@@ -5,9 +5,13 @@ import pandas as pd
 class InitParamValues:
 
     @staticmethod
-    def generateDates(start='1/1/2018', freqDays=25, periods=15):
+    def generateDatesComplete(start='1/1/2018', freqDays=25, periods=15):
         dateArray = pd.date_range(start=start, freq=str(freqDays) + 'D', periods=periods)
         return dateArray
+
+    @staticmethod
+    def generateDates():
+        return [i for i in np.arange(1,365,25)]
 
     @staticmethod
     def initParamValues(option, nb_params=26, nb_class_panel=14):

@@ -1,7 +1,6 @@
 from src.SyntSITSLabelNoise.Write_generate_data import *
 from src.SyntSITSLabelNoise.InitParamValues import *
 
-
 def main():
     (param_val, class_names) = InitParamValues.initParamValues(1)
     dates = InitParamValues.generateDates()
