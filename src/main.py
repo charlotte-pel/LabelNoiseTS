@@ -4,7 +4,7 @@ from src.SyntSITSLabelNoise.InitParamValues import *
 def main():
     (param_val, class_names) = InitParamValues.initParamValues(1)
     dates = InitParamValues.generateDates()
-    WriteGenerateData.write_generate_data(class_names, param_val, dates, "test")
+    WriteGenerateData.write_generate_data(class_names, param_val, dates, "training_Python.txt")
 
 
 if __name__ == "__main__": main()

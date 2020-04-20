@@ -21,7 +21,7 @@ class InitParamValues:
         # Class_names
         class_names = ['Corn', 'Corn_ensilage', 'Sorghum', 'Sunflower', 'Soy',
                        'Wheat', 'Rapeseed', 'Barley',
-                       'Wheat-soy',
+                       'Wheat_soy',
                        'Evergreen', 'Decideous',
                        'Water',
                        'Build',
