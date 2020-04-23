@@ -6,15 +6,34 @@ class InitParamValues:
 
     @staticmethod
     def generateDatesComplete(start='1/1/2018', freqDays=25, periods=15):
+        """
+
+        :param start: first date
+        :param freqDays: time between two dates
+        :param periods: nb dates = 15 dates in array
+        :return: array with complete dates: 1/1/2018
+        """
         dateArray = pd.date_range(start=start, freq=str(freqDays) + 'D', periods=periods)
         return dateArray
 
     @staticmethod
     def generateDates():
+        """
+
+        :return: array containing days spaced 25 days apart
+        """
         return [i for i in np.arange(1,365,25)]
 
     @staticmethod
     def initParamValues(option, nb_params=26, nb_class_panel=14):
+        """
+
+        :param option: three options are available: 1,2 or 3
+        :param nb_params: number of param, by default = 26
+        :param nb_class_panel: number of class, by default = 14
+        :return: param_val: param of double sigmo for each class
+                 param_val[:14, 0] = [0.62, 0.67, 0.2, 0.25, 122, 182, 5, 20, 270, 290, 15, 20, 500, 20]
+        """
         if option < 3:
             option = 1
 
