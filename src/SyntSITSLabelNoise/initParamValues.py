@@ -25,7 +25,7 @@ class InitParamValues:
         return [i for i in np.arange(1,365,25)]
 
     @staticmethod
-    def initParamValues(option, nb_params=26, nb_class_panel=14):
+    def initParamValues(option, nb_params=26, nb_class_panel=13):
         """
 
         :param option: three options are available: 1,2 or 3
@@ -47,7 +47,6 @@ class InitParamValues:
                        'other']
 
         param_val = -np.ones((nb_params, nb_class_panel))
-
         if option == 1:
             # True profile
             # Corn t0= [90 155] t1 = [185 210]
@@ -133,8 +132,9 @@ class InitParamValues:
             # Rapeseed 0.5500    0.1000   40.0000   20.0000   85.0000    5.0000    0.4500    0.1000   90.0000    5.0000
             # 140.0000   10.0000
             param_val[:, 6] = [0.70, 0.8, 0.05, 0.20, 30, 45, 15, 25, 80, 90, 3, 12, 500, 10, 0.60, 0.70, 0.05, 0.15,
-                               85,
-                               95, 3, 12, 135, 145, 5, 15]
+                                85,
+                                95, 3, 12, 135, 145, 5, 15]
+            #param_val[:14, 6] = [0.70, 0.8, 0.05, 0.20, 30, 45, 15, 25, 80, 90, 3, 12, 500, 10]
             # Barley
             param_val[:14, 7] = [0.52, 0.67, 0.20, 0.35, 30, 90, 5, 25, 120, 170, 5, 25, 500, 10]
             # Bi-culture: wheat-soy

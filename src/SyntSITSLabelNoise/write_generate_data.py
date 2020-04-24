@@ -31,11 +31,10 @@ class WriteGenerateData:
 
         # Variance per parameter[A;B;x0;x1;x2;x3]
         # var_param = [0.001 0.01 7 0.2 2 0.2];
-
         # Double or simple sigmoid
         db_sigmo = 14 * np.ones((1, np.size(param_val[2])))
         for i in range(0, np.size(param_val[2])):
-            sig_param_val = param_val[15:, i]
+            sig_param_val = param_val[14:, i]
             if sum(sig_param_val) != -len(sig_param_val):
                 db_sigmo[0, i] = 26
 
@@ -48,7 +47,7 @@ class WriteGenerateData:
         # class1;nbSamples
         # ...
         # % classN;nbSamples
-        WriteGenerateData.fprintf(fid, str(np.size(param_val[2]) - 1))
+        WriteGenerateData.fprintf(fid, str(np.size(param_val[2])))
         WriteGenerateData.fprintf(fid, '\n')
         for i in dates:
             WriteGenerateData.fprintf(fid, '%d;', i)
@@ -63,19 +62,18 @@ class WriteGenerateData:
         for add in range(0, np.size(param_val[2])):
             data = param_val[0:int(db_sigmo[0, add]), add]
             nb_Samples = data[12]
-            polygonSize = data[11]
+            polygonSize = data[13]
 
             # Generate the exact number of samples per polygons
             nb_Samples_Polygons = []
             while sum(nb_Samples_Polygons) < nb_Samples:
                 val = max(round(1. / 5. * polygonSize * np.random.randn() + polygonSize), 1)
                 nb_Samples_Polygons.append(val)
-
             cmpt = 0
-            while (sum(nb_Samples_Polygons) != nb_Samples) & ((len(nb_Samples_Polygons) - 1 - cmpt) >= 0):
+            while sum(nb_Samples_Polygons) != nb_Samples:
                 nb_Samples_Polygons[-1 - cmpt] = nb_Samples_Polygons[-1 - cmpt] - 1
                 cmpt = cmpt + 1
-                if cmpt == len(nb_Samples_Polygons):
+                if cmpt == len(nb_Samples_Polygons) - 1:
                     cmpt = 0
 
             if db_sigmo[0, add] == 14:
@@ -84,15 +82,11 @@ class WriteGenerateData:
             else:
                 range_param = [*data[:12], *data[14:]]
                 range_param = np.reshape(range_param, (12, 2))
-
             for i in range(0, len(nb_Samples_Polygons)):
-                diff_pos = 0
                 sigmo_param = WriteGenerateData.generate_double_sigmo_parameters(range_param)
-                gauss = []
 
                 if db_sigmo[0, add] == 14:
                     x0 = sigmo_param[0, 2]
-
                     # Calcul of x2
                     # Date of the inflection point of the main crop.Page 72 - 73 manuscript.
                     x2 = sigmo_param[0, 4]
@@ -113,7 +107,6 @@ class WriteGenerateData:
                     gauss = A_gauss * np.exp(
                         -(dates - np.mean(dates)) * (dates - np.mean(dates)) / (2 * sigma_gauss * sigma_gauss))
 
-                    # TODO comments
                     pos_mean = np.where(dates <= np.mean(dates))
                     pos_x2 = np.where(dates <= mu_gauss)
                     diff_pos = pos_x2[0][-1] - pos_mean[0][-1]
@@ -128,9 +121,10 @@ class WriteGenerateData:
                             class_names[add], 'Build'):
                         norm_pdf = max(norm_pdf) * np.ones((1, len(dates)))
                 else:
-                    # NormaPDF -> TODO
-                    x0 = sigmo_param[0, 3]
-                    x0bis = sigmo_param[0, 9]
+                    # Code for class: Rapeseed and Wheat_soy
+                    x0 = sigmo_param[0, 2]
+                    x0bis = sigmo_param[0, 8]
+                    # nom_pdf len = 15
                     norm_pdf1 = norm.pdf(dates, x0, 10) + (0.05 - max(norm.pdf(dates, x0, 10)))
                     norm_pdf2 = norm.pdf(dates, x0bis, 10) + (0.05 - max(norm.pdf(dates, x0bis, 10)))
                     norm_pdf = (norm_pdf1 + norm_pdf2) / 2
@@ -141,20 +135,20 @@ class WriteGenerateData:
                     # Code Matlab
                     # profil = norm_pdf.*randn(1,length(init_profil)) + init_profil;
                     profil = norm_pdf * np.random.randn(1, len(init_profil)) + init_profil
-                    if db_sigmo[0][add] == 14:
-                        if len(dates) - diff_pos > diff_pos:
-                            # Origin code Matlab: profil = profil + [gauss(length(dates)-diff_pos+1:end) gauss(
-                            # 1:diff_pos) gauss(diff_pos+1:length(dates)-diff_pos)] Pour ajouter des tab à la suite:
-                            # gauss2 = [*l1,*l2,*l3]
-                            gauss2 = np.array([*gauss[(len(dates) - diff_pos):], *gauss[:diff_pos],
-                                               *gauss[diff_pos:len(dates) - diff_pos]]).reshape(1, 15)
-                            profil[0] = profil[0] + gauss2
-                        else:
-                            # Origin code Matlab: profil = profil + [gauss(length(dates)-diff_pos+1:diff_pos) gauss(
-                            # diff_pos+1:end) gauss(1:length(dates)-diff_pos)]
-                            gauss2 = np.array([*gauss[(len(dates) - diff_pos):diff_pos], *gauss[diff_pos:],
-                                               *gauss[:len(dates) - diff_pos]]).reshape(1, 15)
-                            profil[0] = profil[0] + gauss2
+                    #if db_sigmo[0][add] == 14:
+                    if len(dates) - diff_pos > diff_pos:
+                        # Origin code Matlab: profil = profil + [gauss(length(dates)-diff_pos+1:end) gauss(
+                        # 1:diff_pos) gauss(diff_pos+1:length(dates)-diff_pos)] Pour ajouter des tab à la suite:
+                        # gauss2 = [*l1,*l2,*l3]
+                        gauss2 = np.array([*gauss[(len(dates) - diff_pos):], *gauss[:diff_pos],
+                                           *gauss[diff_pos:len(dates) - diff_pos]]).reshape(1, 15)
+                        profil[0] = profil[0] + gauss2
+                    else:
+                        # Origin code Matlab: profil = profil + [gauss(length(dates)-diff_pos+1:diff_pos) gauss(
+                        # diff_pos+1:end) gauss(1:length(dates)-diff_pos)]
+                        gauss2 = np.array([*gauss[(len(dates) - diff_pos):diff_pos], *gauss[diff_pos:],
+                                           *gauss[:len(dates) - diff_pos]]).reshape(1, 15)
+                        profil[0] = profil[0] + gauss2
 
                     tmpMatrix = -np.ones(np.size(profil))
                     tmpProfil = np.ndarray((1, 15))
@@ -202,7 +196,7 @@ class WriteGenerateData:
     @staticmethod
     def sigmoProfil(samples_sigmo_param, dates):
         """
-
+        TODO Correction code: utiliser sigmoProfil dans doubleSigmoProfil
         :param samples_sigmo_param:
         :param dates: number of days since New Year's Day
                dates = [0,25,50,...]
