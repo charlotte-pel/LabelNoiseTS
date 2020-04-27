@@ -85,34 +85,35 @@ class WriteGenerateData:
             for i in range(0, len(nb_Samples_Polygons)):
                 sigmo_param = WriteGenerateData.generate_double_sigmo_parameters(range_param)
 
+                #if db_sigmo[0, add] == 14:
+                x0 = sigmo_param[0, 2]
+                # Calcul of x2
+                # Date of the inflection point of the main crop.Page 72 - 73 manuscript.
+                x2 = sigmo_param[0, 4]
+
+                # Average dates of regrowth. The regrowth curve is offset in relation to the main crop (for
+                # winter crops the regrowth is in summer and vice versa for winter crops).
+                mu_gauss = np.random.randint(50,
+                                             151) + x2
+
+                # Standard deviation of regrowth
+                sigma_gauss = 16 * np.random.rand() + 32
+
+                # Amplitude of regrowth
+                A_gauss = np.random.rand() / 3
+
+                # Matlab code for gauss
+                # gauss = A_gauss.*exp(-(dates-mean(dates)).*(dates-mean(dates))./(2.*sigma_gauss.*sigma_gauss));
+                gauss = A_gauss * np.exp(
+                    -(dates - np.mean(dates)) * (dates - np.mean(dates)) / (2 * sigma_gauss * sigma_gauss))
+
+                pos_mean = np.where(dates <= np.mean(dates))
+                pos_x2 = np.where(dates <= mu_gauss)
+                diff_pos = pos_x2[0][-1] - pos_mean[0][-1]
+                if diff_pos < 0:
+                    diff_pos = pos_mean[0][-1] - pos_x2[0][-1]
+
                 if db_sigmo[0, add] == 14:
-                    x0 = sigmo_param[0, 2]
-                    # Calcul of x2
-                    # Date of the inflection point of the main crop.Page 72 - 73 manuscript.
-                    x2 = sigmo_param[0, 4]
-
-                    # Average dates of regrowth. The regrowth curve is offset in relation to the main crop (for
-                    # winter crops the regrowth is in summer and vice versa for winter crops).
-                    mu_gauss = np.random.randint(50,
-                                                 151) + x2
-
-                    # Standard deviation of regrowth
-                    sigma_gauss = 16 * np.random.rand() + 32
-
-                    # Amplitude of regrowth
-                    A_gauss = np.random.rand() / 3
-
-                    # Matlab code for gauss
-                    # gauss = A_gauss.*exp(-(dates-mean(dates)).*(dates-mean(dates))./(2.*sigma_gauss.*sigma_gauss));
-                    gauss = A_gauss * np.exp(
-                        -(dates - np.mean(dates)) * (dates - np.mean(dates)) / (2 * sigma_gauss * sigma_gauss))
-
-                    pos_mean = np.where(dates <= np.mean(dates))
-                    pos_x2 = np.where(dates <= mu_gauss)
-                    diff_pos = pos_x2[0][-1] - pos_mean[0][-1]
-                    if diff_pos < 0:
-                        diff_pos = pos_mean[0][-1] - pos_x2[0][-1]
-
                     # Matalb code for norm_pdf
                     # norm_pdf = normpdf(dates,x0,10) + (0.05-max(normpdf(dates,x0,10)))
                     norm_pdf = norm.pdf(dates, x0, 10) + (0.05 - max(norm.pdf(dates, x0, 10)))
@@ -222,10 +223,7 @@ class WriteGenerateData:
                dates = [0,25,50,...]
         :return: a double sigmo profil
         """
-        profil1 = samples_sigmo_param[0, 0] * (
-                1 / (1 + np.exp((samples_sigmo_param[0, 2] - dates) / samples_sigmo_param[0, 3])) - 1 / (
-                1 + np.exp((samples_sigmo_param[0, 4] - dates) / samples_sigmo_param[0, 5]))) + samples_sigmo_param[
-                      0, 1]
+        profil1 = WriteGenerateData.sigmoProfil(samples_sigmo_param, dates)
         profil2 = samples_sigmo_param[0, 6] * (
                 1 / (1 + np.exp((samples_sigmo_param[0, 8] - dates) / samples_sigmo_param[0, 9])) - 1 / (
                 1 + np.exp((samples_sigmo_param[0, 10] - dates) / samples_sigmo_param[0, 11]))) + samples_sigmo_param[

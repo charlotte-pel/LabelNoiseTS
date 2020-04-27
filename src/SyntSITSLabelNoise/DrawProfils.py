@@ -55,7 +55,7 @@ class Drawprofils:
         :return: No return -> Draw graph
         """
         for i in range(0, nb_class - 2):
-            Drawprofils.drawnMeanOneClass(i, dates, class_names, samplesClass)
+            Drawprofils.drawMeanOneClass(i, dates, class_names, samplesClass)
         plt.title('Profils NDVI simulés: Mean Each Class ')
         plt.grid()
         plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
@@ -78,7 +78,7 @@ class Drawprofils:
         """
         nameOfClass = ''
         for i in ids:
-            Drawprofils.drawnMeanOneClass(i, dates, class_names, samplesClass)
+            Drawprofils.drawMeanOneClass(i, dates, class_names, samplesClass)
             nameOfClass = nameOfClass + ' / ' + str(class_names[i])
         if len(ids) <= 4:
             plt.title('Profils NDVI simulés: ' + nameOfClass)
@@ -92,7 +92,7 @@ class Drawprofils:
         plt.show()
 
     @staticmethod
-    def drawnMeanOneClass(id, dates, class_names, samplesClass):
+    def drawMeanOneClass(id, dates, class_names, samplesClass):
         index = id + 1
         cpt = 0
         for i in samplesClass:
@@ -114,7 +114,15 @@ class Drawprofils:
         plt.plot(dates, np.mean(samplesSpeClass, axis=0), label=class_names[index - 1])
 
     @staticmethod
-    def drawnMeanProfilOneClass(id, dates, class_names, samplesClass):
+    def drawMeanProfilOneClass(id, dates, class_names, samplesClass):
+        """
+        Draw Mean per Profil for OneClass
+        :param id:
+        :param dates:
+        :param class_names:
+        :param samplesClass:
+        :return:
+        """
         index = id + 1
         cpt = 0
         nbId = 0
@@ -147,4 +155,70 @@ class Drawprofils:
         plt.ylabel('NDVI')
         plt.axis([0, 350, 0.2, 1])
         plt.grid()
+        plt.show()
+
+    @staticmethod
+    def draw20RandomProfilOneClass(id, dates, class_names, samplesClass):
+        index = id+1
+        cpt = 0
+        nbId = 0
+        for i in samplesClass:
+            if i[0] == index:
+                cpt += 1
+                nbId = i[1]
+        print(cpt)
+        samplesSpeClass = -np.ones((cpt, 15))
+        k = 0
+        for i in samplesClass:
+            l = 0
+            # print(i)
+            if i[0] == index:
+                for j in i:
+                    if l >= 2:
+                        samplesSpeClass[k, l - 2] = j
+                    l += 1
+                k += 1
+        for j in range(0,20):
+            i = np.random.randint(0,nbId)
+            plt.plot(dates, samplesSpeClass[i])
+        plt.title('Profils NDVI simulés ' + class_names[id])
+        plt.grid()
+        plt.xlabel('Jour de l\'an')
+        plt.ylabel('NDVI')
+        plt.axis([0, 350, 0, 1])
+        plt.show()
+
+    @staticmethod
+    def draw20RandomIdProfilOneClass(id, dates, class_names, samplesClass):
+        index = id + 1
+        cpt = 0
+        nbId = 0
+        for i in samplesClass:
+            if i[0] == index:
+                cpt += 1
+                nbId = i[1]
+        print(cpt)
+        print(nbId)
+        samplesSpeClass = -np.ones((cpt, 16))
+        k = 0
+        for i in samplesClass:
+            l = 0
+            if i[0] == index:
+                for j in i:
+                    if l >= 1:
+                        samplesSpeClass[k, l - 1] = j
+                    l += 1
+                k += 1
+        i = np.random.randint(1, nbId)
+        samples = samplesSpeClass[samplesSpeClass[:, 0] == i]
+        print(i)
+        for j in range(0, 20):
+            if j < len(samples):
+                tmpSample = samples[j]
+                plt.plot(dates, tmpSample[1:])
+        plt.title('Profils NDVI simulés ' + class_names[id])
+        plt.grid()
+        plt.xlabel('Jour de l\'an')
+        plt.ylabel('NDVI')
+        plt.axis([0, 350, 0, 1])
         plt.show()
