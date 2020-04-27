@@ -1,7 +1,6 @@
 import os
 
 import numpy as np
-from scipy.stats import norm
 
 
 class WriteGenerateData:
@@ -29,8 +28,6 @@ class WriteGenerateData:
         # We transpose the list of param_val to be able to write it correctly (on line) in the file.
         param_val_transpose = np.transpose(param_val)
 
-        # Variance per parameter[A;B;x0;x1;x2;x3]
-        # var_param = [0.001 0.01 7 0.2 2 0.2];
         # Double or simple sigmoid
         db_sigmo = 14 * np.ones((1, np.size(param_val[2])))
         for i in range(0, np.size(param_val[2])):
@@ -59,22 +56,16 @@ class WriteGenerateData:
                     WriteGenerateData.fprintf(fid, '%0.2f;', j)
             WriteGenerateData.fprintf(fid, '\n')
 
+        # Generate Data Start:
         for add in range(0, np.size(param_val[2])):
+            print(add)
             data = param_val[0:int(db_sigmo[0, add]), add]
             nb_Samples = data[12]
             polygonSize = data[13]
 
             # Generate the exact number of samples per polygons
-            nb_Samples_Polygons = []
-            while sum(nb_Samples_Polygons) < nb_Samples:
-                val = max(round(1. / 5. * polygonSize * np.random.randn() + polygonSize), 1)
-                nb_Samples_Polygons.append(val)
-            cmpt = 0
-            while sum(nb_Samples_Polygons) != nb_Samples:
-                nb_Samples_Polygons[-1 - cmpt] = nb_Samples_Polygons[-1 - cmpt] - 1
-                cmpt = cmpt + 1
-                if cmpt == len(nb_Samples_Polygons) - 1:
-                    cmpt = 0
+            # (same number of samples per polygon)
+            nb_Samples_Polygons = polygonSize * np.ones((1, int(np.floor(nb_Samples / polygonSize))))
 
             if db_sigmo[0, add] == 14:
                 range_param = data[:-2]
@@ -82,25 +73,32 @@ class WriteGenerateData:
             else:
                 range_param = [*data[:12], *data[14:]]
                 range_param = np.reshape(range_param, (12, 2))
-            for i in range(0, len(nb_Samples_Polygons)):
-                sigmo_param = WriteGenerateData.generate_double_sigmo_parameters(range_param)
 
-                #if db_sigmo[0, add] == 14:
-                x0 = sigmo_param[0, 2]
-                # Calcul of x2
+            for i in range(0, len(nb_Samples_Polygons[0])):
+
+                sigmo_param = WriteGenerateData.generate_double_sigmo_parameters(range_param)
+                # Calculation of Gaussian parameters
+
+                # Calculation of x2
                 # Date of the inflection point of the main crop.Page 72 - 73 manuscript.
-                x2 = sigmo_param[0, 4]
+                if db_sigmo[0, add] == 14:
+                    x2 = sigmo_param[0, 4]
+                else:
+                    x2 = sigmo_param[0, 10]
 
                 # Average dates of regrowth. The regrowth curve is offset in relation to the main crop (for
                 # winter crops the regrowth is in summer and vice versa for winter crops).
-                mu_gauss = np.random.randint(50,
-                                             151) + x2
+                mu_gauss = np.random.randint(50,151) + x2
 
                 # Standard deviation of regrowth
                 sigma_gauss = 16 * np.random.rand() + 32
 
                 # Amplitude of regrowth
                 A_gauss = np.random.rand() / 3
+
+                if WriteGenerateData.strcmp(class_names[add], 'Evergreen') | WriteGenerateData.strcmp(
+                        class_names[add], 'Decideous'):
+                    A_gauss = 0
 
                 # Matlab code for gauss
                 # gauss = A_gauss.*exp(-(dates-mean(dates)).*(dates-mean(dates))./(2.*sigma_gauss.*sigma_gauss));
@@ -113,34 +111,27 @@ class WriteGenerateData:
                 if diff_pos < 0:
                     diff_pos = pos_mean[0][-1] - pos_x2[0][-1]
 
-                if db_sigmo[0, add] == 14:
-                    # Matalb code for norm_pdf
-                    # norm_pdf = normpdf(dates,x0,10) + (0.05-max(normpdf(dates,x0,10)))
-                    norm_pdf = norm.pdf(dates, x0, 10) + (0.05 - max(norm.pdf(dates, x0, 10)))
-                    init_profil = WriteGenerateData.sigmoProfil(sigmo_param, dates)
-                    if WriteGenerateData.strcmp(class_names[add], 'Evergreen') | WriteGenerateData.strcmp(
-                            class_names[add], 'Build'):
-                        norm_pdf = max(norm_pdf) * np.ones((1, len(dates)))
-                else:
-                    # Code for class: Rapeseed and Wheat_soy
-                    x0 = sigmo_param[0, 2]
-                    x0bis = sigmo_param[0, 8]
-                    # nom_pdf len = 15
-                    norm_pdf1 = norm.pdf(dates, x0, 10) + (0.05 - max(norm.pdf(dates, x0, 10)))
-                    norm_pdf2 = norm.pdf(dates, x0bis, 10) + (0.05 - max(norm.pdf(dates, x0bis, 10)))
-                    norm_pdf = (norm_pdf1 + norm_pdf2) / 2
-                    init_profil = WriteGenerateData.doubleSigmoProfil(sigmo_param, dates)
+                for j in range(1, int(nb_Samples_Polygons[0,i])):
+                    # Generate variability : 3eme version
 
-                for j in range(1, int(nb_Samples_Polygons[i])):
-                    # Generate variability : 2eme version
-                    # Code Matlab
-                    # profil = norm_pdf.*randn(1,length(init_profil)) + init_profil;
-                    profil = norm_pdf * np.random.randn(1, len(init_profil)) + init_profil
-                    #if db_sigmo[0][add] == 14:
+                    reduce_sigmo_param = np.zeros((len(sigmo_param[0]), 2))
+                    variability = np.random.randint(5, 21)
+                    reduce_sigmo_param[:, 0] = sigmo_param - (range_param[:, 1] - range_param[:, 0]) / variability
+                    reduce_sigmo_param[:, 1] = sigmo_param + (range_param[:, 1] - range_param[:, 0]) / variability
+                    sample_sigmo_param = WriteGenerateData.generate_double_sigmo_parameters(reduce_sigmo_param)
+
+                    if db_sigmo[0, add] == 14:
+                        init_profil = WriteGenerateData.sigmoProfil(sample_sigmo_param, dates)
+                    else:
+                        init_profil = WriteGenerateData.doubleSigmoProfil(sample_sigmo_param, dates)
+
+                    norm_pdf = 0.05 * (2 * np.random.rand(1, len(dates)))
+                    vec_noisy_dates = np.random.permutation(np.random.randint(0, len(dates), size=len(dates)))
+                    norm_pdf[0,vec_noisy_dates[:np.random.randint(0, len(dates))]] = 0
+                    profil = norm_pdf + init_profil
+
                     if len(dates) - diff_pos > diff_pos:
-                        # Origin code Matlab: profil = profil + [gauss(length(dates)-diff_pos+1:end) gauss(
-                        # 1:diff_pos) gauss(diff_pos+1:length(dates)-diff_pos)] Pour ajouter des tab à la suite:
-                        # gauss2 = [*l1,*l2,*l3]
+                        # Pour ajouter des tab à la suite: gauss2 = [*l1,*l2,*l3]
                         gauss2 = np.array([*gauss[(len(dates) - diff_pos):], *gauss[:diff_pos],
                                            *gauss[diff_pos:len(dates) - diff_pos]]).reshape(1, 15)
                         profil[0] = profil[0] + gauss2
@@ -154,12 +145,12 @@ class WriteGenerateData:
                     tmpMatrix = -np.ones(np.size(profil))
                     tmpProfil = np.ndarray((1, 15))
                     for k in range(0, np.size(profil)):
-                        tmpProfil[0, k] = (max(tmpMatrix[k], profil[0, k]))
+                         tmpProfil[0, k] = (max(tmpMatrix[k], profil[0, k]))
                     profil = tmpProfil
                     tmpMatrix = np.ones(np.size(profil))
                     tmpProfil = np.ndarray((1, 15))
                     for k in range(0, np.size(profil)):
-                        tmpProfil[0, k] = (min(tmpMatrix[k], profil[0, k]))
+                         tmpProfil[0, k] = (min(tmpMatrix[k], profil[0, k]))
                     profil = tmpProfil
 
                     # Write samples
