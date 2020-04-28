@@ -88,7 +88,7 @@ class Drawprofils:
         plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
         plt.xlabel('Jour de l\'an')
         plt.ylabel('NDVI')
-        plt.axis([0, 350, 0.2, 1])
+        plt.axis([0, 350, 0.2, 0.9])
         plt.show()
 
     @staticmethod

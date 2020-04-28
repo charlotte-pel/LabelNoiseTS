@@ -74,7 +74,7 @@ class WriteGenerateData:
                 range_param = [*data[:12], *data[14:]]
                 range_param = np.reshape(range_param, (12, 2))
 
-            for i in range(0, len(nb_Samples_Polygons[0])):
+            for i in range(0, len(nb_Samples_Polygons[0])): #id poly
 
                 sigmo_param = WriteGenerateData.generate_double_sigmo_parameters(range_param)
                 # Calculation of Gaussian parameters
@@ -111,7 +111,7 @@ class WriteGenerateData:
                 if diff_pos < 0:
                     diff_pos = pos_mean[0][-1] - pos_x2[0][-1]
 
-                for j in range(1, int(nb_Samples_Polygons[0,i])):
+                for j in range(1, int(nb_Samples_Polygons[0,i])):# pixel poly
                     # Generate variability : 3eme version
 
                     reduce_sigmo_param = np.zeros((len(sigmo_param[0]), 2))
@@ -201,15 +201,15 @@ class WriteGenerateData:
         #         + samples_sigmo_param(2);
         profil = samples_sigmo_param[0, 0] * (
                 1 / (1 + np.exp((samples_sigmo_param[0, 2] - dates) / samples_sigmo_param[0, 3])) - 1 / (
-                1 + np.exp((samples_sigmo_param[0, 4] - dates) / samples_sigmo_param[0, 5]))) + samples_sigmo_param[
-                     0, 1]
+                1 + np.exp((samples_sigmo_param[0, 4] - dates) / samples_sigmo_param[0, 5]))) + (samples_sigmo_param[
+                     0, 1]-0.05)
         return profil
 
     @staticmethod
     def doubleSigmoProfil(samples_sigmo_param, dates):
         """
 
-        :param samples_sigmo_param:
+        :param samples_sigmo_param: [A ; B ; x0 ; x1 ; x2 ; x3]
         :param dates: number of days since New Year's Day
                dates = [0,25,50,...]
         :return: a double sigmo profil
@@ -234,7 +234,7 @@ class WriteGenerateData:
         for i in range(0, len(range_param)):
             if range_param[i, 0] > range_param[i, 1]:
                 print('Error MIN > MAX')
-            mu = (range_param[i, 0] + range_param[i, 1] / 2.0)
+            mu = (range_param[i, 0] + range_param[i, 1]) / 2.0
             sqrt_var = (range_param[i, 1] - mu) / 3.0
             val = sqrt_var * np.random.randn() + mu
             while val < range_param[i, 0] or val > range_param[i, 1]:
