@@ -1,7 +1,7 @@
 from src.SyntSITSLabelNoise.DrawProfils import *
 from src.SyntSITSLabelNoise.InitParamValues import *
 from src.SyntSITSLabelNoise.ReadGenerateData import *
-from src.SyntSITSLabelNoise.Write_generate_data import *
+from src.SyntSITSLabelNoise.WriteGenerateData import *
 
 
 def main():
@@ -10,7 +10,7 @@ def main():
     # print(class_names)
     # print(np.shape(param_val))
     for i in range(0,1):
-        WriteGenerateData.write_generate_data(class_names, param_val, dates, "training_Python.txt")
+        WriteGenerateData.writeGenerateData(class_names, param_val, dates, "training_Python.txt")
         (nb_class, dates, class_names, samplesClass) = ReadGenerateData.read_generate_data("training_Python.txt")
         #Drawprofils.drawMeanProfilOneClass(6, dates, class_names, samplesClass)
         #Drawprofils.drawProfilMeanSpeClass((6,), nb_class, dates, class_names, samplesClass)

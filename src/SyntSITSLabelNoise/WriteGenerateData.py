@@ -10,7 +10,7 @@ class WriteGenerateData:
     """
 
     @staticmethod
-    def write_generate_data(class_names, param_val, dates, filename):
+    def writeGenerateData(class_names, param_val, dates, filename):
         """
         :param class_names: contains the names of different class
                class_names = ['Corn', 'Corn_ensilage',...]
