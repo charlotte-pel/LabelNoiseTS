@@ -29,11 +29,9 @@ class WriteGenerateData:
         param_val_transpose = np.transpose(param_val)
 
         # Double or simple sigmoid
-        db_sigmo = 14 * np.ones((1, np.size(param_val[2])))
-        for i in range(0, np.size(param_val[2])):
-            sig_param_val = param_val[14:, i]
-            if sum(sig_param_val) != -len(sig_param_val):
-                db_sigmo[0, i] = 26
+        # Reshape is to put array like this [[14,...,26,...,14,...]] instead of [14,...,26,...,14,...]
+        db_sigmo = np.where(np.sum(param_val[14:, ], axis=0) != -len(param_val[14:, ]), 26, 14).reshape(
+            (1, np.size(param_val[2])))
 
         # Open the file
         fid = open(filename, "w")
@@ -74,7 +72,7 @@ class WriteGenerateData:
                 range_param = [*data[:12], *data[14:]]
                 range_param = np.reshape(range_param, (12, 2))
 
-            for i in range(0, len(nb_Samples_Polygons[0])): #id poly
+            for i in range(0, len(nb_Samples_Polygons[0])):  # id poly
 
                 sigmo_param = WriteGenerateData.generate_double_sigmo_parameters(range_param)
                 # Calculation of Gaussian parameters
@@ -88,7 +86,7 @@ class WriteGenerateData:
 
                 # Average dates of regrowth. The regrowth curve is offset in relation to the main crop (for
                 # winter crops the regrowth is in summer and vice versa for winter crops).
-                mu_gauss = np.random.randint(50,151) + x2
+                mu_gauss = np.random.randint(50, 151) + x2
 
                 # Standard deviation of regrowth
                 sigma_gauss = 16 * np.random.rand() + 32
@@ -111,13 +109,19 @@ class WriteGenerateData:
                 if diff_pos < 0:
                     diff_pos = pos_mean[0][-1] - pos_x2[0][-1]
 
-                for j in range(1, int(nb_Samples_Polygons[0,i])):# pixel poly
+                for j in range(1, int(nb_Samples_Polygons[0, i])):  # pixel poly
                     # Generate variability : 3eme version
 
                     reduce_sigmo_param = np.zeros((len(sigmo_param[0]), 2))
                     variability = np.random.randint(5, 21)
                     reduce_sigmo_param[:, 0] = sigmo_param - (range_param[:, 1] - range_param[:, 0]) / variability
                     reduce_sigmo_param[:, 1] = sigmo_param + (range_param[:, 1] - range_param[:, 0]) / variability
+
+                    reduce_sigmo_param[:, 0] = np.where(reduce_sigmo_param[:, 0] < range_param[:, 0], range_param[:, 0],
+                                                        reduce_sigmo_param[:, 0])
+                    reduce_sigmo_param[:, 1] = np.where(reduce_sigmo_param[:, 1] > range_param[:, 1], range_param[:, 1],
+                                                        reduce_sigmo_param[:, 1])
+
                     sample_sigmo_param = WriteGenerateData.generate_double_sigmo_parameters(reduce_sigmo_param)
 
                     if db_sigmo[0, add] == 14:
@@ -127,7 +131,7 @@ class WriteGenerateData:
 
                     norm_pdf = 0.05 * (2 * np.random.rand(1, len(dates)))
                     vec_noisy_dates = np.random.permutation(np.random.randint(0, len(dates), size=len(dates)))
-                    norm_pdf[0,vec_noisy_dates[:np.random.randint(0, len(dates))]] = 0
+                    norm_pdf[0, vec_noisy_dates[:np.random.randint(0, len(dates))]] = 0
                     profil = norm_pdf + init_profil
 
                     if len(dates) - diff_pos > diff_pos:
@@ -142,16 +146,10 @@ class WriteGenerateData:
                                            *gauss[:len(dates) - diff_pos]]).reshape(1, 15)
                         profil[0] = profil[0] + gauss2
 
-                    tmpMatrix = -np.ones(np.size(profil))
-                    tmpProfil = np.ndarray((1, 15))
-                    for k in range(0, np.size(profil)):
-                         tmpProfil[0, k] = (max(tmpMatrix[k], profil[0, k]))
-                    profil = tmpProfil
-                    tmpMatrix = np.ones(np.size(profil))
-                    tmpProfil = np.ndarray((1, 15))
-                    for k in range(0, np.size(profil)):
-                         tmpProfil[0, k] = (min(tmpMatrix[k], profil[0, k]))
-                    profil = tmpProfil
+                    # Return max between -np.ones((1, np.size(profil))) and profil
+                    profil = np.where(-np.ones((1, np.size(profil))) > profil, -np.ones((1, np.size(profil))), profil)
+                    # Return min between np.ones((1, np.size(profil))) and profil
+                    profil = np.where(np.ones((1, np.size(profil))) < profil, np.ones((1, np.size(profil))), profil)
 
                     # Write samples
                     WriteGenerateData.fprintf(fid, 'c%s;id%u;', add + 1, i + 1)
@@ -202,7 +200,7 @@ class WriteGenerateData:
         profil = samples_sigmo_param[0, 0] * (
                 1 / (1 + np.exp((samples_sigmo_param[0, 2] - dates) / samples_sigmo_param[0, 3])) - 1 / (
                 1 + np.exp((samples_sigmo_param[0, 4] - dates) / samples_sigmo_param[0, 5]))) + (samples_sigmo_param[
-                     0, 1]-0.05)
+                                                                                                     0, 1] - 0.05)
         return profil
 
     @staticmethod
@@ -214,8 +212,8 @@ class WriteGenerateData:
                dates = [0,25,50,...]
         :return: a double sigmo profil
         """
-        profil1 = WriteGenerateData.sigmoProfil(samples_sigmo_param[:,:6], dates)
-        profil2 = WriteGenerateData.sigmoProfil(samples_sigmo_param[:,6:], dates)+0.05
+        profil1 = WriteGenerateData.sigmoProfil(samples_sigmo_param[:, :6], dates)
+        profil2 = WriteGenerateData.sigmoProfil(samples_sigmo_param[:, 6:], dates) + 0.05
         return profil1 + profil2
 
     @staticmethod
