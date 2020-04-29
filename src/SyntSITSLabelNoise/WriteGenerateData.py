@@ -214,11 +214,8 @@ class WriteGenerateData:
                dates = [0,25,50,...]
         :return: a double sigmo profil
         """
-        profil1 = WriteGenerateData.sigmoProfil(samples_sigmo_param, dates)
-        profil2 = samples_sigmo_param[0, 6] * (
-                1 / (1 + np.exp((samples_sigmo_param[0, 8] - dates) / samples_sigmo_param[0, 9])) - 1 / (
-                1 + np.exp((samples_sigmo_param[0, 10] - dates) / samples_sigmo_param[0, 11]))) + samples_sigmo_param[
-                      0, 7]
+        profil1 = WriteGenerateData.sigmoProfil(samples_sigmo_param[:,:6], dates)
+        profil2 = WriteGenerateData.sigmoProfil(samples_sigmo_param[:,6:], dates)+0.05
         return profil1 + profil2
 
     @staticmethod
