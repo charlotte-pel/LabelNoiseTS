@@ -65,7 +65,7 @@ class Drawprofils:
         plt.show()
 
     @staticmethod
-    def drawProfilMeanSpeClass(ids, nb_class, dates, class_names, samplesClass):
+    def drawProfilMeanSpeClass(ids, nb_class, dates, class_names, samplesClass,options):
         """
 
         :param class_name:
@@ -78,7 +78,7 @@ class Drawprofils:
         """
         nameOfClass = ''
         for i in ids:
-            Drawprofils.drawMeanOneClass(i, dates, class_names, samplesClass)
+            Drawprofils.drawMeanOneClass(i, dates, class_names, samplesClass,options)
             nameOfClass = nameOfClass + ' / ' + str(class_names[i])
         if len(ids) <= 4:
             plt.title('Profils NDVI simulés: ' + nameOfClass)
@@ -92,24 +92,27 @@ class Drawprofils:
         plt.show()
 
     @staticmethod
-    def drawMeanOneClass(id, dates, class_names, samplesClass):
+    def drawMeanOneClass(id, dates, class_names, samplesClass,option):
         index = id + 1
         cpt = 0
         for i in samplesClass:
-            if i[0] == index:
+            if int(i[0]) == index:
                 cpt += 1
         print(cpt)
         samplesSpeClass = -np.ones((cpt, 15))
         k = 0
         for i in samplesClass:
             l = 0
-            # print(i)
-            if i[0] == index:
-                for j in i:
-                    if l >= 2:
-                        samplesSpeClass[k, l - 2] = j
-                    l += 1
-                k += 1
+            if int(i[0]) == index:
+                if option == 0:
+                    for j in i:
+                        if l >= 2:
+                            samplesSpeClass[k, l - 2] = j
+                        l += 1
+                    k += 1
+                else:
+                    samplesSpeClass[k] = i[2:]
+                    k += 1
 
         plt.plot(dates, np.mean(samplesSpeClass, axis=0), label=class_names[index - 1])
 

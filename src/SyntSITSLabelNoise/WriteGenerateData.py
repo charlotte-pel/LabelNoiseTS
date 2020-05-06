@@ -1,6 +1,9 @@
 import os
+import random
 
+import h5py
 import numpy as np
+import pandas as pd
 
 
 class WriteGenerateData:
@@ -33,9 +36,17 @@ class WriteGenerateData:
         db_sigmo = np.where(np.sum(param_val[14:, ], axis=0) != -len(param_val[14:, ]), 26, 14).reshape(
             (1, np.size(param_val[2])))
 
+        unique_sequencePolid = WriteGenerateData.uniqueid()
+        unique_sequencePixid = WriteGenerateData.uniqueid()
+
         # Open the file
         fid = open(filename, "w")
-
+        hf = h5py.File('training_Python.h5', 'w')
+        hdf = pd.HDFStore('dataFrame.h5')
+        hf.create_dataset('dates',data=dates)
+        df = pd.DataFrame(columns=['label', 'polid', 'pixid', 'profil'])
+        dfHeader = []
+        tmpDataFrame = []
         # Write the header
         # N = nbClass
         # dates
@@ -47,16 +58,21 @@ class WriteGenerateData:
         for i in dates:
             WriteGenerateData.fprintf(fid, '%d;', i)
         WriteGenerateData.fprintf(fid, '\n')
-        for i in range(0, np.size(param_val[2]) - 1):
+        dfHeader.append(np.array(dates))
+        for i in range(0, len(class_names) - 1):
             WriteGenerateData.fprintf(fid, 'c%s;%s;', i + 1, class_names[i])
+            dfHeader.append(np.array([class_names[i],param_val_transpose[i]]))
             for j in param_val_transpose[i]:
                 if j != -1:
                     WriteGenerateData.fprintf(fid, '%0.2f;', j)
             WriteGenerateData.fprintf(fid, '\n')
-
+        dfHeader = pd.DataFrame(np.array(dfHeader))
+        hdf.put('header',dfHeader)
         # Generate Data Start:
         for add in range(0, np.size(param_val[2])):
             print(add)
+            grClass = hf.create_group(class_names[add])
+            grClass.attrs['Infos'] = param_val_transpose[add]
             data = param_val[0:int(db_sigmo[0, add]), add]
             nb_Samples = data[12]
             polygonSize = data[13]
@@ -73,7 +89,7 @@ class WriteGenerateData:
                 range_param = np.reshape(range_param, (12, 2))
 
             for i in range(0, len(nb_Samples_Polygons[0])):  # id poly
-
+                # grId = hf.create_group(class_names[add]+'/'+'id'+str(i))
                 sigmo_param = WriteGenerateData.generate_double_sigmo_parameters(range_param)
                 # Calculation of Gaussian parameters
 
@@ -109,7 +125,8 @@ class WriteGenerateData:
                 if diff_pos < 0:
                     diff_pos = pos_mean[0][-1] - pos_x2[0][-1]
 
-                for j in range(1, int(nb_Samples_Polygons[0, i])):  # pixel poly
+                tmpId = []
+                for j in range(0, int(nb_Samples_Polygons[0, i])):  # pixel poly
                     # Generate variability : 3eme version
 
                     reduce_sigmo_param = np.zeros((len(sigmo_param[0]), 2))
@@ -151,12 +168,22 @@ class WriteGenerateData:
                     # Return min between np.ones((1, np.size(profil))) and profil
                     profil = np.where(np.ones((1, np.size(profil))) < profil, np.ones((1, np.size(profil))), profil)
 
+                    tmpId.append(profil)
+
                     # Write samples
                     WriteGenerateData.fprintf(fid, 'c%s;id%u;', add + 1, i + 1)
                     for k in profil[0]:
                         WriteGenerateData.fprintf(fid, '%f;', k)
                     WriteGenerateData.fprintf(fid, '\n')
+                    tmpDataFrame.append([class_names[add], i, next(unique_sequencePixid), profil])
+                grClass.create_dataset(str(i + 1), data=tmpId)
+        tmpDataFrame = np.array(tmpDataFrame)
+        df = pd.DataFrame(tmpDataFrame, columns=['label','polid','pixid','profil'])
+        #df.to_hdf('dataFrame.h5', key='df', mode='w')
+        hdf.put('data',df)
+        hdf.close()
         fid.close()
+        hf.close()
 
     @staticmethod
     def fprintf(stream, format_spec, *args):
@@ -236,3 +263,30 @@ class WriteGenerateData:
                 val = sqrt_var * np.random.randn() + mu
             sigmo_param[0, i] = val
         return sigmo_param
+
+    @staticmethod
+    def traverse_datasets(hdf_file):
+
+        """Traverse all datasets across all groups in HDF5 file."""
+
+        def h5py_dataset_iterator(g, prefix=''):
+            for key in g.keys():
+                item = g[key]
+                path = '{}/{}'.format(prefix, key)
+                if isinstance(item, h5py.Dataset):  # test for dataset
+                    yield (path, item)
+                elif isinstance(item, h5py.Group):  # test for group (go down)
+                    yield from h5py_dataset_iterator(item, path)
+
+        with h5py.File(hdf_file, 'r') as f:
+            for (path, dset) in h5py_dataset_iterator(f):
+                print(path, dset)
+
+        return None
+
+    @staticmethod
+    def uniqueid():
+        seed = random.getrandbits(16)
+        while True:
+            yield seed
+            seed += 1

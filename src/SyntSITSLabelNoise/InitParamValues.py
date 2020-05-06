@@ -45,7 +45,6 @@ class InitParamValues:
                        'Water',
                        'Build',
                        'other']
-
         param_val = -np.ones((nb_params, nb_class_panel))
         if option == 1:
             # True profile
