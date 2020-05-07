@@ -19,12 +19,8 @@ class GenerateData:
                param_val[:14, 0] = [0.62, 0.67, 0.2, 0.25, 122, 182, 5, 20, 270, 290, 15, 20, 500, 20]
         :param dates: number of days since New Year's Day
                dates = [0,25,50,...]
-        :param filename: the name of the file in which the data will be entered
         :return: No return the ouput is the file.
         """
-        # # Test Filename
-        # if not os.path.exists(filename):
-        #     print('Invalid filename: ' + filename)
 
         # We transpose the list of param_val to be able to write it correctly (on line) in the file.
         param_val_transpose = np.transpose(param_val)
@@ -36,9 +32,6 @@ class GenerateData:
 
         unique_sequencePixid = GenerateData.uniqueid()
 
-        # Open the file
-        #fid = open(filename, "w")
-        #hdf = pd.HDFStore('dataFrame.h5')
         dfHeader = []
         tmpDataFrame = []
 
@@ -49,21 +42,10 @@ class GenerateData:
         # ...
         # % classN;nbSamples
 
-        #GenerateData.fprintf(fid, str(np.size(param_val[2])))
-        #GenerateData.fprintf(fid, '\n')
-        #for i in dates:
-         #   GenerateData.fprintf(fid, '%d;', i)
-        #GenerateData.fprintf(fid, '\n')
         dfHeader.append(np.array(dates))
         for i in range(0, len(class_names) - 1):
-            #GenerateData.fprintf(fid, 'c%s;%s;', i + 1, class_names[i])
             dfHeader.append(np.array([class_names[i],param_val_transpose[i]]))
-            # for j in param_val_transpose[i]:
-            #     if j != -1:
-            #         GenerateData.fprintf(fid, '%0.2f;', j)
-            # GenerateData.fprintf(fid, '\n')
         dfHeader = pd.DataFrame(np.array(dfHeader))
-        #hdf.put('header',dfHeader)
 
         # Generate Data Start:
         for add in range(0, np.size(param_val[2])):
@@ -119,7 +101,6 @@ class GenerateData:
                 if diff_pos < 0:
                     diff_pos = pos_mean[0][-1] - pos_x2[0][-1]
 
-                tmpId = []
                 for j in range(0, int(nb_Samples_Polygons[0, i])):  # pixel poly
                     # Generate variability : 3eme version
 
@@ -162,34 +143,11 @@ class GenerateData:
                     # Return min between np.ones((1, np.size(profil))) and profil
                     profil = np.where(np.ones((1, np.size(profil))) < profil, np.ones((1, np.size(profil))), profil)
 
-                    tmpId.append(profil)
-
-                    # Write samples
-                    # GenerateData.fprintf(fid, 'c%s;id%u;', add + 1, i + 1)
-                    # for k in profil[0]:
-                    #     GenerateData.fprintf(fid, '%f;', k)
-                    # GenerateData.fprintf(fid, '\n')
-
                     tmpDataFrame.append([class_names[add], i, next(unique_sequencePixid), profil])
 
         tmpDataFrame = np.array(tmpDataFrame)
         dfData = pd.DataFrame(tmpDataFrame, columns=['label','polid','pixid','profil'])
         return dfHeader,dfData
-        #hdf.put('data',df)
-        #hdf.close()
-        #fid.close()
-
-    # @staticmethod
-    # def fprintf(stream, format_spec, *args):
-    #     """
-    #     Function to format the string and write in the file
-    #     :param stream: the file
-    #     :param format_spec: format of the string which write
-    #            Ex: 'c%s;id%u;'
-    #     :param args: string to add in the file
-    #     :return: No return -> add the line to the file
-    #     """
-    #     stream.write(format_spec % args)
 
     @staticmethod
     def strcmp(str1, str2):
