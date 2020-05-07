@@ -30,6 +30,7 @@ class GenerateData:
         db_sigmo = np.where(np.sum(param_val[14:, ], axis=0) != -len(param_val[14:, ]), 26, 14).reshape(
             (1, np.size(param_val[2])))
 
+        unique_sequencePolid = GenerateData.uniqueid()
         unique_sequencePixid = GenerateData.uniqueid()
 
         dfHeader = []
@@ -66,6 +67,7 @@ class GenerateData:
                 range_param = np.reshape(range_param, (12, 2))
 
             for i in range(0, len(nb_Samples_Polygons[0])):  # id poly
+                polid = next(unique_sequencePolid)
                 sigmo_param = GenerateData.generate_double_sigmo_parameters(range_param)
                 # Calculation of Gaussian parameters
 
@@ -143,7 +145,7 @@ class GenerateData:
                     # Return min between np.ones((1, np.size(profil))) and profil
                     profil = np.where(np.ones((1, np.size(profil))) < profil, np.ones((1, np.size(profil))), profil)
 
-                    tmpDataFrame.append([class_names[add], i, next(unique_sequencePixid), profil])
+                    tmpDataFrame.append([class_names[add], polid, next(unique_sequencePixid), profil])
 
         tmpDataFrame = np.array(tmpDataFrame)
         dfData = pd.DataFrame(tmpDataFrame, columns=['label','polid','pixid','profil'])

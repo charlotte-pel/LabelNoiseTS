@@ -17,6 +17,15 @@ class WriteGenerateData:
         hdf.put('data', dfData)
         hdf.close()
 
+    @staticmethod
+    def writeGenerateNoisyData(filename, noiseLevel, dfNoisy, systematicChange):
+        hdf = pd.HDFStore(filename)
+        if systematicChange is not None:
+            hdf.put('noiseData_'+systematicChange+ str(int(noiseLevel * 100)), dfNoisy)
+        else:
+            hdf.put('noiseData_'+str(int(noiseLevel*100)), dfNoisy)
+        hdf.close()
+
     # @staticmethod
     # def fprintf(stream, format_spec, *args):
     #     """

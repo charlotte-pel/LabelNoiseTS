@@ -16,7 +16,4 @@ class ReadGenerateData:
             classNames.append(dfheader[0][i][0])
         samplesClass = dfData
         nbPixelClass = [len(samplesClass.loc[(samplesClass['label'] == i)]) for i in classNames]
-        # Doesn't work in all cases: if size of poly aren't the same. The size is fixed -> samplesClass['polid'] == 1
-        nbPolyClass = [len(samplesClass.loc[(samplesClass['label'] == i)]) / len(
-            samplesClass.loc[(samplesClass['label'] == i) & (samplesClass['polid'] == 1)]) for i in classNames]
-        return nbClass, dates, classNames, samplesClass, nbPixelClass, nbPolyClass
+        return nbClass, dates, classNames, samplesClass, nbPixelClass
