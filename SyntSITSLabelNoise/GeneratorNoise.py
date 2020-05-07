@@ -1,4 +1,5 @@
 from SyntSITSLabelNoise.ReadGenerateData import *
+import numpy as np
 
 class GeneratorNoise:
     """

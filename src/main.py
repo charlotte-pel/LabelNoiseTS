@@ -1,10 +1,9 @@
-#import h5py
 import h5py
-
 from SyntSITSLabelNoise.GenerateData import *
 from SyntSITSLabelNoise.GeneratorNoise import *
 from SyntSITSLabelNoise.InitParamValues import *
 from SyntSITSLabelNoise.WriteGenerateData import *
+import numpy as np
 
 
 def main():
