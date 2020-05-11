@@ -34,12 +34,36 @@ The generated datasets might be used for testing the robustness of various class
 
 ## Prerequisites
 
-The code relies on Pyton 3.7.
+The code relies on Pyton 3.7.\
+And use:
+- Numpy
+- Pandas
+- Matplotlib (Only for visualisation)
+
+## Installation
+
+Use the package manager [pip](https://pip.pypa.io/en/stable/) to install numpy, pandas.
+
+```bash
+pip install numpy
+pip install pandas
+```
+
+## Quick use
+
+Open and run the notebook: ExampleUse in jupyter notebook.\
+Located at the root of the project folder
 
 ## Usage
 
-```bash
-python main.py
+```python
+from SyntSITSLabelNoise.GeneratorData import *
+
+generator = GeneratorData("src/dataFrame.h5")
+a = {'Wheat': 'Barley', 'Barley': 'Soy'}
+(X,Y) = generator.getDataXY() 
+(Xnoise,YNoise) = generator.getNoiseDataXY(0.05,a) #Example with systematic change label noise
+(Xtest,Ytest) = (generator.getTestData())
 ```
 
 ## Contributing
