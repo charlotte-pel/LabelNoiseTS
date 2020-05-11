@@ -47,6 +47,7 @@ Use the package manager [pip](https://pip.pypa.io/en/stable/) to install numpy, 
 ```bash
 pip install numpy
 pip install pandas
+pip install Matplotlib # (Only for visualisation)
 ```
 
 ## Quick use
