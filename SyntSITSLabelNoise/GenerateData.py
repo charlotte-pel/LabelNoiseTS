@@ -29,8 +29,8 @@ class GenerateData:
         db_sigmo = np.where(np.sum(param_val[14:, ], axis=0) != -len(param_val[14:, ]), 26, 14).reshape(
             (1, np.size(param_val[2])))
 
-        unique_sequencePolid = GenerateData.uniqueid()
-        unique_sequencePixid = GenerateData.uniqueid()
+        unique_sequencePolid = GenerateData._uniqueid()
+        unique_sequencePixid = GenerateData._uniqueid()
 
         dfHeader = []
         tmpDataFrame = []
@@ -49,7 +49,7 @@ class GenerateData:
 
         # Generate Data Start:
         for add in range(0, np.size(param_val[2])):
-            print(add)
+            #print(add)
             data = param_val[0:int(db_sigmo[0, add]), add]
             nb_Samples = data[12]
             polygonSize = data[13]
@@ -67,7 +67,7 @@ class GenerateData:
 
             for i in range(0, len(nb_Samples_Polygons[0])):  # id poly
                 polid = next(unique_sequencePolid)
-                sigmo_param = GenerateData.generate_double_sigmo_parameters(range_param)
+                sigmo_param = GenerateData._generate_double_sigmo_parameters(range_param)
                 # Calculation of Gaussian parameters
 
                 # Calculation of x2
@@ -87,7 +87,7 @@ class GenerateData:
                 # Amplitude of regrowth
                 A_gauss = np.random.rand() / 3
 
-                if GenerateData.strcmp(class_names[add], 'Evergreen') | GenerateData.strcmp(
+                if GenerateData._strcmp(class_names[add], 'Evergreen') | GenerateData._strcmp(
                         class_names[add], 'Decideous'):
                     A_gauss = 0
 
@@ -115,12 +115,12 @@ class GenerateData:
                     reduce_sigmo_param[:, 1] = np.where(reduce_sigmo_param[:, 1] > range_param[:, 1], range_param[:, 1],
                                                         reduce_sigmo_param[:, 1])
 
-                    sample_sigmo_param = GenerateData.generate_double_sigmo_parameters(reduce_sigmo_param)
+                    sample_sigmo_param = GenerateData._generate_double_sigmo_parameters(reduce_sigmo_param)
 
                     if db_sigmo[0, add] == 14:
-                        init_profil = GenerateData.sigmoProfil(sample_sigmo_param, dates)
+                        init_profil = GenerateData._sigmoProfil(sample_sigmo_param, dates)
                     else:
-                        init_profil = GenerateData.doubleSigmoProfil(sample_sigmo_param, dates)
+                        init_profil = GenerateData._doubleSigmoProfil(sample_sigmo_param, dates)
 
                     norm_pdf = 0.05 * (2 * np.random.rand(1, len(dates)))
                     vec_noisy_dates = np.random.permutation(np.random.randint(0, len(dates), size=len(dates)))
@@ -150,8 +150,13 @@ class GenerateData:
         dfData = pd.DataFrame(tmpDataFrame, columns=['label','polid','pixid','profil'])
         return dfHeader,dfData
 
+    #  -----------------------------------------------------------------------------------------------------------------
+    #  Intern (Private) Functions of this class.
+    #  For normal use, don't use them.
+    #  -----------------------------------------------------------------------------------------------------------------
+
     @staticmethod
-    def strcmp(str1, str2):
+    def _strcmp(str1, str2):
         """
         Function to compare two string with each other
         :param str1: first string
@@ -164,9 +169,9 @@ class GenerateData:
             return False
 
     @staticmethod
-    def sigmoProfil(samples_sigmo_param, dates):
+    def _sigmoProfil(samples_sigmo_param, dates):
         """
-        TODO Correction code: utiliser sigmoProfil dans doubleSigmoProfil
+
         :param samples_sigmo_param:
         :param dates: number of days since New Year's Day
                dates = [0,25,50,...]
@@ -184,7 +189,7 @@ class GenerateData:
         return profil
 
     @staticmethod
-    def doubleSigmoProfil(samples_sigmo_param, dates):
+    def _doubleSigmoProfil(samples_sigmo_param, dates):
         """
 
         :param samples_sigmo_param: [A ; B ; x0 ; x1 ; x2 ; x3]
@@ -192,12 +197,12 @@ class GenerateData:
                dates = [0,25,50,...]
         :return: a double sigmo profil
         """
-        profil1 = GenerateData.sigmoProfil(samples_sigmo_param[:, :6], dates)
-        profil2 = GenerateData.sigmoProfil(samples_sigmo_param[:, 6:], dates) + 0.05
+        profil1 = GenerateData._sigmoProfil(samples_sigmo_param[:, :6], dates)
+        profil2 = GenerateData._sigmoProfil(samples_sigmo_param[:, 6:], dates) + 0.05
         return profil1 + profil2
 
     @staticmethod
-    def generate_double_sigmo_parameters(range_param):
+    def _generate_double_sigmo_parameters(range_param):
         """
 
         :param range_param: contains min and max value for the six params
@@ -218,7 +223,11 @@ class GenerateData:
         return sigmo_param
 
     @staticmethod
-    def uniqueid():
+    def _uniqueid():
+        """
+
+        :return: Generate an generator for unique ID
+        """
         seed = random.getrandbits(16)
         while True:
             yield seed
