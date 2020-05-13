@@ -7,7 +7,7 @@ class GeneratorNoise:
     """
 
     @staticmethod
-    def generatorNoisePerClass(filename, noiseLevel, dictClass=None):
+    def generatorNoisePerClass(filename,rep, noiseLevel, dictClass=None,csv=False):
         """
 
         :param filename:
@@ -17,7 +17,7 @@ class GeneratorNoise:
         :return:
         """
 
-        (nbClass, dates, classNames, samplesClass, nbPixelClass) = ReadGenerateData.readGenerateDataH5DataFrame(filename)
+        (nbClass, dates, classNames, samplesClass, nbPixelClass) = ReadGenerateData.readGenerateDataH5DataFrame(filename,rep,csv)
         nbNoiseSamplesPerClass = np.floor(np.multiply(noiseLevel, nbPixelClass))
         dfNoise = samplesClass[['pixid', 'label']]
         dfNoise.insert(1, "noisy", False, True)
@@ -69,14 +69,15 @@ class GeneratorNoise:
                     classNames = i
                     generateNoise(classNames[0], classNames)
                 systematicChange = systematicChange+classNames[0]+'To'+str(classNames[1])+'_'
+                #print(systematicChange)
         # Random
         else:
             systematicChange = None
             for i in classNames:
                 generateNoise(i,classNames)
 
-        print(np.array(tmpDfNoise).shape)
-        print(nbNoiseSamplesPerClass[0] * 2)
+        #print(np.array(tmpDfNoise).shape)
+        #print(nbNoiseSamplesPerClass[0] * 2)
         tmpDfNoise = pd.DataFrame(tmpDfNoise, columns=['pixid', 'noisy', 'label'])
         dfNoise = dfNoise[['pixid']].merge(tmpDfNoise, 'right').combine_first(dfNoise).astype(dfNoise.dtypes)
         return noiseLevel, dfNoise, systematicChange

@@ -34,7 +34,7 @@ class GenerateData:
 
         dfHeader = []
         tmpDataFrame = []
-
+        tmpProfils = []
         # Write the header
         # N = nbClass
         # dates
@@ -143,11 +143,16 @@ class GenerateData:
                     profil = np.where(-np.ones((1, np.size(profil))) > profil, -np.ones((1, np.size(profil))), profil)
                     # Return min between np.ones((1, np.size(profil))) and profil
                     profil = np.where(np.ones((1, np.size(profil))) < profil, np.ones((1, np.size(profil))), profil)
-
-                    tmpDataFrame.append([class_names[add], polid, next(unique_sequencePixid), profil])
+                    tmpDataFrame.append([class_names[add], polid, next(unique_sequencePixid)])
+                    tmpProfils.append(profil[0])
 
         tmpDataFrame = np.array(tmpDataFrame)
-        dfData = pd.DataFrame(tmpDataFrame, columns=['label','polid','pixid','profil'])
+        tmpProfils = np.array(tmpProfils)
+        tmplen = len(tmpProfils[0])
+        tmpProfils = np.transpose(tmpProfils)
+        dfData = pd.DataFrame(tmpDataFrame, columns=['label','polid','pixid',])
+        for i in range(tmplen):
+            dfData['d'+str(i+1)] = tmpProfils[i]
         return dfHeader,dfData
 
     #  -----------------------------------------------------------------------------------------------------------------
