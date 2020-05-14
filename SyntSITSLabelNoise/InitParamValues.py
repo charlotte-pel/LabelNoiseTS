@@ -38,13 +38,14 @@ class InitParamValues:
             option = 1
 
         # Class_names
-        class_names = ['Corn', 'Corn_ensilage', 'Sorghum', 'Sunflower', 'Soy',
+        class_names = ['Corn', 'Corn_Ensilage', 'Sorghum', 'Sunflower', 'Soy',
                        'Wheat', 'Rapeseed', 'Barley',
-                       'Wheat_soy',
+                       'Wheat_Soy',
                        'Evergreen', 'Decideous',
                        'Water',
                        'Build',
                        'other']
+        #class_names = [i[:3] + i[i.find('_') + 1] if '_' in i else i[:3] for i in class_names]
         param_val = -np.ones((nb_params, nb_class_panel))
         if option == 1:
             # True profile

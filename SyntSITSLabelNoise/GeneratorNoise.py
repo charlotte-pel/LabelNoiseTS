@@ -1,3 +1,5 @@
+import hashlib
+
 from SyntSITSLabelNoise.ReadGenerateData import *
 import numpy as np
 
@@ -53,7 +55,7 @@ class GeneratorNoise:
 
         # Systematic change
         if dictClass is not None:
-            systematicChange = ''
+            systematicChange = 'systematic_'+str(int(noiseLevel * 100))+'_'+str(int(hashlib.md5(str(dictClass).encode("UTF-8")).hexdigest(), 16))
             for i in dictClass.items():
                 # If One class to many: 'Wheat': ('Barley','Soy')
                 if type(dictClass.get(i[0])) is tuple:
@@ -68,8 +70,6 @@ class GeneratorNoise:
                 else:
                     classNames = i
                     generateNoise(classNames[0], classNames)
-                systematicChange = systematicChange+classNames[0]+'To'+str(classNames[1])+'_'
-                #print(systematicChange)
         # Random
         else:
             systematicChange = None
