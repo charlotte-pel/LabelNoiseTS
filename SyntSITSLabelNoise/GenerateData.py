@@ -21,6 +21,7 @@ class GenerateData:
         :return: No return the ouput is the file.
         """
 
+        # Get class names, param, dates from initFile.
         param_val = pd.DataFrame(pd.read_csv('../initFile.csv'))
         class_names = np.array(param_val['class_names'])
         del param_val['class_names']

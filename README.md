@@ -34,7 +34,7 @@ The generated datasets might be used for testing the robustness of various class
 
 ## Prerequisites
 
-The code relies on Pyton 3.7.\
+The code relies on Pyton 3.8\
 And use:
 - Numpy
 - Pandas
@@ -65,6 +65,29 @@ a = {'Wheat': 'Barley', 'Barley': 'Soy'}
 (X,Y) = generator.getDataXY() 
 (Xnoise,YNoise) = generator.getNoiseDataXY(0.05,a) #Example with systematic change label noise
 (Xtest,Ytest) = (generator.getTestData())
+```
+## Config File:
+
+DataFrame from initFile.csv must be like below :
+(Example initFile.csv has good format)
+- First column must be named: class_names
+- Last row must contain dates (In the example below line 13), dates start column after class_names column.
+```
+      class_names     0       1      2      3  ...    21     22     23    24    25
+0            Corn  0.57   0.720   0.15   0.30  ...  -1.0   -1.0   -1.0  -1.0  -1.0
+1   Corn_Ensilage  0.57   0.720   0.15   0.30  ...  -1.0   -1.0   -1.0  -1.0  -1.0
+2         Sorghum  0.62   0.770   0.15   0.30  ...  -1.0   -1.0   -1.0  -1.0  -1.0
+3       Sunflower  0.67   0.820   0.15   0.30  ...  -1.0   -1.0   -1.0  -1.0  -1.0
+4             Soy  0.67   0.820   0.15   0.30  ...  -1.0   -1.0   -1.0  -1.0  -1.0
+5           Wheat  0.52   0.670   0.20   0.35  ...  -1.0   -1.0   -1.0  -1.0  -1.0
+6        Rapeseed  0.70   0.800   0.05   0.20  ...  12.0  135.0  145.0   5.0  15.0
+7          Barley  0.52   0.670   0.20   0.35  ...  -1.0   -1.0   -1.0  -1.0  -1.0
+8       Wheat_Soy  0.50   0.550   0.10   0.15  ...  15.0  280.0  300.0  25.0  35.0
+9       Evergreen  0.01   0.015   0.55   0.70  ...  -1.0   -1.0   -1.0  -1.0  -1.0
+10      Decideous  0.20   0.350   0.40   0.50  ...  -1.0   -1.0   -1.0  -1.0  -1.0
+11          Water  0.01   0.020  -0.20   0.00  ...  -1.0   -1.0   -1.0  -1.0  -1.0
+12          Build  0.01   0.020   0.20   0.30  ...  -1.0   -1.0   -1.0  -1.0  -1.0
+13            NaN  1.00  26.000  51.00  76.00  ...   NaN    NaN    NaN   NaN   NaN
 ```
 
 ## Contributing
