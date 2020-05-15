@@ -10,8 +10,9 @@ class GenerateData:
     """
 
     @staticmethod
-    def generateData():
+    def generateData(seed):
         """
+        :param seed:
         :param class_names: contains the names of different class
                class_names = ['Corn', 'Corn_ensilage',...]
         :param param_val: param of double sigmo for each class
@@ -20,7 +21,8 @@ class GenerateData:
                dates = [0,25,50,...]
         :return: No return the ouput is the file.
         """
-
+        # Set random_state:
+        randomState = np.random.RandomState(seed)
         # Get class names, param, dates from initFile.
         param_val = pd.DataFrame(pd.read_csv('../initFile.csv'))
         class_names = np.array(param_val['class_names'])
@@ -70,7 +72,7 @@ class GenerateData:
 
             for i in range(0, len(nb_Samples_Polygons[0])):  # id poly
                 polid = next(unique_sequencePolid)
-                sigmo_param = GenerateData._generate_double_sigmo_parameters(range_param)
+                sigmo_param = GenerateData._generate_double_sigmo_parameters(range_param,randomState)
                 # Calculation of Gaussian parameters
 
                 # Calculation of x2
@@ -82,13 +84,13 @@ class GenerateData:
 
                 # Average dates of regrowth. The regrowth curve is offset in relation to the main crop (for
                 # winter crops the regrowth is in summer and vice versa for winter crops).
-                mu_gauss = np.random.randint(50, 151) + x2
+                mu_gauss = randomState.randint(50, 151) + x2
 
                 # Standard deviation of regrowth
-                sigma_gauss = 16 * np.random.rand() + 32
+                sigma_gauss = 16 * randomState.rand() + 32
 
                 # Amplitude of regrowth
-                A_gauss = np.random.rand() / 3
+                A_gauss = randomState.rand() / 3
 
                 if GenerateData._strcmp(class_names[add], 'Evergreen') | GenerateData._strcmp(
                         class_names[add], 'Decideous'):
@@ -109,7 +111,7 @@ class GenerateData:
                     # Generate variability : 3eme version
 
                     reduce_sigmo_param = np.zeros((len(sigmo_param[0]), 2))
-                    variability = np.random.randint(5, 21)
+                    variability = randomState.randint(5, 21)
                     reduce_sigmo_param[:, 0] = sigmo_param - (range_param[:, 1] - range_param[:, 0]) / variability
                     reduce_sigmo_param[:, 1] = sigmo_param + (range_param[:, 1] - range_param[:, 0]) / variability
 
@@ -118,16 +120,16 @@ class GenerateData:
                     reduce_sigmo_param[:, 1] = np.where(reduce_sigmo_param[:, 1] > range_param[:, 1], range_param[:, 1],
                                                         reduce_sigmo_param[:, 1])
 
-                    sample_sigmo_param = GenerateData._generate_double_sigmo_parameters(reduce_sigmo_param)
+                    sample_sigmo_param = GenerateData._generate_double_sigmo_parameters(reduce_sigmo_param,randomState)
 
                     if db_sigmo[add] == 14:
                         init_profil = GenerateData._sigmoProfil(sample_sigmo_param, dates)
                     else:
                         init_profil = GenerateData._doubleSigmoProfil(sample_sigmo_param, dates)
 
-                    norm_pdf = 0.05 * (2 * np.random.rand(1, len(dates)))
-                    vec_noisy_dates = np.random.permutation(np.random.randint(0, len(dates), size=len(dates)))
-                    norm_pdf[0, vec_noisy_dates[:np.random.randint(0, len(dates))]] = 0
+                    norm_pdf = 0.05 * (2 * randomState.rand(1, len(dates)))
+                    vec_noisy_dates = randomState.permutation(randomState.randint(0, len(dates), size=len(dates)))
+                    norm_pdf[0, vec_noisy_dates[:randomState.randint(0, len(dates))]] = 0
                     profil = norm_pdf + init_profil
 
                     if len(dates) - diff_pos > diff_pos:
@@ -210,7 +212,7 @@ class GenerateData:
         return profil1 + profil2
 
     @staticmethod
-    def _generate_double_sigmo_parameters(range_param):
+    def _generate_double_sigmo_parameters(range_param,randomState):
         """
 
         :param range_param: contains min and max value for the six params
@@ -224,9 +226,9 @@ class GenerateData:
                 print('Error MIN > MAX')
             mu = (range_param[i, 0] + range_param[i, 1]) / 2.0
             sqrt_var = (range_param[i, 1] - mu) / 3.0
-            val = sqrt_var * np.random.randn() + mu
+            val = sqrt_var * randomState.randn() + mu
             while val < range_param[i, 0] or val > range_param[i, 1]:
-                val = sqrt_var * np.random.randn() + mu
+                val = sqrt_var * randomState.randn() + mu
             sigmo_param[0, i] = val
         return sigmo_param
 

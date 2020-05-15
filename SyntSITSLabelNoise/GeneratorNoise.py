@@ -9,7 +9,7 @@ class GeneratorNoise:
     """
 
     @staticmethod
-    def generatorNoisePerClass(filename,rep, noiseLevel, dictClass=None,csv=False):
+    def generatorNoisePerClass(filename,rep, noiseLevel, dictClass=None,csv=False,seed=0):
         """
 
         :param filename:
@@ -33,7 +33,10 @@ class GeneratorNoise:
             :param nbClassOneToMany: In case: If One class to many: 'Wheat': ('Barley','Soy') nbClassOneToMany = 2 because ('Barley','Soy')
             :return: Nothing modify per reference tmpDfNoise
             """
-            tmpIdTab = np.random.permutation(
+            # Set random_state:
+            randomState = np.random.RandomState(seed)
+
+            tmpIdTab = randomState.permutation(
                 np.unique(np.array(samplesClass.loc[(samplesClass["label"] == className)]['polid'])))
             j = 0
             if nbClassOneToMany is None:
@@ -45,9 +48,9 @@ class GeneratorNoise:
                 tmpPixTab = np.array(
                     samplesClass.loc[(samplesClass["label"] == className) & (samplesClass["polid"] == tmpIdTab[int(j / 10)])][
                         'pixid'])
-                newClass = np.random.choice(classNames, 1)[0]
+                newClass = randomState.choice(classNames, 1)[0]
                 while newClass == className:
-                    newClass = np.random.choice(classNames,1)[0]
+                    newClass = randomState.choice(classNames,1)[0]
                 for k in tmpPixTab:
                     if j < nbNoiseSamples:
                         tmpDfNoise.append((k, True, newClass))

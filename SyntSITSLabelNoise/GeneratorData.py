@@ -8,7 +8,7 @@ import numpy as np
 
 class GeneratorData:
 
-    def __init__(self, filename,csv=False,verbose=False,rep=''):
+    def __init__(self, filename, seedData=0, csv=False, verbose=False, rep=''):
         """
 
         :param filename: Name of the file h5
@@ -20,27 +20,28 @@ class GeneratorData:
         self._filename = filename
         self._dfTest = None
         self._csv = csv
+        self._seedData = seedData
         # Test if not file exist
-        if not os.path.isfile(self._rep+self._filename):
+        if not os.path.isfile(self._rep + self._filename):
             (dfHeader, dfData) = self._genData()
             self._dfHeader = dfHeader
             self._dfData = dfData
-            WriteGenerateData.writeGenerateDataToH5(self._filename, self._rep,self._dfHeader, self._dfData,self._csv)
+            WriteGenerateData.writeGenerateDataToH5(self._filename, self._rep, self._dfHeader, self._dfData, self._csv)
             if self._verbose is True:
                 print("Generate Data Done !")
         else:
             # File exist
-            self._dfHeader = pd.DataFrame(pd.read_hdf(self._rep+self._filename,'header'))
+            self._dfHeader = pd.DataFrame(pd.read_hdf(self._rep + self._filename, 'header'))
             # Test if convert is needed
             if csv is False:
                 try:
-                    dfCsv = pd.read_hdf(self._rep+self._filename, 'csvFile')
+                    dfCsv = pd.read_hdf(self._rep + self._filename, 'csvFile')
                     npCsv = np.array(pd.DataFrame(dfCsv))
                     npCsv = npCsv.reshape((len(npCsv),))
                     self._dfData = pd.DataFrame(pd.read_csv(npCsv[0]))
                     self._convertCsvToh5(npCsv)
                 except KeyError:
-                    self._dfData = pd.DataFrame(pd.read_hdf(self._rep+self._filename, 'data'))
+                    self._dfData = pd.DataFrame(pd.read_hdf(self._rep + self._filename, 'data'))
             else:
                 try:
                     self._dfData = pd.DataFrame(pd.read_hdf(self._rep + self._filename, 'data'))
@@ -62,14 +63,14 @@ class GeneratorData:
         """
         return self._generateXY()
 
-    def getNoiseDataXY(self, noiseLevel, dictClassSystematicChange=None):
+    def getNoiseDataXY(self, noiseLevel, dictClassSystematicChange=None,seedNoise=0):
         """
         Public Fonction
         :param noiseLevel: Level of noise in %, format like that 0.05
         :param dictClassSystematicChange: Dictionary format like that {'Wheat': 'Barley', 'Barley': 'Soy'}
         :return: X and Y. X is a matrix containing profils NDVI generate. Y is label matrix with label noise
         """
-        dfNoise = self._generateNoise(noiseLevel, dictClassSystematicChange)
+        dfNoise = self._generateNoise(noiseLevel, dictClassSystematicChange,seedNoise)
         return self._generateXY(dfNoise)
 
     def getTestData(self):
@@ -104,7 +105,7 @@ class GeneratorData:
             X1[i] = X[i]
         return X1, Y
 
-    def _generateNoise(self, noiseLevel, dictClassSystematicChange=None):
+    def _generateNoise(self, noiseLevel, dictClassSystematicChange, seedNoise):
         """
         Intern Fonction
         :param noiseLevel: Level of noise in %, format like that 0.05
@@ -112,14 +113,18 @@ class GeneratorData:
         :return: DataFrame like this columns=['pixid', 'noisy', 'label']
         """
         name = self._genName(dictClassSystematicChange, noiseLevel)
-        if not ReadGenerateData.getAlreadyGenNoise(self._filename, self._rep,name,self._csv):
-            (noiseLevel, dfNoise, systematicChange) = GeneratorNoise.generatorNoisePerClass(self._filename, self._rep,noiseLevel,
-                                                                                            dictClassSystematicChange,self._csv)
-            WriteGenerateData.writeGenerateNoisyData(self._filename, self._rep,noiseLevel, dfNoise, systematicChange,self._csv,dictClassSystematicChange)
+        if not ReadGenerateData.getAlreadyGenNoise(self._filename, self._rep, name, self._csv):
+            (noiseLevel, dfNoise, systematicChange) = GeneratorNoise.generatorNoisePerClass(self._filename, self._rep,
+                                                                                            noiseLevel,
+                                                                                            dictClassSystematicChange,
+                                                                                            self._csv,
+                                                                                            seed=seedNoise)
+            WriteGenerateData.writeGenerateNoisyData(self._filename, self._rep, noiseLevel, dfNoise, systematicChange,
+                                                     self._csv, dictClassSystematicChange)
             if self._verbose is True:
                 print("Generate Noise Done !")
         else:
-            dfNoise = ReadGenerateData.getByNameNoise(self._filename,self._rep, name,self._csv)
+            dfNoise = ReadGenerateData.getByNameNoise(self._filename, self._rep, name, self._csv)
             if self._verbose is True:
                 print("Generate Noise Already Done !")
         return dfNoise
@@ -132,12 +137,12 @@ class GeneratorData:
                     print('Generate Test already Done !')
             except KeyError:
                 (dfHeader, dfTest) = self._genData()
-                WriteGenerateData.writeTest(self._filename, self._rep,dfTest,self._csv)
+                WriteGenerateData.writeTest(self._filename, self._rep, dfTest, self._csv)
                 if self._verbose is True:
                     print('Generate Test Done !')
         else:
             try:
-                dfTest = pd.DataFrame(pd.read_csv(self._rep+'test.csv'))
+                dfTest = pd.DataFrame(pd.read_csv(self._rep + 'test.csv'))
                 if self._verbose is True:
                     print('Generate Test already Done !')
             except FileNotFoundError:
@@ -152,10 +157,10 @@ class GeneratorData:
         Intern Fonction
         :return: 2 DataFrame Header and Data
         """
-        (dfHeader, dfData) = GenerateData.generateData()
+        (dfHeader, dfData) = GenerateData.generateData(seed=self._seedData)
         return dfHeader, dfData
 
-    def _convertCsvToh5(self,npCsv):
+    def _convertCsvToh5(self, npCsv):
         if self._verbose is True:
             print('Convert Csv To h5 start...')
         # Test if dataset Test exist
@@ -163,10 +168,10 @@ class GeneratorData:
             dfTest = pd.DataFrame(pd.read_csv(self._rep + 'test.csv'))
         except FileNotFoundError:
             dfTest = None
-        #Save old path
+        # Save old path
         tmpFileName = self._filename
         # Remove path of test.csv
-        npCsv = npCsv[npCsv != self._rep+'test.csv']
+        npCsv = npCsv[npCsv != self._rep + 'test.csv']
         self._filename = "test.h5"
         # Write dataset Data
         WriteGenerateData.writeGenerateDataToH5(self._filename, self._rep, self._dfHeader, self._dfData, self._csv)
@@ -176,7 +181,7 @@ class GeneratorData:
             WriteGenerateData.writeTest(self._filename, self._rep, dfTest, self._csv)
             os.remove(self._rep + 'test.csv')
         # Get content of LUT
-        npLutCsv = np.array(pd.DataFrame(pd.read_csv(self._rep+'lut.csv'))['dict'])
+        npLutCsv = np.array(pd.DataFrame(pd.read_csv(self._rep + 'lut.csv'))['dict'])
         # String to dict
         npLutCsv = [eval(i) for i in npLutCsv]
         # Remove path of data.csv
@@ -188,16 +193,17 @@ class GeneratorData:
             dfNoise = pd.read_csv(npCsv[i])
             tmpstring = systematicChange.split('_')
             # Get noise level
-            noiseLevel = int(tmpstring[1])/100
+            noiseLevel = int(tmpstring[1]) / 100
             if len(npLutCsv) == 0:
-                WriteGenerateData.writeGenerateNoisyData(self._filename, self._rep, noiseLevel, dfNoise, systematicChange,
-                                                     self._csv,None)
+                WriteGenerateData.writeGenerateNoisyData(self._filename, self._rep, noiseLevel, dfNoise,
+                                                         systematicChange,
+                                                         self._csv, None)
             else:
                 WriteGenerateData.writeGenerateNoisyData(self._filename, self._rep, noiseLevel, dfNoise,
-                                                         systematicChange,self._csv, npLutCsv[i - 1])
+                                                         systematicChange, self._csv, npLutCsv[i - 1])
 
-            os.remove(self._rep+systematicChange+'.csv')
-        os.remove(self._rep +'data.csv')
+            os.remove(self._rep + systematicChange + '.csv')
+        os.remove(self._rep + 'data.csv')
         os.remove(self._rep + 'lut.csv')
         os.remove(self._rep + tmpFileName)
         os.rename(self._rep + self._filename, self._rep + tmpFileName)
@@ -209,7 +215,7 @@ class GeneratorData:
         if self._verbose is True:
             print('Convert h5 To Csv start...')
         # Get name of dataset
-        file = h5py.File(self._rep+self._filename, 'r')
+        file = h5py.File(self._rep + self._filename, 'r')
         tmptab = list(file.keys())
         file.close()
         tmpDfNoise = []
@@ -220,9 +226,10 @@ class GeneratorData:
         except ValueError:
             dfTest = None
         # Get dataset by name
-        self._dfData = pd.read_hdf(self._rep+self._filename,tmptab[tmptab.index('data')])
+        self._dfData = pd.read_hdf(self._rep + self._filename, tmptab[tmptab.index('data')])
         self._dfHeader = pd.read_hdf(self._rep + self._filename, tmptab[tmptab.index('header')])
-        tmpDfHeaderNoise = np.array(pd.DataFrame(pd.read_hdf(self._rep + self._filename, tmptab[tmptab.index('headerNoise')])))
+        tmpDfHeaderNoise = np.array(
+            pd.DataFrame(pd.read_hdf(self._rep + self._filename, tmptab[tmptab.index('headerNoise')])))
         # Reshape to horizontal array
         tmpDfHeaderNoise = tmpDfHeaderNoise.reshape((len(tmpDfHeaderNoise),))
         npLutCsv = np.array(pd.DataFrame(pd.read_hdf(self._rep + self._filename, 'lut'))['dict'])
@@ -247,21 +254,20 @@ class GeneratorData:
         # String to dict
         npLutCsv = [eval(i) for i in npLutCsv]
         # Write noisy dataset
-        for i,j,k in zip(tmpDfHeaderNoise,tmpDfNoise,npLutCsv):
+        for i, j, k in zip(tmpDfHeaderNoise, tmpDfNoise, npLutCsv):
             systematicChange = i.split(".")[0]
             tmpstring = systematicChange.split('_')
             # Get noisy dataset
             dfNoise = j
             # Get noise level
-            noiseLevel = int(tmpstring[1])/100
+            noiseLevel = int(tmpstring[1]) / 100
             WriteGenerateData.writeGenerateNoisyData(self._filename, self._rep, noiseLevel, dfNoise, systematicChange,
-                                                     self._csv,k)
-        os.remove(self._rep+tmpFileName)
-        os.rename(self._rep+self._filename,self._rep+tmpFileName)
+                                                     self._csv, k)
+        os.remove(self._rep + tmpFileName)
+        os.rename(self._rep + self._filename, self._rep + tmpFileName)
         self._filename = tmpFileName
         if self._verbose is True:
             print('Convert h5 To Csv done !')
-
 
     @staticmethod
     def _genName(dictClass, noiseLevel):
@@ -273,7 +279,8 @@ class GeneratorData:
         """
         name = ''
         if dictClass is not None:
-                name = 'systematic_'+str(int(noiseLevel * 100))+'_'+str(int(hashlib.md5(str(dictClass).encode("UTF-8")).hexdigest(), 16))
+            name = 'systematic_' + str(int(noiseLevel * 100)) + '_' + str(
+                int(hashlib.md5(str(dictClass).encode("UTF-8")).hexdigest(), 16))
         else:
             name = 'random_' + str(int(noiseLevel * 100))
         return name
