@@ -10,7 +10,7 @@ class GenerateData:
     """
 
     @staticmethod
-    def generateData(class_names, param_val, dates):
+    def generateData():
         """
         :param class_names: contains the names of different class
                class_names = ['Corn', 'Corn_ensilage',...]
@@ -21,13 +21,16 @@ class GenerateData:
         :return: No return the ouput is the file.
         """
 
-        # We transpose the list of param_val to be able to write it correctly (on line) in the file.
-        param_val_transpose = np.transpose(param_val)
+        param_val = pd.DataFrame(pd.read_csv('../initFile.csv'))
+        class_names = np.array(param_val['class_names'])
+        del param_val['class_names']
+        dates = np.array(param_val.loc[param_val.index[-1],:])
+        dates = dates[np.logical_not(np.isnan(dates))]
+        param_val = param_val.drop(param_val.index[-1])
+        param_val = np.array(param_val)
 
         # Double or simple sigmoid
-        # Reshape is to put array like this [[14,...,26,...,14,...]] instead of [14,...,26,...,14,...]
-        db_sigmo = np.where(np.sum(param_val[14:, ], axis=0) != -len(param_val[14:, ]), 26, 14).reshape(
-            (1, np.size(param_val[2])))
+        db_sigmo = np.where(np.sum(param_val[:, 14:], axis=1) != -len(param_val[:, 14:])+1, 26, 14)
 
         unique_sequencePolid = GenerateData._uniqueid()
         unique_sequencePixid = GenerateData._uniqueid()
@@ -44,13 +47,12 @@ class GenerateData:
 
         dfHeader.append(np.array(dates))
         for i in range(0, len(class_names) - 1):
-            dfHeader.append(np.array([class_names[i],param_val_transpose[i]]))
+            dfHeader.append(np.array([class_names[i], param_val[i]]))
         dfHeader = pd.DataFrame(np.array(dfHeader))
 
         # Generate Data Start:
-        for add in range(0, np.size(param_val[2])):
-            #print(add)
-            data = param_val[0:int(db_sigmo[0, add]), add]
+        for add in range(0, len(param_val)):
+            data = param_val[add,:int(db_sigmo[add])]
             nb_Samples = data[12]
             polygonSize = data[13]
 
@@ -58,7 +60,7 @@ class GenerateData:
             # (same number of samples per polygon)
             nb_Samples_Polygons = polygonSize * np.ones((1, int(np.floor(nb_Samples / polygonSize))))
 
-            if db_sigmo[0, add] == 14:
+            if db_sigmo[add] == 14:
                 range_param = data[:-2]
                 range_param = np.reshape(range_param, (6, 2))
             else:
@@ -72,7 +74,7 @@ class GenerateData:
 
                 # Calculation of x2
                 # Date of the inflection point of the main crop.Page 72 - 73 manuscript.
-                if db_sigmo[0, add] == 14:
+                if db_sigmo[add] == 14:
                     x2 = sigmo_param[0, 4]
                 else:
                     x2 = sigmo_param[0, 10]
@@ -117,7 +119,7 @@ class GenerateData:
 
                     sample_sigmo_param = GenerateData._generate_double_sigmo_parameters(reduce_sigmo_param)
 
-                    if db_sigmo[0, add] == 14:
+                    if db_sigmo[add] == 14:
                         init_profil = GenerateData._sigmoProfil(sample_sigmo_param, dates)
                     else:
                         init_profil = GenerateData._doubleSigmoProfil(sample_sigmo_param, dates)
@@ -150,10 +152,10 @@ class GenerateData:
         tmpProfils = np.array(tmpProfils)
         tmplen = len(tmpProfils[0])
         tmpProfils = np.transpose(tmpProfils)
-        dfData = pd.DataFrame(tmpDataFrame, columns=['label','polid','pixid',])
+        dfData = pd.DataFrame(tmpDataFrame, columns=['label', 'polid', 'pixid', ])
         for i in range(tmplen):
-            dfData['d'+str(i+1)] = tmpProfils[i]
-        return dfHeader,dfData
+            dfData['d' + str(i + 1)] = tmpProfils[i]
+        return dfHeader, dfData
 
     #  -----------------------------------------------------------------------------------------------------------------
     #  Intern (Private) Functions of this class.

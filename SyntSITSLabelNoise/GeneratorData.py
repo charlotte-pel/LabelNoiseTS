@@ -2,14 +2,13 @@ import h5py
 
 from SyntSITSLabelNoise.GenerateData import *
 from SyntSITSLabelNoise.GeneratorNoise import *
-from SyntSITSLabelNoise.InitParamValues import *
 from SyntSITSLabelNoise.WriteGenerateData import *
 import numpy as np
 
 
 class GeneratorData:
 
-    def __init__(self, filename,csv,verbose,rep=''):
+    def __init__(self, filename,csv=False,verbose=False,rep=''):
         """
 
         :param filename: Name of the file h5
@@ -153,10 +152,7 @@ class GeneratorData:
         Intern Fonction
         :return: 2 DataFrame Header and Data
         """
-        (param_val, class_names) = InitParamValues.initParamValues(3)
-        class_names = np.array(class_names)
-        dates = InitParamValues.generateDates()
-        (dfHeader, dfData) = GenerateData.generateData(class_names, param_val, dates)
+        (dfHeader, dfData) = GenerateData.generateData()
         return dfHeader, dfData
 
     def _convertCsvToh5(self,npCsv):
@@ -169,6 +165,8 @@ class GeneratorData:
             dfTest = None
         #Save old path
         tmpFileName = self._filename
+        # Remove path of test.csv
+        npCsv = npCsv[npCsv != self._rep+'test.csv']
         self._filename = "test.h5"
         # Write dataset Data
         WriteGenerateData.writeGenerateDataToH5(self._filename, self._rep, self._dfHeader, self._dfData, self._csv)
@@ -181,11 +179,11 @@ class GeneratorData:
         npLutCsv = np.array(pd.DataFrame(pd.read_csv(self._rep+'lut.csv'))['dict'])
         # String to dict
         npLutCsv = [eval(i) for i in npLutCsv]
-        # Remove path of test.csv
-        npCsv = npCsv[npCsv != 'file/test.csv']
+        # Remove path of data.csv
+        npCsv = npCsv[npCsv != self._rep + 'data.csv']
         # Write noisy dataset
-        for i in range(1,len(npCsv)):
-            systematicChange = npCsv[i].split("/")[1].split(".")[0]
+        for i in range(len(npCsv)):
+            systematicChange = npCsv[i].split("/")[-1].split(".")[0]
             # Get noisy dataset
             dfNoise = pd.read_csv(npCsv[i])
             tmpstring = systematicChange.split('_')
