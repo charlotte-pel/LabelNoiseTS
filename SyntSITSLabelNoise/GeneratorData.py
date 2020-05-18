@@ -1,5 +1,5 @@
 import h5py
-
+from SyntSITSLabelNoise.DrawProfils import *
 from SyntSITSLabelNoise.GenerateData import *
 from SyntSITSLabelNoise.GeneratorNoise import *
 from SyntSITSLabelNoise.WriteGenerateData import *
@@ -8,14 +8,21 @@ import numpy as np
 
 class GeneratorData:
 
-    def __init__(self, filename, seedData=0, csv=False, verbose=False, rep=''):
+    def __init__(self, filename, rep='', seedData=None, csv=False, verbose=False):
         """
 
         :param filename: Name of the file h5
         """
+        # Path to initFilename
+        self._initFilename = '../initFile.csv'
+
+        if seedData is None:
+            seedData = np.random.randint(100000)
+
         self._verbose = verbose
         if self._verbose is True:
             print("Init Start !")
+
         self._rep = rep
         self._filename = filename
         self._dfTest = None
@@ -63,14 +70,16 @@ class GeneratorData:
         """
         return self._generateXY()
 
-    def getNoiseDataXY(self, noiseLevel, dictClassSystematicChange=None,seedNoise=0):
+    def getNoiseDataXY(self, noiseLevel, dictClassSystematicChange=None, seedNoise=None):
         """
         Public Fonction
         :param noiseLevel: Level of noise in %, format like that 0.05
         :param dictClassSystematicChange: Dictionary format like that {'Wheat': 'Barley', 'Barley': 'Soy'}
         :return: X and Y. X is a matrix containing profils NDVI generate. Y is label matrix with label noise
         """
-        dfNoise = self._generateNoise(noiseLevel, dictClassSystematicChange,seedNoise)
+        if seedNoise is None:
+            seedNoise = np.random.randint(100000)
+        dfNoise = self._generateNoise(noiseLevel, dictClassSystematicChange, seedNoise)
         return self._generateXY(dfNoise)
 
     def getTestData(self):
@@ -157,7 +166,7 @@ class GeneratorData:
         Intern Fonction
         :return: 2 DataFrame Header and Data
         """
-        (dfHeader, dfData) = GenerateData.generateData(seed=self._seedData)
+        (dfHeader, dfData) = GenerateData.generateData(seed=self._seedData,initFilename=self._initFilename)
         return dfHeader, dfData
 
     def _convertCsvToh5(self, npCsv):
@@ -284,3 +293,12 @@ class GeneratorData:
         else:
             name = 'random_' + str(int(noiseLevel * 100))
         return name
+
+    def visualisation(self,rep):
+        nbClass = len(self._dfHeader) - 1
+        classNames = []
+        for i in range(1, nbClass + 1):
+            classNames.append(self._dfHeader[0][i][0])
+        for i in classNames:
+            Drawprofils.drawProfilClass(i,dfHeader=self._dfHeader,dfData=self._dfData,vis=True,rep=rep)
+        Drawprofils.drawProfilMeanClass(dfHeader=self._dfHeader,dfData=self._dfData,vis=True,rep=rep)

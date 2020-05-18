@@ -10,8 +10,9 @@ class GenerateData:
     """
 
     @staticmethod
-    def generateData(seed):
+    def generateData(seed,initFilename):
         """
+        :param initFilename:
         :param seed:
         :param class_names: contains the names of different class
                class_names = ['Corn', 'Corn_ensilage',...]
@@ -24,7 +25,7 @@ class GenerateData:
         # Set random_state:
         randomState = np.random.RandomState(seed)
         # Get class names, param, dates from initFile.
-        param_val = pd.DataFrame(pd.read_csv('../initFile.csv'))
+        param_val = pd.DataFrame(pd.read_csv(initFilename))
         class_names = np.array(param_val['class_names'])
         del param_val['class_names']
         dates = np.array(param_val.loc[param_val.index[-1],:])
