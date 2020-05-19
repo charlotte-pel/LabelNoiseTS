@@ -8,13 +8,18 @@ import numpy as np
 
 class GeneratorData:
 
-    def __init__(self, filename, rep='', seedData=None, csv=False, verbose=False):
+    def __init__(self, filename, rep='', classList=None, pathInitFile=None, seedData=None, csv=False, verbose=False):
         """
 
         :param filename: Name of the file h5
         """
         # Path to initFilename
-        self._initFilename = '../initFile.csv'
+        if pathInitFile is None:
+            self._initFilename = '../initFile.csv'
+        else:
+            self._initFilename = pathInitFile
+
+        self._classList = classList
 
         if seedData is None:
             seedData = np.random.randint(100000)
@@ -107,7 +112,8 @@ class GeneratorData:
         """
         if dfLabel is None:
             dfLabel = self._dfData
-        Y = np.array(dfLabel.sort_values(by=['pixid'])['label']).reshape(6500, 1)
+        Y = np.array(dfLabel.sort_values(by=['pixid'])['label']).reshape(
+            len(np.array(dfLabel.sort_values(by=['pixid'])['label'])), 1)
         X = np.array(self._dfData.sort_values(by=['pixid']).loc[:, 'd1':])
         X1 = np.ones((len(X), len(np.array(self._dfHeader.loc[0, :])[0])))
         for i in range(len(X)):
@@ -124,10 +130,9 @@ class GeneratorData:
         name = self._genName(dictClassSystematicChange, noiseLevel)
         if not ReadGenerateData.getAlreadyGenNoise(self._filename, self._rep, name, self._csv):
             (noiseLevel, dfNoise, systematicChange) = GeneratorNoise.generatorNoisePerClass(self._filename, self._rep,
-                                                                                            noiseLevel,
+                                                                                            noiseLevel, seedNoise,
                                                                                             dictClassSystematicChange,
-                                                                                            self._csv,
-                                                                                            seed=seedNoise)
+                                                                                            self._csv)
             WriteGenerateData.writeGenerateNoisyData(self._filename, self._rep, noiseLevel, dfNoise, systematicChange,
                                                      self._csv, dictClassSystematicChange)
             if self._verbose is True:
@@ -166,7 +171,8 @@ class GeneratorData:
         Intern Fonction
         :return: 2 DataFrame Header and Data
         """
-        (dfHeader, dfData) = GenerateData.generateData(seed=self._seedData,initFilename=self._initFilename)
+        (dfHeader, dfData) = GenerateData.generateData(seed=self._seedData, initFilename=self._initFilename,
+                                                       classList=self._classList)
         return dfHeader, dfData
 
     def _convertCsvToh5(self, npCsv):
@@ -294,11 +300,11 @@ class GeneratorData:
             name = 'random_' + str(int(noiseLevel * 100))
         return name
 
-    def visualisation(self,rep):
+    def visualisation(self, rep):
         nbClass = len(self._dfHeader) - 1
         classNames = []
         for i in range(1, nbClass + 1):
             classNames.append(self._dfHeader[0][i][0])
         for i in classNames:
-            Drawprofils.drawProfilClass(i,dfHeader=self._dfHeader,dfData=self._dfData,vis=True,rep=rep)
-        Drawprofils.drawProfilMeanClass(dfHeader=self._dfHeader,dfData=self._dfData,vis=True,rep=rep)
+            Drawprofils.drawProfilClass(i, dfHeader=self._dfHeader, dfData=self._dfData, vis=True, rep=rep)
+        Drawprofils.drawProfilMeanClass(dfHeader=self._dfHeader, dfData=self._dfData, vis=True, rep=rep)

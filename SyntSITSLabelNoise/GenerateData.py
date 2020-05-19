@@ -10,7 +10,7 @@ class GenerateData:
     """
 
     @staticmethod
-    def generateData(seed,initFilename):
+    def generateData(seed,initFilename,classList=None):
         """
         :param initFilename:
         :param seed:
@@ -26,7 +26,10 @@ class GenerateData:
         randomState = np.random.RandomState(seed)
         # Get class names, param, dates from initFile.
         param_val = pd.DataFrame(pd.read_csv(initFilename))
-        class_names = np.array(param_val['class_names'])
+        if classList is None:
+            class_names = np.array(param_val['class_names'])
+        else:
+            class_names = classList
         del param_val['class_names']
         dates = np.array(param_val.loc[param_val.index[-1],:])
         dates = dates[np.logical_not(np.isnan(dates))]
@@ -50,12 +53,12 @@ class GenerateData:
         # % classN;nbSamples
 
         dfHeader.append(np.array(dates))
-        for i in range(0, len(class_names) - 1):
+        for i in range(0, len(class_names)):
             dfHeader.append(np.array([class_names[i], param_val[i]]))
         dfHeader = pd.DataFrame(np.array(dfHeader))
 
         # Generate Data Start:
-        for add in range(0, len(param_val)):
+        for add in range(0, len(class_names)):
             data = param_val[add,:int(db_sigmo[add])]
             nb_Samples = data[12]
             polygonSize = data[13]

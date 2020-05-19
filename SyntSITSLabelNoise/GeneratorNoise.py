@@ -9,7 +9,7 @@ class GeneratorNoise:
     """
 
     @staticmethod
-    def generatorNoisePerClass(filename,rep, noiseLevel, dictClass=None,csv=False,seed=0):
+    def generatorNoisePerClass(filename,rep, noiseLevel, seed, dictClass=None, csv=False):
         """
 
         :param filename:

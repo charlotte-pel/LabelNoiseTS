@@ -26,6 +26,8 @@ def main():
     # a = {'Wheat': ('Barley','Soy','Build'),'Barley':'Soy'}
     generator = GeneratorData(rep=a['-d'],filename=a['-f'],csv=a['-save_csv'],verbose=a['-v'])
     (X, Y) = generator.getDataXY()
+    if a['-vis'] is True:
+        generator.visualisation('img/')
     a['-noise.level'] = a['-noise.level'].replace('[', '')
     a['-noise.level'] = a['-noise.level'].replace(']', '')
     a['-noise.level'] = list(a['-noise.level'].split(","))
