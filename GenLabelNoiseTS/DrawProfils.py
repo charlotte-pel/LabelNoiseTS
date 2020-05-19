@@ -5,16 +5,15 @@ import numpy as np
 class Drawprofils:
 
     @staticmethod
-    def drawProfilClass(className, dfHeader, dfData,vis=False,rep=''):
+    def drawProfilClass(className, dfHeader, dfData, vis=False,rep=''):
         """
 
-        :param class_name:
-        :param nb_class: number of class
-        :param dates: dates: number of days since New Year's Day, dates = [0,25,50,...]
-        :param class_names: class_names: contains the names of different class, class_names = ['Corn', 'Corn_ensilage',...]
-        :param samplesClass: each line are -> [idClass,idnb,0.62, 0.67, 0.2, 0.25, 122, 182, 5, 20, 270, 290, 15, 20, 500, 20]
-               (idClass -> int: 1,2,.. ; idnb -> int: 1,2,..)
-        :return: No return -> Draw graph
+        :param className: Name of the class
+        :param dfHeader: DataFrame contain Header
+        :param dfData: DataFrame contain Data
+        :param vis: True for save in file ot False for show plot
+        :param rep: If vis == True -> name of the rep
+        :return: No return -> Draw graph or save in file
         """
         dates = np.array(dfHeader.loc[0, :])[0]
         dfTest = dfData.loc[(dfData['label'] == className)]
@@ -38,13 +37,11 @@ class Drawprofils:
     def drawProfilMeanClass(dfHeader, dfData,vis=False,rep=''):
         """
 
-        :param class_name:
-        :param nb_class: number of class
-        :param dates: dates: number of days since New Year's Day, dates = [0,25,50,...]
-        :param class_names: class_names: contains the names of different class, class_names = ['Corn', 'Corn_ensilage',...]
-        :param samplesClass: each line are -> [idClass,idnb,0.62, 0.67, 0.2, 0.25, 122, 182, 5, 20, 270, 290, 15, 20, 500, 20]
-               (idClass -> int: 1,2,.. ; idnb -> int: 1,2,..)
-        :return: No return -> Draw graph
+        :param dfHeader: DataFrame contain Header
+        :param dfData: DataFrame contain Data
+        :param vis: True for save in file ot False for show plot
+        :param rep: If vis == True -> name of the rep
+        :return: No return -> Draw graph or save in file
         """
         dates = np.array(dfHeader.loc[0, :])[0]
         dfTest = dfData.groupby(['label']).mean()
@@ -71,15 +68,13 @@ class Drawprofils:
     def drawMeanProfilOneClass(className, dfHeader, dfData,vis=False,rep=''):
         """
 
-        :param class_name:
-        :param nb_class: number of class
-        :param dates: dates: number of days since New Year's Day, dates = [0,25,50,...]
-        :param class_names: class_names: contains the names of different class, class_names = ['Corn', 'Corn_ensilage',...]
-        :param samplesClass: each line are -> [idClass,idnb,0.62, 0.67, 0.2, 0.25, 122, 182, 5, 20, 270, 290, 15, 20, 500, 20]
-               (idClass -> int: 1,2,.. ; idnb -> int: 1,2,..)
-        :return: No return -> Draw graph
+        :param className: Name of the class
+        :param dfHeader: DataFrame contain Header
+        :param dfData: DataFrame contain Data
+        :param vis: True for save in file ot False for show plot
+        :param rep: If vis == True -> name of the rep
+        :return: No return -> Draw graph or save in file
         """
-
         dates = np.array(dfHeader.loc[0, :])[0]
         dfTest = dfData.loc[(dfData['label'] == className)]
         dfTest = dfTest.groupby(['label', 'polid']).mean()
@@ -101,6 +96,15 @@ class Drawprofils:
 
     @staticmethod
     def drawMeanOneClass(className, dfHeader, dfData,vis=False,rep=''):
+        """
+
+        :param className: Name of the class
+        :param dfHeader: DataFrame contain Header
+        :param dfData: DataFrame contain Data
+        :param vis: True for save in file ot False for show plot
+        :param rep: If vis == True -> name of the rep
+        :return: No return -> Draw graph or save in file
+        """
         dates = np.array(dfHeader.loc[0, :])[0]
         dfTest = dfData.loc[(dfData['label'] == className)]
         dfTest = dfTest.groupby(['label']).mean()
@@ -121,6 +125,15 @@ class Drawprofils:
 
     @staticmethod
     def draw20RandomProfilOneClass(className, dfHeader, dfData,vis=False,rep=''):
+        """
+
+        :param className: Name of the class
+        :param dfHeader: DataFrame contain Header
+        :param dfData: DataFrame contain Data
+        :param vis: True for save in file ot False for show plot
+        :param rep: If vis == True -> name of the rep
+        :return: No return -> Draw graph or save in file
+        """
         dates = np.array(dfHeader.loc[0, :])[0]
         dfTest = dfData.loc[(dfData['label'] == className)]
         dfTest = dfTest.reset_index()
@@ -144,6 +157,15 @@ class Drawprofils:
 
     @staticmethod
     def draw20RandomIdProfilOneClass(className, dfHeader, dfData,vis=False,rep=''):
+        """
+
+        :param className: Name of the class
+        :param dfHeader: DataFrame contain Header
+        :param dfData: DataFrame contain Data
+        :param vis: True for save in file ot False for show plot
+        :param rep: If vis == True -> name of the rep
+        :return: No return -> Draw graph or save in file
+        """
         dates = np.array(dfHeader.loc[0, :])[0]
         dfTest = dfData.loc[(dfData['label'] == className)]
         dfTest = dfTest.groupby(['label', 'polid']).mean()

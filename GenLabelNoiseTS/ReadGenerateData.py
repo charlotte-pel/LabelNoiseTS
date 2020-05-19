@@ -11,6 +11,8 @@ class ReadGenerateData:
         """
 
         :param filename: the name of the file in which the data will be entered
+        :param rep: name of the rep
+        :param csv: Csv Option True or False
         :return:
         """
         filename = rep + filename
@@ -37,7 +39,9 @@ class ReadGenerateData:
         """
 
         :param filename: the name of the file in which the data will be entered
+        :param rep: name of the rep
         :param name: Name of new Noisy dataset
+        :param csv: Csv Option True or False
         :return: True if and only if dataset named "name" is found
         """
         filename = rep + filename
@@ -59,9 +63,10 @@ class ReadGenerateData:
     def getByNameNoise(filename,rep,name,csv=False):
         """
 
-        :param csv:
         :param filename: the name of the file in which the data will be entered
+        :param rep: name of the rep
         :param name: Name of new Noisy dataset
+        :param csv: Csv Option True or False
         :return: DataFrame format like that columns=['pixid', 'noisy', 'label']
         """
         filename = rep + filename

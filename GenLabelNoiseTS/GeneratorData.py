@@ -12,6 +12,12 @@ class GeneratorData:
         """
 
         :param filename: Name of the file h5
+        :param rep: name of the rep
+        :param classList: List of class names for generate data.
+        :param pathInitFile: Path to initParamFile
+        :param seedData: seed for randomState
+        :param csv: Csv Option True or False
+        :param verbose: Show print : True or False
         """
         # Path to initFilename
         if pathInitFile is None:
@@ -70,16 +76,17 @@ class GeneratorData:
 
     def getDataXY(self):
         """
-        Public Fonction
+        Public function
         :return: X and Y. X is a matrix containing profils NDVI generate. Y is label matrix
         """
         return self._generateXY()
 
     def getNoiseDataXY(self, noiseLevel, dictClassSystematicChange=None, seedNoise=None):
         """
-        Public Fonction
+        Public function
         :param noiseLevel: Level of noise in %, format like that 0.05
         :param dictClassSystematicChange: Dictionary format like that {'Wheat': 'Barley', 'Barley': 'Soy'}
+        :param seedNoise: seed for randomState
         :return: X and Y. X is a matrix containing profils NDVI generate. Y is label matrix with label noise
         """
         if seedNoise is None:
@@ -89,7 +96,7 @@ class GeneratorData:
 
     def getTestData(self):
         """
-        Public Fonction
+        Public function
         :return: X and Y. X is a new matrix test containing profils NDVI generate. Y is label matrix
         """
         dfTest = self._generateTest()
@@ -106,7 +113,7 @@ class GeneratorData:
     #  -----------------------------------------------------------------------------------------------------------------
     def _generateXY(self, dfLabel=None):
         """
-        Intern Fonction
+        Intern function
         :param dfLabel: DataFrame containing name of class for each pixel profil
         :return: X and Y. X is a new matrix test containing profils NDVI generate. Y is label matrix
         """
@@ -122,9 +129,10 @@ class GeneratorData:
 
     def _generateNoise(self, noiseLevel, dictClassSystematicChange, seedNoise):
         """
-        Intern Fonction
+        Intern function
         :param noiseLevel: Level of noise in %, format like that 0.05
         :param dictClassSystematicChange: Dictionary format like that {'Wheat': 'Barley', 'Barley': 'Soy'}
+        :param seedNoise: seed for randomState
         :return: DataFrame like this columns=['pixid', 'noisy', 'label']
         """
         name = self._genName(dictClassSystematicChange, noiseLevel)
@@ -144,6 +152,10 @@ class GeneratorData:
         return dfNoise
 
     def _generateTest(self):
+        """
+        Intern function
+        :return: DataFrame contain test dataset
+        """
         if self._csv is False:
             try:
                 dfTest = pd.DataFrame(pd.read_hdf(self._rep + self._filename, 'test'))
@@ -168,7 +180,7 @@ class GeneratorData:
 
     def _genData(self):
         """
-        Intern Fonction
+        Intern function
         :return: 2 DataFrame Header and Data
         """
         (dfHeader, dfData) = GenerateData.generateData(seed=self._seedData, initFilename=self._initFilename,
@@ -176,6 +188,11 @@ class GeneratorData:
         return dfHeader, dfData
 
     def _convertCsvToh5(self, npCsv):
+        """
+        Intern function for convert Csv file save system to H5 file save system
+        :param npCsv: Numpy array contain path of csv file
+        :return: None
+        """
         if self._verbose is True:
             print('Convert Csv To h5 start...')
         # Test if dataset Test exist
@@ -227,6 +244,10 @@ class GeneratorData:
             print('Convert Csv To h5 done !')
 
     def _converth5ToCsv(self):
+        """
+        Intern function for convert H5 file save system to CSV file save system
+        :return: None
+        """
         if self._verbose is True:
             print('Convert h5 To Csv start...')
         # Get name of dataset
@@ -287,7 +308,7 @@ class GeneratorData:
     @staticmethod
     def _genName(dictClass, noiseLevel):
         """
-        Intern Fonction
+        Intern function
         :param dictClass: dictClassSystematicChange: Dictionary format like that {'Wheat': 'Barley', 'Barley': 'Soy'}
         :param noiseLevel: Level of noise in %, format like that 0.05
         :return: Name of the dataset in file h5
@@ -301,6 +322,11 @@ class GeneratorData:
         return name
 
     def visualisation(self, rep):
+        """
+        Intern function for create visualisation in rep
+        :param rep: Name of the rep
+        :return: None
+        """
         nbClass = len(self._dfHeader) - 1
         classNames = []
         for i in range(1, nbClass + 1):

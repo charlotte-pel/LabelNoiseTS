@@ -10,18 +10,20 @@ class GenerateData:
     """
 
     @staticmethod
-    def generateData(seed,initFilename,classList=None):
+    def generateData(seed, initFilename, classList=None):
         """
-        :param initFilename:
         :param seed:
-        :param class_names: contains the names of different class
-               class_names = ['Corn', 'Corn_ensilage',...]
-        :param param_val: param of double sigmo for each class
-               param_val[:14, 0] = [0.62, 0.67, 0.2, 0.25, 122, 182, 5, 20, 270, 290, 15, 20, 500, 20]
-        :param dates: number of days since New Year's Day
-               dates = [0,25,50,...]
+        :param initFilename:
         :return: No return the ouput is the file.
         """
+
+        # class_names: contains the names of different class
+        #                class_names = ['Corn', 'Corn_ensilage',...]
+        # param_val: param of double sigmo for each class
+        #                param_val[:14, 0] = [0.62, 0.67, 0.2, 0.25, 122, 182, 5, 20, 270, 290, 15, 20, 500, 20]
+        # dates: number of days since New Year's Day
+        #                dates = [0,25,50,...]
+
         # Set random_state:
         randomState = np.random.RandomState(seed)
         # Get class names, param, dates from initFile.
@@ -31,13 +33,13 @@ class GenerateData:
         else:
             class_names = classList
         del param_val['class_names']
-        dates = np.array(param_val.loc[param_val.index[-1],:])
+        dates = np.array(param_val.loc[param_val.index[-1], :])
         dates = dates[np.logical_not(np.isnan(dates))]
         param_val = param_val.drop(param_val.index[-1])
         param_val = np.array(param_val)
 
         # Double or simple sigmoid
-        db_sigmo = np.where(np.sum(param_val[:, 14:], axis=1) != -len(param_val[:, 14:])+1, 26, 14)
+        db_sigmo = np.where(np.sum(param_val[:, 14:], axis=1) != -len(param_val[:, 14:]) + 1, 26, 14)
 
         unique_sequencePolid = GenerateData._uniqueid()
         unique_sequencePixid = GenerateData._uniqueid()
@@ -59,7 +61,7 @@ class GenerateData:
 
         # Generate Data Start:
         for add in range(0, len(class_names)):
-            data = param_val[add,:int(db_sigmo[add])]
+            data = param_val[add, :int(db_sigmo[add])]
             nb_Samples = data[12]
             polygonSize = data[13]
 
@@ -76,7 +78,7 @@ class GenerateData:
 
             for i in range(0, len(nb_Samples_Polygons[0])):  # id poly
                 polid = next(unique_sequencePolid)
-                sigmo_param = GenerateData._generate_double_sigmo_parameters(range_param,randomState)
+                sigmo_param = GenerateData._generate_double_sigmo_parameters(range_param, randomState)
                 # Calculation of Gaussian parameters
 
                 # Calculation of x2
@@ -124,7 +126,7 @@ class GenerateData:
                     reduce_sigmo_param[:, 1] = np.where(reduce_sigmo_param[:, 1] > range_param[:, 1], range_param[:, 1],
                                                         reduce_sigmo_param[:, 1])
 
-                    sample_sigmo_param = GenerateData._generate_double_sigmo_parameters(reduce_sigmo_param,randomState)
+                    sample_sigmo_param = GenerateData._generate_double_sigmo_parameters(reduce_sigmo_param, randomState)
 
                     if db_sigmo[add] == 14:
                         init_profil = GenerateData._sigmoProfil(sample_sigmo_param, dates)
@@ -216,11 +218,12 @@ class GenerateData:
         return profil1 + profil2
 
     @staticmethod
-    def _generate_double_sigmo_parameters(range_param,randomState):
+    def _generate_double_sigmo_parameters(range_param, randomState):
         """
 
         :param range_param: contains min and max value for the six params
                of the double sigmoid [A ; B ; x0 ; x1 ; x2 ; x3]
+        :param randomState randomState used in this generation
         :return: give the six double_sigmoid parameters
                 [A ; B ; x0 ; x1 ; x2 ; x3]
         """

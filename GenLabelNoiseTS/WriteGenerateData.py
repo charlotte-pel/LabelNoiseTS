@@ -12,8 +12,10 @@ class WriteGenerateData:
         """
 
         :param filename: the name of the file in which the data will be entered
-        :param dfHeader:
-        :param dfData:
+        :param rep: name of the rep
+        :param dfHeader: DataFrame contain Header
+        :param dfData: DataFrame contain Data
+        :param csv: Csv Option True or False
         :return:
         """
         filename = rep+filename
@@ -36,9 +38,12 @@ class WriteGenerateData:
         """
 
         :param filename: the name of the file in which the data will be entered
+        :param rep: name of the rep
         :param noiseLevel: Level of noise in %, format like that 0.05
         :param dfNoisy:
         :param systematicChange: Name of systematic schema class WheatToBarley_...
+        :param csv: Csv Option True or False
+        :param dict: Dict used for generate noise
         :return:
         """
         filename = rep + filename
@@ -110,7 +115,9 @@ class WriteGenerateData:
         """
 
         :param filename: the name of the file in which the data will be entered
+        :param rep: name of the rep
         :param test: Name of new Noisy dataset
+        :param csv: Csv Option True or False
         :return:
         """
         filename = rep + filename
