@@ -85,7 +85,8 @@ class GeneratorData:
         """
         Public function
         :param noiseLevel: Level of noise in %, format like that 0.05
-        :param dictClassSystematicChange: Dictionary format like that {'Wheat': 'Barley', 'Barley': 'Soy'}
+        :param dictClassSystematicChange: None = random noise if dict is specify == Systematic change
+                Dictionary format like that {'Wheat': 'Barley', 'Barley': 'Soy'}
         :param seedNoise: seed for randomState
         :return: X and Y. X is a matrix containing profils NDVI generate. Y is label matrix with label noise
         """
