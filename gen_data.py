@@ -1,4 +1,4 @@
-from SyntSITSLabelNoise.GeneratorData import *
+from GenLabelNoiseTS.GeneratorData import *
 import sys
 import ast
 
