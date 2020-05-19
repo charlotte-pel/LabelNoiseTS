@@ -21,7 +21,7 @@ class GeneratorData:
         """
         # Path to initFilename
         if pathInitFile is None:
-            self._initFilename = '../initFile.csv'
+            self._initFilename = 'init_param_file.csv'
         else:
             self._initFilename = pathInitFile
 

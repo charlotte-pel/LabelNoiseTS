@@ -36,6 +36,7 @@ class GenerateData:
         dates = np.array(param_val.loc[param_val.index[-1], :])
         dates = dates[np.logical_not(np.isnan(dates))]
         param_val = param_val.drop(param_val.index[-1])
+        param_val = param_val.fillna(-1)
         param_val = np.array(param_val)
 
         # Double or simple sigmoid
@@ -55,25 +56,24 @@ class GenerateData:
         # % classN;nbSamples
 
         dfHeader.append(np.array(dates))
-        for i in range(0, len(class_names)):
+        for i in range(0, len(class_names)-1):
             dfHeader.append(np.array([class_names[i], param_val[i]]))
         dfHeader = pd.DataFrame(np.array(dfHeader))
 
         # Generate Data Start:
-        for add in range(0, len(class_names)):
+        for add in range(0, len(class_names)-1):
             data = param_val[add, :int(db_sigmo[add])]
-            nb_Samples = data[12]
-            polygonSize = data[13]
+            nb_Samples = data[0]
+            polygonSize = data[1]
 
             # Generate the exact number of samples per polygons
             # (same number of samples per polygon)
             nb_Samples_Polygons = polygonSize * np.ones((1, int(np.floor(nb_Samples / polygonSize))))
 
+            range_param = data[2:]
             if db_sigmo[add] == 14:
-                range_param = data[:-2]
                 range_param = np.reshape(range_param, (6, 2))
             else:
-                range_param = [*data[:12], *data[14:]]
                 range_param = np.reshape(range_param, (12, 2))
 
             for i in range(0, len(nb_Samples_Polygons[0])):  # id poly
