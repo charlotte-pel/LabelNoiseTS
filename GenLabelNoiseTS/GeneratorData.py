@@ -119,7 +119,7 @@ class GeneratorData:
         :param Y_Noise: Array with noisy labels
         :return: Noise Matrix with shape(nbUniqueClass_Y_True,nbUniqueClass_Y_Noise)
         """
-        noiseMatrix = np.zeros((len(np.unique(Y_True)),len(np.unique(Y_Noise))),dtype=int)
+        noiseMatrix = np.zeros((len(np.unique(Y_True)),len(np.unique(Y_True))),dtype=int)
         for i,j in zip(Y_True,Y_Noise):
             noiseMatrix[i,j] += 1
         return noiseMatrix

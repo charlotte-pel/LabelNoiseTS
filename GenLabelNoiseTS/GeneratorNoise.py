@@ -26,6 +26,7 @@ class GeneratorNoise:
         dfNoise = samplesClass[['pixid', 'label']]
         dfNoise.insert(1, "noisy", False, True)
         tmpDfNoise = []
+
         # Set random_state:
         randomState = np.random.RandomState(seed)
 
@@ -38,14 +39,12 @@ class GeneratorNoise:
             :return: Nothing modify per reference tmpDfNoise
             """
 
-            tmpIdTab = randomState.permutation(
-                np.unique(np.array(samplesClass.loc[(samplesClass["label"] == className)]['polid'])))
-            j = 0
             if nbClassOneToMany is None:
                 nbNoiseSamples = int(nbNoiseSamplesPerClass[classNames.index(className)])
             else:
-                nbNoiseSamples = int(nbNoiseSamplesPerClass[classNames.index(className)] / nbClassOneToMany)
+                nbNoiseSamples = (len(tmpIdTab) * 10) * noiseLevel
 
+            j = 0
             while j < nbNoiseSamples:
                 tmpPixTab = np.array(
                     samplesClass.loc[
@@ -68,14 +67,20 @@ class GeneratorNoise:
                 if type(dictClass.get(i[0])) is tuple:
                     classNames = []
                     classNames.append(i[0])
-                    for j in i[1]:
+                    tmpIdTabAll = np.array_split(randomState.permutation(
+                        np.unique(np.array(samplesClass.loc[(samplesClass["label"] == classNames[0])]['polid']))),
+                        len(i[1]))
+                    for j, l in zip(i[1], range(len(i[1]))):
                         classNames.append(j)
+                        tmpIdTab = tmpIdTabAll[l]
                         generateNoise(classNames[0], classNames, len(i[1]))
                         del classNames[-1]
                     classNames = i
                 # Else One class to other class: 'Barley':'Soy'
                 else:
                     classNames = i
+                    tmpIdTab = randomState.permutation(
+                        np.unique(np.array(samplesClass.loc[(samplesClass["label"] == classNames[0])]['polid'])))
                     generateNoise(classNames[0], classNames)
         # Random
         else:
@@ -86,16 +91,8 @@ class GeneratorNoise:
         # print(np.array(tmpDfNoise).shape)
         # print(nbNoiseSamplesPerClass[0] * 2)
         tmpDfNoise = pd.DataFrame(tmpDfNoise, columns=['pixid', 'noisy', 'label'])
-        # print(len(np.unique(tmpDfNoise['pixid'])))
-        # print(len(tmpDfNoise['pixid']))
-        # print(tmpDfNoise.sort_values(by=['pixid']))
         for i in np.array(tmpDfNoise['pixid']):
             dfNoise = dfNoise[dfNoise['pixid'] != i]
-        print(len(dfNoise)+len(tmpDfNoise['pixid']))
         dfNoise = dfNoise.append(tmpDfNoise, ignore_index=True)
-        #dfNoise = dfNoise[['pixid']].merge(tmpDfNoise, 'right').combine_first(dfNoise).astype(dfNoise.dtypes)
-        #dfNoise = dfNoise.where(np.array(dfNoise['pixid']) in np.array(tmpDfNoise['pixid']),tmpDfNoise)
-
-        print(len(np.unique(dfNoise['pixid'])))
         dfNoise = dfNoise.sort_values(by=['pixid'])
         return noiseLevel, dfNoise, systematicChange
