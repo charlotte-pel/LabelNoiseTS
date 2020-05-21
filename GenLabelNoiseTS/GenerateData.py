@@ -164,6 +164,7 @@ class GenerateData:
         dfData = pd.DataFrame(tmpDataFrame, columns=['label', 'polid', 'pixid', ])
         for i in range(tmplen):
             dfData['d' + str(i + 1)] = tmpProfils[i]
+        dfData = dfData.sort_values(by=['pixid'])
         return dfHeader, dfData
 
     #  -----------------------------------------------------------------------------------------------------------------

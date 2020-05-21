@@ -33,7 +33,6 @@ class GeneratorData:
         self._verbose = verbose
         if self._verbose is True:
             print("Init Start !")
-
         self._rep = rep
         self._filename = filename
         self._dfTest = None
@@ -71,6 +70,8 @@ class GeneratorData:
                     self._dfData = pd.DataFrame(pd.read_csv(npCsv[0]))
             if self._verbose is True:
                 print("The file already exists !!!")
+        (_, Y) = self._generateXY()
+        self._matrixClassInt = pd.DataFrame([np.arange(0, len(np.unique(Y)))], columns=np.unique(Y))
         if self._verbose is True:
             print("Init Done !")
 
@@ -79,7 +80,8 @@ class GeneratorData:
         Public function
         :return: X and Y. X is a matrix containing profils NDVI generate. Y is label matrix
         """
-        return self._generateXY()
+        (X,Y) = self._generateXY()
+        return self._strClassNamesToInt(X,Y)
 
     def getNoiseDataXY(self, noiseLevel, dictClassSystematicChange=None, seedNoise=None):
         """
@@ -93,7 +95,8 @@ class GeneratorData:
         if seedNoise is None:
             seedNoise = np.random.randint(100000)
         dfNoise = self._generateNoise(noiseLevel, dictClassSystematicChange, seedNoise)
-        return self._generateXY(dfNoise)
+        (X,Y) = self._generateXY(dfNoise)
+        return self._strClassNamesToInt(X,Y)
 
     def getTestData(self):
         """
@@ -106,7 +109,20 @@ class GeneratorData:
         self._dfData = dfTest
         (X, Y) = self._generateXY()
         self._dfData = tmpdfData
-        return X, Y
+        return self._strClassNamesToInt(X,Y)
+
+    @staticmethod
+    def getNoiseMatrix(Y_True,Y_Noise):
+        """
+
+        :param Y_True: Array with originals labels
+        :param Y_Noise: Array with noisy labels
+        :return: Noise Matrix with shape(nbUniqueClass_Y_True,nbUniqueClass_Y_Noise)
+        """
+        noiseMatrix = np.zeros((len(np.unique(Y_True)),len(np.unique(Y_Noise))),dtype=int)
+        for i,j in zip(Y_True,Y_Noise):
+            noiseMatrix[i,j] += 1
+        return noiseMatrix
 
     #  -----------------------------------------------------------------------------------------------------------------
     #  Intern (Private) Functions of this class.
@@ -187,6 +203,11 @@ class GeneratorData:
         (dfHeader, dfData) = GenerateData.generateData(seed=self._seedData, initFilename=self._initFilename,
                                                        classList=self._classList)
         return dfHeader, dfData
+
+    def _strClassNamesToInt(self, X, Y):
+        Yint = np.array([int(self._matrixClassInt[i[0]]) for i in Y]).reshape(
+            len(np.array([int(self._matrixClassInt[i[0]]) for i in Y])), 1)
+        return X, Yint
 
     def _convertCsvToh5(self, npCsv):
         """
