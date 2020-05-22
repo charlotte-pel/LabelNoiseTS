@@ -1,4 +1,5 @@
 import hashlib
+import math
 
 from GenLabelNoiseTS.ReadGenerateData import *
 import numpy as np
@@ -42,7 +43,8 @@ class GeneratorNoise:
             if nbClassOneToMany is None:
                 nbNoiseSamples = int(nbNoiseSamplesPerClass[classNames.index(className)])
             else:
-                nbNoiseSamples = (len(tmpIdTab) * 10) * noiseLevel
+                nbNoiseSamples = nbClassOneToMany * 10
+                print(nbNoiseSamples)
 
             j = 0
             while j < nbNoiseSamples:
@@ -57,6 +59,7 @@ class GeneratorNoise:
                     if j < nbNoiseSamples:
                         tmpDfNoise.append((k, True, newClass))
                         j += 1
+            return int(nbNoiseSamples / 10)
 
         # Systematic change
         if dictClass is not None:
@@ -67,15 +70,27 @@ class GeneratorNoise:
                 if type(dictClass.get(i[0])) is tuple:
                     classNames = []
                     classNames.append(i[0])
-                    tmpIdTabAll = np.array_split(randomState.permutation(
-                        np.unique(np.array(samplesClass.loc[(samplesClass["label"] == classNames[0])]['polid']))),
-                        len(i[1]))
+
+                    cal = nbNoiseSamplesPerClass[classNames.index(classNames[0])] // 10
+                    calMod = int(cal % len(i[1]))
+                    cal = cal // len(i[1])
+                    calList = np.ones((len(i[1]),), dtype=int) * cal
+                    for m in range(calMod + 1):
+                        if m < calMod:
+                            calList[m] += 1
+                        elif m == calMod:
+                            calList[m] += ((nbNoiseSamplesPerClass[classNames.index(classNames[0])] / 10) % 1)
+                    calList = randomState.permutation(calList)
+                    print(calList)
+
+                    tmpIdTab = randomState.permutation(
+                        np.unique(np.array(samplesClass.loc[(samplesClass["label"] == classNames[0])]['polid'])))
                     for j, l in zip(i[1], range(len(i[1]))):
                         classNames.append(j)
-                        tmpIdTab = tmpIdTabAll[l]
-                        generateNoise(classNames[0], classNames, len(i[1]))
+                        k = generateNoise(classNames[0], classNames, calList[l])
                         del classNames[-1]
-                    classNames = i
+                        tmpIdTab = np.delete(tmpIdTab, slice(None, k))
+                        # print(len(tmpIdTab))
                 # Else One class to other class: 'Barley':'Soy'
                 else:
                     classNames = i
