@@ -42,6 +42,7 @@ class GeneratorData:
         if not os.path.isfile(self._rep + self._filename):
             (dfHeader, dfData) = self._genData()
             self._dfHeader = dfHeader
+            self._nbPixPerPolid = self._getDfNbPixPerPolidList()
             self._dfData = dfData
             WriteGenerateData.writeGenerateDataToH5(self._filename, self._rep, self._dfHeader, self._dfData, self._csv)
             if self._verbose is True:
@@ -49,6 +50,7 @@ class GeneratorData:
         else:
             # File exist
             self._dfHeader = pd.DataFrame(pd.read_hdf(self._rep + self._filename, 'header'))
+            self._nbPixPerPolid = self._getDfNbPixPerPolidList()
             # Test if convert is needed
             if csv is False:
                 try:
@@ -80,8 +82,8 @@ class GeneratorData:
         Public function
         :return: X and Y. X is a matrix containing profils NDVI generate. Y is label matrix
         """
-        (X,Y) = self._generateXY()
-        return self._strClassNamesToInt(X,Y)
+        (X, Y) = self._generateXY()
+        return self._strClassNamesToInt(X, Y)
 
     def getNoiseDataXY(self, noiseLevel, dictClassSystematicChange=None, seedNoise=None):
         """
@@ -95,8 +97,8 @@ class GeneratorData:
         if seedNoise is None:
             seedNoise = np.random.randint(100000)
         dfNoise = self._generateNoise(noiseLevel, dictClassSystematicChange, seedNoise)
-        (X,Y) = self._generateXY(dfNoise)
-        return self._strClassNamesToInt(X,Y)
+        (X, Y) = self._generateXY(dfNoise)
+        return self._strClassNamesToInt(X, Y)
 
     def getTestData(self):
         """
@@ -109,20 +111,41 @@ class GeneratorData:
         self._dfData = dfTest
         (X, Y) = self._generateXY()
         self._dfData = tmpdfData
-        return self._strClassNamesToInt(X,Y)
+        return self._strClassNamesToInt(X, Y)
+
+    def getDfHeader(self):
+        """
+        Getter for dfHeader
+        :return: The header dataframe
+        """
+        return self._dfHeader
 
     @staticmethod
-    def getNoiseMatrix(Y_True,Y_Noise):
+    def getNoiseMatrix(Y_True, Y_Noise):
         """
-
+        Public function
         :param Y_True: Array with originals labels
         :param Y_Noise: Array with noisy labels
         :return: Noise Matrix with shape(nbUniqueClass_Y_True,nbUniqueClass_Y_Noise)
         """
-        noiseMatrix = np.zeros((len(np.unique(Y_True)),len(np.unique(Y_True))),dtype=int)
-        for i,j in zip(Y_True,Y_Noise):
-            noiseMatrix[i,j] += 1
+        noiseMatrix = np.zeros((len(np.unique(Y_True)), len(np.unique(Y_True))), dtype=int)
+        for i, j in zip(Y_True, Y_Noise):
+            noiseMatrix[i, j] += 1
         return noiseMatrix
+
+    def visualisation(self, rep):
+        """
+        Public function for create visualisation in rep
+        :param rep: Name of the rep
+        :return: None
+        """
+        nbClass = len(self._dfHeader) - 1
+        classNames = []
+        for i in range(1, nbClass + 1):
+            classNames.append(self._dfHeader[0][i][0])
+        for i in classNames:
+            Drawprofils.drawProfilClass(i, dfHeader=self._dfHeader, dfData=self._dfData, vis=True, rep=rep)
+        Drawprofils.drawProfilMeanClass(dfHeader=self._dfHeader, dfData=self._dfData, vis=True, rep=rep)
 
     #  -----------------------------------------------------------------------------------------------------------------
     #  Intern (Private) Functions of this class.
@@ -156,6 +179,7 @@ class GeneratorData:
         if not ReadGenerateData.getAlreadyGenNoise(self._filename, self._rep, name, self._csv):
             (noiseLevel, dfNoise, systematicChange) = GeneratorNoise.generatorNoisePerClass(self._filename, self._rep,
                                                                                             noiseLevel, seedNoise,
+                                                                                            self._nbPixPerPolid,
                                                                                             dictClassSystematicChange,
                                                                                             self._csv)
             WriteGenerateData.writeGenerateNoisyData(self._filename, self._rep, noiseLevel, dfNoise, systematicChange,
@@ -286,6 +310,7 @@ class GeneratorData:
         # Get dataset by name
         self._dfData = pd.read_hdf(self._rep + self._filename, tmptab[tmptab.index('data')])
         self._dfHeader = pd.read_hdf(self._rep + self._filename, tmptab[tmptab.index('header')])
+        self._nbPixPerPolid = self._getDfNbPixPerPolidList()
         tmpDfHeaderNoise = np.array(
             pd.DataFrame(pd.read_hdf(self._rep + self._filename, tmptab[tmptab.index('headerNoise')])))
         # Reshape to horizontal array
@@ -343,16 +368,6 @@ class GeneratorData:
             name = 'random_' + str(int(noiseLevel * 100))
         return name
 
-    def visualisation(self, rep):
-        """
-        Intern function for create visualisation in rep
-        :param rep: Name of the rep
-        :return: None
-        """
-        nbClass = len(self._dfHeader) - 1
-        classNames = []
-        for i in range(1, nbClass + 1):
-            classNames.append(self._dfHeader[0][i][0])
-        for i in classNames:
-            Drawprofils.drawProfilClass(i, dfHeader=self._dfHeader, dfData=self._dfData, vis=True, rep=rep)
-        Drawprofils.drawProfilMeanClass(dfHeader=self._dfHeader, dfData=self._dfData, vis=True, rep=rep)
+    def _getDfNbPixPerPolidList(self):
+        return pd.DataFrame([[i[0], i[1][1]] for i in np.array(self._dfHeader.loc[1:, 0])],
+                            columns=['label', 'nbPixelPerPolid'])

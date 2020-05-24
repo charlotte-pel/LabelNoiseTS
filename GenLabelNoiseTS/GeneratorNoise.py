@@ -11,7 +11,7 @@ class GeneratorNoise:
     """
 
     @staticmethod
-    def generatorNoisePerClass(filename, rep, noiseLevel, seed, dictClass=None, csv=False):
+    def generatorNoisePerClass(filename, rep, noiseLevel, seed, dfNbPixPerPolidList, dictClass=None, csv=False):
         """
 
         :param filename:
@@ -23,6 +23,8 @@ class GeneratorNoise:
 
         (nbClass, dates, classNames, samplesClass, nbPixelClass) = ReadGenerateData.readGenerateDataH5DataFrame(
             filename, rep, csv)
+
+        # Number of pixels to be noisy
         nbNoiseSamplesPerClass = np.floor(np.multiply(noiseLevel, nbPixelClass))
         dfNoise = samplesClass[['pixid', 'label']]
         dfNoise.insert(1, "noisy", False, True)
@@ -43,14 +45,13 @@ class GeneratorNoise:
             if nbClassOneToMany is None:
                 nbNoiseSamples = int(nbNoiseSamplesPerClass[classNames.index(className)])
             else:
-                nbNoiseSamples = nbClassOneToMany * 10
-                print(nbNoiseSamples)
+                nbNoiseSamples = nbClassOneToMany * nbPixPerPolid
 
             j = 0
             while j < nbNoiseSamples:
                 tmpPixTab = np.array(
                     samplesClass.loc[
-                        (samplesClass["label"] == className) & (samplesClass["polid"] == tmpIdTab[int(j / 10)])][
+                        (samplesClass["label"] == className) & (samplesClass["polid"] == tmpIdTab[int(j / nbPixPerPolid)])][
                         'pixid'])
                 newClass = randomState.choice(classNames, 1)[0]
                 while newClass == className:
@@ -59,7 +60,6 @@ class GeneratorNoise:
                     if j < nbNoiseSamples:
                         tmpDfNoise.append((k, True, newClass))
                         j += 1
-            return int(nbNoiseSamples / 10)
 
         # Systematic change
         if dictClass is not None:
@@ -71,26 +71,30 @@ class GeneratorNoise:
                     classNames = []
                     classNames.append(i[0])
 
-                    cal = nbNoiseSamplesPerClass[classNames.index(classNames[0])] // 10
-                    calMod = int(cal % len(i[1]))
-                    cal = cal // len(i[1])
-                    calList = np.ones((len(i[1]),), dtype=int) * cal
-                    for m in range(calMod + 1):
-                        if m < calMod:
-                            calList[m] += 1
-                        elif m == calMod:
-                            calList[m] += ((nbNoiseSamplesPerClass[classNames.index(classNames[0])] / 10) % 1)
-                    calList = randomState.permutation(calList)
-                    print(calList)
+                    # Polygon number distribution by noise class
+                    # Ex: 'Wheat': ('Barley', 'Soy','Rapeseed') -> len(i[i]) = 3
+                    nbPixPerPolid = int(np.array(dfNbPixPerPolidList[dfNbPixPerPolidList['label'] == classNames[0]]['nbPixelPerPolid']))
+                    nbPolid = nbNoiseSamplesPerClass[classNames.index(classNames[0])] // nbPixPerPolid
+                    nbPolidMod = int(nbPolid % len(i[1]))
+                    nbPolid = nbPolid // len(i[1])
+                    nbPolidList = np.ones((len(i[1]),), dtype=int) * nbPolid
+
+                    for m in range(nbPolidMod + 1):
+                        if m < nbPolidMod:
+                            nbPolidList[m] += 1
+                        elif m == nbPolidMod:
+                            nbPolidList[m] += ((nbNoiseSamplesPerClass[classNames.index(classNames[0])] / nbPixPerPolid) % 1)
+                    nbPolidList = randomState.permutation(nbPolidList)
 
                     tmpIdTab = randomState.permutation(
                         np.unique(np.array(samplesClass.loc[(samplesClass["label"] == classNames[0])]['polid'])))
+
                     for j, l in zip(i[1], range(len(i[1]))):
                         classNames.append(j)
-                        k = generateNoise(classNames[0], classNames, calList[l])
+                        generateNoise(classNames[0], classNames, nbPolidList[l])
                         del classNames[-1]
-                        tmpIdTab = np.delete(tmpIdTab, slice(None, k))
-                        # print(len(tmpIdTab))
+                        tmpIdTab = np.delete(tmpIdTab, slice(None, int(nbPolidList[l])))
+
                 # Else One class to other class: 'Barley':'Soy'
                 else:
                     classNames = i
