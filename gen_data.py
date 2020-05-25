@@ -7,6 +7,7 @@ import ast
 # python gen_data.py -d src/file/ -f data.h5 -nclass 10 -noise {'Wheat':('Barley','Soy'),'Barley':'Soy'} -noise.level [0.05,0.1,0.15,0.2,0.25,0.3] -save_csv -v -vis
 
 def main():
+    pathVis = 'src/img/'
     args = list(sys.argv)
     a = {}
     i = 1
@@ -27,7 +28,7 @@ def main():
     generator = GeneratorData(rep=a['-d'],filename=a['-f'],csv=a['-save_csv'],verbose=a['-v'])
     (X, Y) = generator.getDataXY()
     if a['-vis'] is True:
-        generator.visualisation('img/')
+        generator.visualisation(pathVis)
     a['-noise.level'] = a['-noise.level'].replace('[', '')
     a['-noise.level'] = a['-noise.level'].replace(']', '')
     a['-noise.level'] = list(a['-noise.level'].split(","))

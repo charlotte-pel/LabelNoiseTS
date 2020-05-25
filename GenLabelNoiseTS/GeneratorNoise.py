@@ -1,5 +1,4 @@
 import hashlib
-import math
 
 from GenLabelNoiseTS.ReadGenerateData import *
 import numpy as np
@@ -7,111 +6,152 @@ import numpy as np
 
 class GeneratorNoise:
     """
-
+    Noise generating class.
     """
-
-    @staticmethod
-    def generatorNoisePerClass(filename, rep, noiseLevel, seed, dfNbPixPerPolidList, dictClass=None, csv=False):
+    def __init__(self, filename, rep, noiseLevel, seed, dfNbPixPerPolidList, dictClass=None, csv=False):
         """
 
-        :param filename:
-        :param noiseLevel:
-        :param class1:
-        :param class2:
-        :return:
+        :param filename: Name of the save file
+        :param rep: Directory where the file is located
+        :param noiseLevel: Percentage of label to be noisy
+        :param seed: Seed for RandomState
+        :param dfNbPixPerPolidList: Dataframe containg a list of number of pixel per polygon
+        :param dictClass: The dictionary used for systematic change
+        :param csv: If the option csv is activated
         """
 
-        (nbClass, dates, classNames, samplesClass, nbPixelClass) = ReadGenerateData.readGenerateDataH5DataFrame(
-            filename, rep, csv)
+        self._filename = filename
+        self._rep = rep
+        self._csv = csv
+        self._dictClass = dictClass
+        (_, _, self._classNames, self._samplesClass,
+         self._nbPixelClass) = ReadGenerateData.readGenerateDataH5DataFrame(
+            self._filename, self._rep, self._csv)
+        self._noiseLevel = noiseLevel
 
         # Number of pixels to be noisy
-        nbNoiseSamplesPerClass = np.floor(np.multiply(noiseLevel, nbPixelClass))
-        dfNoise = samplesClass[['pixid', 'label']]
-        dfNoise.insert(1, "noisy", False, True)
-        tmpDfNoise = []
+        self._nbNoiseSamplesPerClass = np.floor(np.multiply(self._noiseLevel, self._nbPixelClass))
+        self._dfNoise = self._samplesClass[['pixid', 'label']]
+        self._dfNoise.insert(1, "noisy", False, True)
+        self._tmpDfNoise = []
+        self._seed = seed
+        self._dfNbPixPerPolidList = dfNbPixPerPolidList
 
         # Set random_state:
-        randomState = np.random.RandomState(seed)
+        self._randomState = np.random.RandomState(self._seed)
 
-        def generateNoise(className, classNames, nbClassOneToMany=None):
-            """
-            Generate Noise on className with other class in classNames
-            :param className: class to noisy
-            :param classNames: other class
-            :param nbClassOneToMany: In case: If One class to many: 'Wheat': ('Barley','Soy') nbClassOneToMany = 2 because ('Barley','Soy')
-            :return: Nothing modify per reference tmpDfNoise
-            """
+    def generatorNoisePerClass(self):
+        """
 
-            if nbClassOneToMany is None:
-                nbNoiseSamples = int(nbNoiseSamplesPerClass[classNames.index(className)])
-            else:
-                nbNoiseSamples = nbClassOneToMany * nbPixPerPolid
-
-            j = 0
-            while j < nbNoiseSamples:
-                tmpPixTab = np.array(
-                    samplesClass.loc[
-                        (samplesClass["label"] == className) & (samplesClass["polid"] == tmpIdTab[int(j / nbPixPerPolid)])][
-                        'pixid'])
-                newClass = randomState.choice(classNames, 1)[0]
-                while newClass == className:
-                    newClass = randomState.choice(classNames, 1)[0]
-                for k in tmpPixTab:
-                    if j < nbNoiseSamples:
-                        tmpDfNoise.append((k, True, newClass))
-                        j += 1
+        :return: self._noiseLevel, self._dfNoise, systematicChange
+        """
 
         # Systematic change
-        if dictClass is not None:
-            systematicChange = 'systematic_' + str(int(noiseLevel * 100)) + '_' + str(
-                int(hashlib.md5(str(dictClass).encode("UTF-8")).hexdigest(), 16))
-            for i in dictClass.items():
+        if self._dictClass is not None:
+            systematicChange = 'systematic_' + str(int(self._noiseLevel * 100)) + '_' + str(
+                int(hashlib.md5(str(self._dictClass).encode("UTF-8")).hexdigest(), 16))
+
+            for i in self._dictClass.items():
                 # If One class to many: 'Wheat': ('Barley','Soy')
-                if type(dictClass.get(i[0])) is tuple:
+                if type(self._dictClass.get(i[0])) is tuple:
                     classNames = []
                     classNames.append(i[0])
-
-                    # Polygon number distribution by noise class
-                    # Ex: 'Wheat': ('Barley', 'Soy','Rapeseed') -> len(i[i]) = 3
-                    nbPixPerPolid = int(np.array(dfNbPixPerPolidList[dfNbPixPerPolidList['label'] == classNames[0]]['nbPixelPerPolid']))
-                    nbPolid = nbNoiseSamplesPerClass[classNames.index(classNames[0])] // nbPixPerPolid
-                    nbPolidMod = int(nbPolid % len(i[1]))
-                    nbPolid = nbPolid // len(i[1])
-                    nbPolidList = np.ones((len(i[1]),), dtype=int) * nbPolid
+                    (nbPixPerPolid, nbPolidMod, nbPolidList) = self._getNbPixPerPolid(i,classNames)
 
                     for m in range(nbPolidMod + 1):
                         if m < nbPolidMod:
                             nbPolidList[m] += 1
                         elif m == nbPolidMod:
-                            nbPolidList[m] += ((nbNoiseSamplesPerClass[classNames.index(classNames[0])] / nbPixPerPolid) % 1)
-                    nbPolidList = randomState.permutation(nbPolidList)
+                            nbPolidList[m] += ((self._nbNoiseSamplesPerClass[
+                                                    classNames.index(classNames[0])] / nbPixPerPolid) % 1)
+                    nbPolidList = self._randomState.permutation(nbPolidList)
 
-                    tmpIdTab = randomState.permutation(
-                        np.unique(np.array(samplesClass.loc[(samplesClass["label"] == classNames[0])]['polid'])))
+                    tmpPolidTab = self._randomState.permutation(
+                        np.unique(
+                            np.array(self._samplesClass.loc[(self._samplesClass["label"] == classNames[0])]['polid'])))
 
                     for j, l in zip(i[1], range(len(i[1]))):
                         classNames.append(j)
-                        generateNoise(classNames[0], classNames, nbPolidList[l])
+                        self._generateNoise(classNames[0], classNames, tmpPolidTab, nbPixPerPolid, nbPolidList[l])
                         del classNames[-1]
-                        tmpIdTab = np.delete(tmpIdTab, slice(None, int(nbPolidList[l])))
+                        tmpPolidTab = np.delete(tmpPolidTab, slice(None, int(nbPolidList[l])))
 
                 # Else One class to other class: 'Barley':'Soy'
                 else:
                     classNames = i
-                    tmpIdTab = randomState.permutation(
-                        np.unique(np.array(samplesClass.loc[(samplesClass["label"] == classNames[0])]['polid'])))
-                    generateNoise(classNames[0], classNames)
+
+                    (nbPixPerPolid, nbPolidMod, nbPolidList) = self._getNbPixPerPolid(i, classNames)
+
+                    tmpPolidTab = self._randomState.permutation(
+                        np.unique(
+                            np.array(self._samplesClass.loc[(self._samplesClass["label"] == classNames[0])]['polid'])))
+                    self._generateNoise(classNames[0], classNames, tmpPolidTab, nbPixPerPolid)
+
         # Random
         else:
             systematicChange = None
-            for i in classNames:
-                generateNoise(i, classNames)
+            for i in self._classNames:
+                (nbPixPerPolid, nbPolidMod, nbPolidList) = self._getNbPixPerPolid(i, self._classNames)
+                tmpPolidTab = self._randomState.permutation(
+                    np.unique(
+                        np.array(self._samplesClass.loc[(self._samplesClass["label"] == i)]['polid'])))
+                self._generateNoise(i, self._classNames, tmpPolidTab, nbPixPerPolid)
 
-        # print(np.array(tmpDfNoise).shape)
-        # print(nbNoiseSamplesPerClass[0] * 2)
-        tmpDfNoise = pd.DataFrame(tmpDfNoise, columns=['pixid', 'noisy', 'label'])
-        for i in np.array(tmpDfNoise['pixid']):
-            dfNoise = dfNoise[dfNoise['pixid'] != i]
-        dfNoise = dfNoise.append(tmpDfNoise, ignore_index=True)
-        dfNoise = dfNoise.sort_values(by=['pixid'])
-        return noiseLevel, dfNoise, systematicChange
+        # Creation of Noisy Dataframe
+        self._tmpDfNoise = pd.DataFrame(self._tmpDfNoise, columns=['pixid', 'noisy', 'label'])
+        for i in np.array(self._tmpDfNoise['pixid']):
+            self._dfNoise = self._dfNoise[self._dfNoise['pixid'] != i]
+        self._dfNoise = self._dfNoise.append(self._tmpDfNoise, ignore_index=True)
+        self._dfNoise = self._dfNoise.sort_values(by=['pixid'])
+
+        return self._noiseLevel, self._dfNoise, systematicChange
+
+    def _generateNoise(self, className, classNames, tmpPolidTab, nbPixPerPolid, nbPolid=None):
+        """
+        Generate Noise on className with other class in classNames
+        :param className: class to noisy
+        :param classNames: other class
+        :param tmpPolidTab: Array containing list of polid for "className"
+        :param nbPixPerPolid: Number of pixel per polygon
+        :param nbPolid: Number of polygon
+        :return: Nothing modify per reference self._tmpDfNoise
+        """
+        if nbPolid is None:
+            nbNoiseSamples = int(self._nbNoiseSamplesPerClass[classNames.index(className)])
+        else:
+            nbNoiseSamples = nbPolid * nbPixPerPolid
+
+        j = 0
+        while j < nbNoiseSamples:
+            tmpPixTab = np.array(
+                self._samplesClass.loc[
+                    (self._samplesClass["label"] == className) & (
+                                self._samplesClass["polid"] == tmpPolidTab[int(j / nbPixPerPolid)])][
+                    'pixid'])
+            newClass = self._randomState.choice(classNames, 1)[0]
+            while newClass == className:
+                newClass = self._randomState.choice(classNames, 1)[0]
+            for k in tmpPixTab:
+                if j < nbNoiseSamples:
+                    self._tmpDfNoise.append((k, True, newClass))
+                    j += 1
+
+    def _getNbPixPerPolid(self, itemDict, classNames):
+        """
+
+        :param itemDict: Name of the class
+        :param classNames: Array containing Class Names
+        :return: nbPixPerPolid, nbPolidMod, nbPolidList
+        """
+
+        # Polygon number distribution by noise class
+        # Ex: 'Wheat': ('Barley', 'Soy','Rapeseed') -> len(i[i]) = 3
+        nbPixPerPolid = int(
+            np.array(self._dfNbPixPerPolidList[self._dfNbPixPerPolidList['label'] == classNames[0]][
+                         'nbPixelPerPolid']))
+        nbPolid = self._nbNoiseSamplesPerClass[classNames.index(classNames[0])] // nbPixPerPolid
+        nbPolidMod = int(nbPolid % len(itemDict[1]))
+        nbPolid = nbPolid // len(itemDict[1])
+        nbPolidList = np.ones((len(itemDict[1]),), dtype=int) * nbPolid
+
+        return nbPixPerPolid, nbPolidMod, nbPolidList

@@ -4,53 +4,55 @@ from GenLabelNoiseTS.GeneratorData import *
 
 
 def main():
-    initPath = 'initFile.csv'
-    path = ('data/TwoClass', 'data/FiveClass', 'data/TenClass')
-    if os.path.isdir('data/'):
+    initPath = 'init_param_file.csv'
+    rep = ''
+    nameDataDir = rep+'data/'
+    namesDir = (nameDataDir+'TwoClass', nameDataDir+'FiveClass', nameDataDir+'TenClass')
+    if os.path.isdir(nameDataDir):
         print('Dir data/ already exist !')
         print('Do you want delete dir data/ ? [y(Yes) or n(No)]')
         answer = input()
         while answer != 'y' and answer != 'n':
             answer = input()
         if answer == 'y':
-            shutil.rmtree('data/')
+            shutil.rmtree(nameDataDir)
         elif answer == 'n':
             print('Error Dir data/ already exist !')
     else:
         answer = 'y'
 
     if answer == 'y':
-        os.mkdir('data/', 0o755)
+        os.mkdir(nameDataDir, 0o755)
         noiseArray = [round(i, 2) for i in np.arange(0, 1.05, 0.05)]
         l = 0
-        lMax = (len(path) * 10 * len(noiseArray)) + (10 * len(noiseArray)) -1
+        lMax = (len(namesDir) * 10 * len(noiseArray)) + (10 * len(noiseArray)) -1
         print('PROGRESS BAR GENERATE DATA :')
-        for i in path:
+        for i in namesDir:
             os.mkdir(i, 0o755)
             for j in range(10):
                 os.mkdir(i + '/Run' + str(j + 1), 0o755)
-                if i == 'data/TwoClass':
+                if i == nameDataDir+'TwoClass':
                     generator = GeneratorData(filename="dataFrame.h5", rep=i + '/Run' + str(j + 1) + '/',
                                               pathInitFile=initPath, classList=('Corn', 'Corn_Ensilage'),
-                                              csv=True, verbose=False, )
-                elif i == 'data/FiveClass':
+                                              csv=True, verbose=False)
+                elif i == nameDataDir+'FiveClass':
                     generator = GeneratorData(filename="dataFrame.h5", rep=i + '/Run' + str(j + 1) + '/',
                                               pathInitFile=initPath,
                                               classList=('Corn', 'Corn_Ensilage', 'Sorghum', 'Sunflower', 'Soy'),
-                                              csv=True, verbose=False, )
+                                              csv=True, verbose=False)
                     a = {'Corn': 'Corn_Ensilage', 'Corn_Ensilage': 'Sorghum', 'Sorghum': 'Sunflower', 'Sunflower': 'Soy',
                          'Soy': 'Corn'}
-                elif i == 'data/TenClass':
+                elif i == nameDataDir+'TenClass':
                     generator = GeneratorData(filename="dataFrame.h5", rep=i + '/Run' + str(j + 1) + '/',
                                               pathInitFile=initPath,
                                               classList=('Corn', 'Corn_Ensilage', 'Sorghum', 'Sunflower', 'Soy',
                                                          'Wheat', 'Rapeseed', 'Barley',
                                                          'Evergreen', 'Decideous'),
-                                              csv=True, verbose=False, )
+                                              csv=True, verbose=False)
                 for k in noiseArray:
                     generator.getNoiseDataXY(k)
                     printProgressBar(l, lMax)
-                    if i == 'data/FiveClass':
+                    if i == nameDataDir+'FiveClass':
                         generator.getNoiseDataXY(k, a)
                         l += 1
                     l += 1

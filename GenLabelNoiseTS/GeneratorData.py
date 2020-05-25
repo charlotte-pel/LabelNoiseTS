@@ -177,13 +177,15 @@ class GeneratorData:
         """
         name = self._genName(dictClassSystematicChange, noiseLevel)
         if not ReadGenerateData.getAlreadyGenNoise(self._filename, self._rep, name, self._csv):
-            (noiseLevel, dfNoise, systematicChange) = GeneratorNoise.generatorNoisePerClass(self._filename, self._rep,
-                                                                                            noiseLevel, seedNoise,
-                                                                                            self._nbPixPerPolid,
-                                                                                            dictClassSystematicChange,
-                                                                                            self._csv)
+            generatorNoise = GeneratorNoise(filename=self._filename, rep=self._rep,
+                                            noiseLevel=noiseLevel, seed=seedNoise,
+                                            dfNbPixPerPolidList=self._nbPixPerPolid,
+                                            dictClass=dictClassSystematicChange,
+                                            csv=self._csv)
+            (noiseLevel, dfNoise, systematicChange) = generatorNoise.generatorNoisePerClass()
             WriteGenerateData.writeGenerateNoisyData(self._filename, self._rep, noiseLevel, dfNoise, systematicChange,
                                                      self._csv, dictClassSystematicChange)
+            del generatorNoise
             if self._verbose is True:
                 print("Generate Noise Done !")
         else:
