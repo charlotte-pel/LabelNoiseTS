@@ -156,7 +156,7 @@ class Drawprofils:
             plt.show()
 
     @staticmethod
-    def draw20RandomIdProfilOneClass(className, dfHeader, dfData,vis=False,rep=''):
+    def draw20RandomIdMeanProfilOneClass(className, dfHeader, dfData,vis=False,rep=''):
         """
 
         :param className: Name of the class
@@ -168,10 +168,11 @@ class Drawprofils:
         """
         dates = np.array(dfHeader.loc[0, :])[0]
         dfTest = dfData.loc[(dfData['label'] == className)]
-        dfTest = dfTest.groupby(['label', 'polid']).mean()
+        dfTest = dfTest.groupby(['label', 'polid', 'pixid']).mean()
         dfTest = dfTest.reset_index()
-        dfTest = dfTest.sample(n=20)  # , random_state=1)
+        dfTest = dfTest.sample(n=20)
         del dfTest['polid']
+        del dfTest['pixid']
         dfTest = dfTest.set_index('label')
         dfTest = dfTest.T
         dfTest.insert(0, 'dates', dates, True)
@@ -182,6 +183,40 @@ class Drawprofils:
         plt.ylabel('NDVI')
         plt.axis([0, 350, 0, 1])
         if vis is True:
-            plt.savefig(rep+'plotprofil20randomidprofil_'+className)
+            plt.savefig(rep+'plotprofil20randomidMeanprofil_'+className)
+        else:
+            plt.show()
+
+    @staticmethod
+    def drawRandomIdProfilOneClass(className, dfHeader, dfData, vis=False, rep=''):
+        """
+
+        :param className: Name of the class
+        :param dfHeader: DataFrame contain Header
+        :param dfData: DataFrame contain Data
+        :param vis: True for save in file ot False for show plot
+        :param rep: If vis == True -> name of the rep
+        :return: No return -> Draw graph or save in file
+        """
+        dates = np.array(dfHeader.loc[0, :])[0]
+        dfTest = dfData.loc[(dfData['label'] == className)]
+        print(dfTest)
+        dfTest = dfTest.loc[(dfTest['polid'] == int(dfTest['polid'].sample(n=1)))]
+        dfTest = dfTest.reset_index()
+        del dfTest['polid']
+        del dfTest['pixid']
+        del dfTest['index']
+        # TODO Find why the first use doesn't work
+        dfTest = dfTest.set_index('label')
+        dfTest = dfTest.T
+        dfTest.insert(0, 'dates', dates, True)
+        dfTest.plot(x='dates', y=className, kind='line', legend=False)
+        plt.title('Profils NDVI simulés ' + className)
+        plt.grid()
+        plt.xlabel('Jour de l\'an')
+        plt.ylabel('NDVI')
+        plt.axis([0, 350, 0, 1])
+        if vis is True:
+            plt.savefig(rep + 'plotprofilrandomidprofil_' + className)
         else:
             plt.show()

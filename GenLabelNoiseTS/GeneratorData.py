@@ -120,6 +120,13 @@ class GeneratorData:
         """
         return self._dfHeader
 
+    def getDfData(self):
+        """
+        Getter for dfData
+        :return: The data dataframe
+        """
+        return self._dfData
+
     @staticmethod
     def getNoiseMatrix(Y_True, Y_Noise):
         """
