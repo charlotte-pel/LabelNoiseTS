@@ -19,11 +19,6 @@ class GeneratorData:
         :param csv: Csv Option True or False
         :param verbose: Show print : True or False
         """
-        # Path to initFilename
-        if pathInitFile is None:
-            self._initFilename = 'init_param_file.csv'
-        else:
-            self._initFilename = pathInitFile
 
         self._classList = classList
 
@@ -40,6 +35,12 @@ class GeneratorData:
         self._seedData = seedData
         # Test if not file exist
         if not os.path.isfile(self._rep + self._filename):
+            # Path to initFilename
+            if pathInitFile is None:
+                self._initFilename = 'init_param_file.csv'
+            else:
+                self._initFilename = pathInitFile
+
             (dfHeader, dfData) = self._genData()
             self._dfHeader = dfHeader
             self._nbPixPerPolid = self._getDfNbPixPerPolidList()
@@ -47,6 +48,7 @@ class GeneratorData:
             WriteGenerateData.writeGenerateDataToH5(self._filename, self._rep, self._dfHeader, self._dfData, self._csv)
             if self._verbose is True:
                 print("Generate Data Done !")
+
         else:
             # File exist
             self._dfHeader = pd.DataFrame(pd.read_hdf(self._rep + self._filename, 'header'))
@@ -100,12 +102,12 @@ class GeneratorData:
         (X, Y) = self._generateXY(dfNoise)
         return self._strClassNamesToInt(X, Y)
 
-    def getTestData(self):
+    def getTestData(self,otherPath=None):
         """
         Public function
         :return: X and Y. X is a new matrix test containing profils NDVI generate. Y is label matrix
         """
-        dfTest = self._generateTest()
+        dfTest = self._generateTest(otherPath)
         tmpdfData = self._dfData
         self._dfTest = dfTest
         self._dfData = dfTest
@@ -201,7 +203,7 @@ class GeneratorData:
                 print("Generate Noise Already Done !")
         return dfNoise
 
-    def _generateTest(self):
+    def _generateTest(self,otherPath):
         """
         Intern function
         :return: DataFrame contain test dataset
@@ -217,13 +219,17 @@ class GeneratorData:
                 if self._verbose is True:
                     print('Generate Test Done !')
         else:
+            if otherPath is None:
+                repPath = self._rep
+            else:
+                repPath = otherPath
             try:
-                dfTest = pd.DataFrame(pd.read_csv(self._rep + 'test.csv'))
+                dfTest = pd.DataFrame(pd.read_csv(repPath + 'test.csv'))
                 if self._verbose is True:
                     print('Generate Test already Done !')
             except FileNotFoundError:
                 (dfHeader, dfTest) = self._genData()
-                WriteGenerateData.writeTest(self._filename, self._rep, dfTest, self._csv)
+                WriteGenerateData.writeTest(self._filename, repPath, dfTest, self._csv)
                 if self._verbose is True:
                     print('Generate Test Done !')
         return dfTest

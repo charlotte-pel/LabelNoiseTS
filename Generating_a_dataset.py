@@ -5,7 +5,7 @@ from GenLabelNoiseTS.GeneratorData import *
 
 def main():
     initPath = 'init_param_file.csv'
-    rep = ''
+    rep = 'C:/Users/walkz/OneDrive/Bureau/StageIrisa/'
     nameDataDir = rep+'data/'
     namesDir = (nameDataDir+'TwoClass', nameDataDir+'FiveClass', nameDataDir+'TenClass')
     if os.path.isdir(nameDataDir):

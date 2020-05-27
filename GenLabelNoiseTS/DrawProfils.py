@@ -47,20 +47,23 @@ class Drawprofils:
         dfTest = dfData.groupby(['label']).mean()
         dfTest = dfTest.reset_index()
         dfTest = dfTest.set_index('label')
+        del dfTest['polid']
+        del dfTest['pixid']
         dfTest = dfTest.T
         del dfTest['Build']
         del dfTest['Water']
         del dfTest['Wheat_Soy']
+        print(dfTest)
         dfTest.insert(0, 'dates', dates, True)
         dfTest.plot(x='dates', kind='line')
-        plt.title('Profils NDVI simulés ' + 'all')
+        plt.title('Profils NDVI simulés ' + '10 Classes')
         plt.grid()
         plt.xlabel('Jour de l\'an')
         plt.ylabel('NDVI')
         plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
         plt.axis([0, 350, 0, 1])
         if vis is True:
-            plt.savefig(rep+'plotprofilmean_allclass')
+            plt.savefig(rep+'plotprofilmean_10class')
         else:
             plt.show()
 
