@@ -129,6 +129,15 @@ class GeneratorData:
         """
         return self._dfData
 
+    def getSeed(self):
+        return self.getSeedList()['dataSeed']
+
+    def getSeedList(self):
+        return eval(str(self._dfHeader[0][1]))
+
+    def getMatrixClassInt(self):
+        return self._matrixClassInt
+
     @staticmethod
     def getNoiseMatrix(Y_True, Y_Noise):
         """
@@ -192,6 +201,16 @@ class GeneratorData:
                                             dictClass=dictClassSystematicChange,
                                             csv=self._csv)
             (noiseLevel, dfNoise, systematicChange) = generatorNoise.generatorNoisePerClass()
+            tmpDictSeed = self.getSeedList()
+
+            # Add new seedNoise to Header.
+            if dictClassSystematicChange is None:
+                tmpDictSeed[str(noiseLevel)+'_Random'] = seedNoise
+            else:
+                tmpDictSeed[str(noiseLevel) + '_' + str(dictClassSystematicChange)] = seedNoise
+
+            self._dfHeader.loc[1:1,0:0] = np.array(tmpDictSeed)
+            WriteGenerateData.updateDfHeader(self._filename,self._rep,self._dfHeader)
             WriteGenerateData.writeGenerateNoisyData(self._filename, self._rep, noiseLevel, dfNoise, systematicChange,
                                                      self._csv, dictClassSystematicChange)
             del generatorNoise
@@ -384,5 +403,5 @@ class GeneratorData:
         return name
 
     def _getDfNbPixPerPolidList(self):
-        return pd.DataFrame([[i[0], i[1][1]] for i in np.array(self._dfHeader.loc[1:, 0])],
+        return pd.DataFrame([[i[0], i[1][1]] for i in np.array(self._dfHeader.loc[2:, 0])],
                             columns=['label', 'nbPixelPerPolid'])

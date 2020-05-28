@@ -28,12 +28,20 @@ class GenerateData:
         randomState = np.random.RandomState(seed)
         # Get class names, param, dates from initFile.
         param_val = pd.DataFrame(pd.read_csv(initFilename))
+
         if classList is None:
             class_names = np.array(param_val['class_names'])
-            nbClass = len(class_names)-1
+            nbClass = len(class_names) - 1
         else:
             class_names = classList
             nbClass = len(class_names)
+
+        tmpClass = np.array(param_val['class_names'])[:-1]
+        for i in tmpClass:
+            if i not in class_names:
+                param_val = param_val.drop(param_val[param_val['class_names'] == i].index)
+        param_val = param_val.reset_index()
+        del param_val['index']
         del param_val['class_names']
         dates = np.array(param_val.loc[param_val.index[-1], :])
         dates = dates[np.logical_not(np.isnan(dates))]
@@ -44,8 +52,8 @@ class GenerateData:
         # Double or simple sigmoid
         db_sigmo = np.where(np.sum(param_val[:, 14:], axis=1) != -len(param_val[:, 14:]) + 1, 26, 14)
 
-        unique_sequencePolid = GenerateData._uniqueid()
-        unique_sequencePixid = GenerateData._uniqueid()
+        unique_sequencePolid = GenerateData._uniqueid(randomState)
+        unique_sequencePixid = GenerateData._uniqueid(randomState)
 
         dfHeader = []
         tmpDataFrame = []
@@ -56,8 +64,8 @@ class GenerateData:
         # class1;nbSamples
         # ...
         # % classN;nbSamples
-
         dfHeader.append(np.array(dates))
+        dfHeader.append(np.array({'dataSeed': seed}))
         for i in range(0, nbClass):
             dfHeader.append(np.array([class_names[i], param_val[i]]))
         dfHeader = pd.DataFrame(np.array(dfHeader))
@@ -243,12 +251,12 @@ class GenerateData:
         return sigmo_param
 
     @staticmethod
-    def _uniqueid():
+    def _uniqueid(randomState):
         """
 
         :return: Generate an generator for unique ID
         """
-        seed = random.getrandbits(16)
+        seed = randomState.randint(10000,100000)
         while True:
             yield seed
             seed += 1

@@ -18,10 +18,10 @@ class ReadGenerateData:
         filename = rep + filename
         dfheader = pd.read_hdf(filename, 'header')
         dfheader = pd.DataFrame(dfheader)
-        nbClass = len(dfheader) - 1
+        nbClass = len(dfheader) - 2
         dates = dfheader[0][0]
         classNames = []
-        for i in range(1, nbClass + 1):
+        for i in range(2, nbClass + 2):
             classNames.append(dfheader[0][i][0])
         if csv is False:
             dfData = pd.read_hdf(filename, 'data')
@@ -32,6 +32,7 @@ class ReadGenerateData:
             dfData = pd.read_csv(npCsv[0])
         samplesClass = dfData
         nbPixelClass = [len(samplesClass.loc[(samplesClass['label'] == i)]) for i in classNames]
+        nbPixelClass = pd.DataFrame([nbPixelClass],columns=classNames)
         return nbClass, dates, classNames, samplesClass, nbPixelClass
 
     @staticmethod

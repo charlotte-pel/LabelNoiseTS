@@ -133,3 +133,10 @@ class WriteGenerateData:
             hdf = pd.HDFStore(filename)
             hdf.put('csvFile', dfCsv)
             hdf.close()
+
+    @staticmethod
+    def updateDfHeader(filename,rep, dfHeader):
+        filename = rep + filename
+        hdf = pd.HDFStore(filename)
+        hdf.put('header', dfHeader)
+        hdf.close()
