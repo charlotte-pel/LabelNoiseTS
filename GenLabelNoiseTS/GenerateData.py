@@ -42,15 +42,15 @@ class GenerateData:
                 param_val = param_val.drop(param_val[param_val['class_names'] == i].index)
         param_val = param_val.reset_index()
         del param_val['index']
+
         del param_val['class_names']
         dates = np.array(param_val.loc[param_val.index[-1], :])
         dates = dates[np.logical_not(np.isnan(dates))]
         param_val = param_val.drop(param_val.index[-1])
         param_val = param_val.fillna(-1)
         param_val = np.array(param_val)
-
         # Double or simple sigmoid
-        db_sigmo = np.where(np.sum(param_val[:, 14:], axis=1) != -len(param_val[:, 14:]) + 1, 26, 14)
+        db_sigmo = np.where(np.sum(param_val[:, 14:], axis=1) != -param_val[:,14:].shape[1], 26, 14)
 
         unique_sequencePolid = GenerateData._uniqueid(randomState)
         unique_sequencePixid = GenerateData._uniqueid(randomState)
