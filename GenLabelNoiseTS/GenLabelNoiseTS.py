@@ -1,12 +1,13 @@
 import h5py
+import os
 from GenLabelNoiseTS.DrawProfils import *
-from GenLabelNoiseTS.GenerateData import *
-from GenLabelNoiseTS.GeneratorNoise import *
+from GenLabelNoiseTS.GeneratorNDVIProfils import *
+from GenLabelNoiseTS.GeneratorLabelNoise import *
 from GenLabelNoiseTS.WriteGenerateData import *
 import numpy as np
 
 
-class GeneratorData:
+class GenLabelNoiseTS:
 
     def __init__(self, filename, rep='', classList=None, pathInitFile=None, seedData=None, csv=False, verbose=False):
         """
@@ -102,7 +103,7 @@ class GeneratorData:
         (X, Y) = self._generateXY(dfNoise)
         return self._strClassNamesToInt(X, Y)
 
-    def getTestData(self,otherPath=None):
+    def getTestData(self, otherPath=None):
         """
         Public function
         :return: X and Y. X is a new matrix test containing profils NDVI generate. Y is label matrix
@@ -195,22 +196,22 @@ class GeneratorData:
         """
         name = self._genName(dictClassSystematicChange, noiseLevel)
         if not ReadGenerateData.getAlreadyGenNoise(self._filename, self._rep, name, self._csv):
-            generatorNoise = GeneratorNoise(filename=self._filename, rep=self._rep,
-                                            noiseLevel=noiseLevel, seed=seedNoise,
-                                            dfNbPixPerPolidList=self._nbPixPerPolid,
-                                            dictClass=dictClassSystematicChange,
-                                            csv=self._csv)
+            generatorNoise = GeneratorLabelNoise(filename=self._filename, rep=self._rep,
+                                                 noiseLevel=noiseLevel, seed=seedNoise,
+                                                 dfNbPixPerPolidList=self._nbPixPerPolid,
+                                                 dictClass=dictClassSystematicChange,
+                                                 csv=self._csv)
             (noiseLevel, dfNoise, systematicChange) = generatorNoise.generatorNoisePerClass()
             tmpDictSeed = self.getSeedList()
 
             # Add new seedNoise to Header.
             if dictClassSystematicChange is None:
-                tmpDictSeed[str(noiseLevel)+'_Random'] = seedNoise
+                tmpDictSeed[str(noiseLevel) + '_Random'] = seedNoise
             else:
                 tmpDictSeed[str(noiseLevel) + '_' + str(dictClassSystematicChange)] = seedNoise
 
-            self._dfHeader.loc[1:1,0:0] = np.array(tmpDictSeed)
-            WriteGenerateData.updateDfHeader(self._filename,self._rep,self._dfHeader)
+            self._dfHeader.loc[1:1, 0:0] = np.array(tmpDictSeed)
+            WriteGenerateData.updateDfHeader(self._filename, self._rep, self._dfHeader)
             WriteGenerateData.writeGenerateNoisyData(self._filename, self._rep, noiseLevel, dfNoise, systematicChange,
                                                      self._csv, dictClassSystematicChange)
             del generatorNoise
@@ -222,7 +223,7 @@ class GeneratorData:
                 print("Generate Noise Already Done !")
         return dfNoise
 
-    def _generateTest(self,otherPath):
+    def _generateTest(self, otherPath):
         """
         Intern function
         :return: DataFrame contain test dataset
@@ -258,8 +259,9 @@ class GeneratorData:
         Intern function
         :return: 2 DataFrame Header and Data
         """
-        (dfHeader, dfData) = GenerateData.generateData(seed=self._seedData, initFilename=self._initFilename,
-                                                       classList=self._classList)
+        (dfHeader, dfData) = GeneratorNDVIProfils.generatorNDVIProfils(seed=self._seedData,
+                                                                       initFilename=self._initFilename,
+                                                                       classList=self._classList)
         return dfHeader, dfData
 
     def _strClassNamesToInt(self, X, Y):

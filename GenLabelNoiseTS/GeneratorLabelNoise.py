@@ -1,10 +1,9 @@
 import hashlib
-
 from GenLabelNoiseTS.ReadGenerateData import *
 import numpy as np
 
 
-class GeneratorNoise:
+class GeneratorLabelNoise:
     """
     Noise generating class.
     """

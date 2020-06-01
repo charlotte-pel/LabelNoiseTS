@@ -50,9 +50,9 @@ class Drawprofils:
         del dfTest['polid']
         del dfTest['pixid']
         dfTest = dfTest.T
-        del dfTest['Build']
-        del dfTest['Water']
-        del dfTest['Wheat_Soy']
+        #del dfTest['Build']
+        #del dfTest['Water']
+        #del dfTest['Wheat_Soy']
         print(dfTest)
         dfTest.insert(0, 'dates', dates, True)
         dfTest.plot(x='dates', kind='line')

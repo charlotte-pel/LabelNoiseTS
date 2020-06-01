@@ -1,4 +1,4 @@
-from GenLabelNoiseTS.GeneratorData import *
+from GenLabelNoiseTS.GenLabelNoiseTS import *
 import sys
 import ast
 
@@ -25,7 +25,7 @@ def main():
     if '-vis' not in list(a.keys()):
         a['-vis'] = False
     # a = {'Wheat': ('Barley','Soy','Build'),'Barley':'Soy'}
-    generator = GeneratorData(rep=a['-d'],filename=a['-f'],csv=a['-save_csv'],verbose=a['-v'])
+    generator = GenLabelNoiseTS(rep=a['-d'],filename=a['-f'],csv=a['-save_csv'],verbose=a['-v'])
     (X, Y) = generator.getDataXY()
     if a['-vis'] is True:
         generator.visualisation(pathVis)

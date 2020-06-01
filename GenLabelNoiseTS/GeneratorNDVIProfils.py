@@ -1,16 +1,15 @@
-import random
 import numpy as np
 import pandas as pd
 
 
-class GenerateData:
+class GeneratorNDVIProfils:
     """
-    Class GenerateData
+    Class GeneratorNDVIProfils
     The class contains only static method/function
     """
 
     @staticmethod
-    def generateData(seed, initFilename, classList=None):
+    def generatorNDVIProfils(seed, initFilename, classList=None):
         """
         :param seed:
         :param initFilename:
@@ -52,8 +51,8 @@ class GenerateData:
         # Double or simple sigmoid
         db_sigmo = np.where(np.sum(param_val[:, 14:], axis=1) != -param_val[:,14:].shape[1], 26, 14)
 
-        unique_sequencePolid = GenerateData._uniqueid(randomState)
-        unique_sequencePixid = GenerateData._uniqueid(randomState)
+        unique_sequencePolid = GeneratorNDVIProfils._uniqueid(randomState)
+        unique_sequencePixid = GeneratorNDVIProfils._uniqueid(randomState)
 
         dfHeader = []
         tmpDataFrame = []
@@ -88,7 +87,7 @@ class GenerateData:
 
             for i in range(0, len(nb_Samples_Polygons[0])):  # id poly
                 polid = next(unique_sequencePolid)
-                sigmo_param = GenerateData._generate_double_sigmo_parameters(range_param, randomState)
+                sigmo_param = GeneratorNDVIProfils._generate_double_sigmo_parameters(range_param, randomState)
                 # Calculation of Gaussian parameters
 
                 # Calculation of x2
@@ -108,7 +107,7 @@ class GenerateData:
                 # Amplitude of regrowth
                 A_gauss = randomState.rand() / 3
 
-                if GenerateData._strcmp(class_names[add], 'Evergreen') | GenerateData._strcmp(
+                if GeneratorNDVIProfils._strcmp(class_names[add], 'Evergreen') | GeneratorNDVIProfils._strcmp(
                         class_names[add], 'Decideous'):
                     A_gauss = 0
 
@@ -136,12 +135,12 @@ class GenerateData:
                     reduce_sigmo_param[:, 1] = np.where(reduce_sigmo_param[:, 1] > range_param[:, 1], range_param[:, 1],
                                                         reduce_sigmo_param[:, 1])
 
-                    sample_sigmo_param = GenerateData._generate_double_sigmo_parameters(reduce_sigmo_param, randomState)
+                    sample_sigmo_param = GeneratorNDVIProfils._generate_double_sigmo_parameters(reduce_sigmo_param, randomState)
 
                     if db_sigmo[add] == 14:
-                        init_profil = GenerateData._sigmoProfil(sample_sigmo_param, dates)
+                        init_profil = GeneratorNDVIProfils._sigmoProfil(sample_sigmo_param, dates)
                     else:
-                        init_profil = GenerateData._doubleSigmoProfil(sample_sigmo_param, dates)
+                        init_profil = GeneratorNDVIProfils._doubleSigmoProfil(sample_sigmo_param, dates)
 
                     norm_pdf = 0.05 * (2 * randomState.rand(1, len(dates)))
                     vec_noisy_dates = randomState.permutation(randomState.randint(0, len(dates), size=len(dates)))
@@ -224,8 +223,8 @@ class GenerateData:
                dates = [0,25,50,...]
         :return: a double sigmo profil
         """
-        profil1 = GenerateData._sigmoProfil(samples_sigmo_param[:, :6], dates)
-        profil2 = GenerateData._sigmoProfil(samples_sigmo_param[:, 6:], dates) + 0.05
+        profil1 = GeneratorNDVIProfils._sigmoProfil(samples_sigmo_param[:, :6], dates)
+        profil2 = GeneratorNDVIProfils._sigmoProfil(samples_sigmo_param[:, 6:], dates) + 0.05
         return profil1 + profil2
 
     @staticmethod
