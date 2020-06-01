@@ -7,7 +7,7 @@
 * [Installation](#Installation)
 * [Quick use](#Quick-use)
 * [Usage](#Usage)
-* [Config-File](#Config-File:)
+* [Config File](#Config-File)
 * [Results](#Results)
 * [Contributing](#Contributing)
 * [Contributors](#Contributors)
@@ -127,7 +127,7 @@ Dataset tree:
     - ...
     - Run10
     
-## Config File:
+## Config File
 
 DataFrame from initFile.csv must be like below :
 (Example initFile.csv has good format)
