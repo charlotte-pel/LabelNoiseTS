@@ -53,12 +53,11 @@ class Drawprofils:
         #del dfTest['Build']
         #del dfTest['Water']
         #del dfTest['Wheat_Soy']
-        print(dfTest)
         dfTest.insert(0, 'dates', dates, True)
         dfTest.plot(x='dates', kind='line')
-        plt.title('Profils NDVI simulés ' + '10 Classes')
+        plt.title('NDVI Profils ' + '10 Classes')
         plt.grid()
-        plt.xlabel('Jour de l\'an')
+        plt.xlabel('DoY')
         plt.ylabel('NDVI')
         plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
         plt.axis([0, 350, 0, 1])
@@ -180,9 +179,9 @@ class Drawprofils:
         dfTest = dfTest.T
         dfTest.insert(0, 'dates', dates, True)
         dfTest.plot(x='dates', y=className, kind='line', legend=False)
-        plt.title('Profils NDVI simulés ' + className)
+        plt.title('NDVI Profils ' + className)
         plt.grid()
-        plt.xlabel('Jour de l\'an')
+        plt.xlabel('DoY')
         plt.ylabel('NDVI')
         plt.axis([0, 350, 0, 1])
         if vis is True:
@@ -203,7 +202,6 @@ class Drawprofils:
         """
         dates = np.array(dfHeader.loc[0, :])[0]
         dfTest = dfData.loc[(dfData['label'] == className)]
-        print(dfTest)
         dfTest = dfTest.loc[(dfTest['polid'] == int(dfTest['polid'].sample(n=1)))]
         dfTest = dfTest.reset_index()
         del dfTest['polid']
