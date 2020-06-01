@@ -7,7 +7,7 @@
 * [Installation](#Installation)
 * [Quick use](#Quick-use)
 * [Usage](#Usage)
-* [Config File](#Config-File:)
+* [Config-File](#Config-File:)
 * [Results](#Results)
 * [Contributing](#Contributing)
 * [Contributors](#Contributors)
