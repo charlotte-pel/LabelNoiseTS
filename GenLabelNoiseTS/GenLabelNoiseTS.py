@@ -41,7 +41,6 @@ class GenLabelNoiseTS:
                 self._initFilename = 'init_param_file.csv'
             else:
                 self._initFilename = pathInitFile
-
             (dfHeader, dfData) = self._genData()
             self._dfHeader = dfHeader
             self._nbPixPerPolid = self._getDfNbPixPerPolidList()

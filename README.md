@@ -58,37 +58,90 @@ Located at the root of the project folder
 ## Usage
 
 ```python
-from SyntSITSLabelNoise.GeneratorData import *
+from GenLabelNoiseTS.GenLabelNoiseTS import *
 
-generator = GeneratorData("src/dataFrame.h5")
-a = {'Wheat': 'Barley', 'Barley': 'Soy'}
-(X,Y) = generator.getDataXY() 
-(Xnoise,YNoise) = generator.getNoiseDataXY(0.05,a) #Example with systematic change label noise
-(Xtest,Ytest) = (generator.getTestData())
+# Example with a list of two class and systematic change.
+generator = GenLabelNoiseTS(filename="dataFrame.h5", classList=('Wheat','Barley'), csv=True, verbose=True, rep="file/")
+a = {'Wheat': 'Barley', 'Barley': 'Wheat'}
+(X,Y) = generator.getDataXY()
+(Xnoise,YNoise) = generator.getNoiseDataXY(0.05,a)
+(Xtest,Ytest) = generator.getTestData()
+generator.visualisation('img/')
 ```
+To generate a dataset use python command below:
+```bash
+python gen_data.py -d src/file/ -f data.h5 -nclass 10 -noise random -noise.level [0.05,0.1,0.15,0.2,0.25,0.3] -save_csv -v -vis
+# If you use dict don't put any space!!!
+python gen_data.py -d src/file/ -f data.h5 -nclass 10 -noise {'Wheat':('Barley','Soy'),'Barley':'Soy'} -noise.level [0.05,0.1,0.15,0.2,0.25,0.3] -save_csv -v -vis
+```
+
+To generate dataset for performance evaluation of machine learning algorithms use python command below:
+```bash
+python Generating_a_dataset.py
+```
+An example of a dataset named data is at the root of the directory.
+Dataset tree:
+- data
+  - TwoClass
+    - Run1
+      - data.csv
+      - dataFrame.h5
+      - random_0.csv
+      - ...
+      - random_100.csv
+    - Run2
+    - ...
+    - Run10
+  - FiveClass
+    - Run1
+      - data.csv
+      - dataFrame.h5
+      - random_0.csv
+      - ...
+      - random_100.csv
+    - Run2
+    - ...
+    - Run10
+  - TenClass
+    - Run1
+      - data.csv
+      - dataFrame.h5
+      - random_0.csv
+      - ...
+      - random_100.csv
+    - Run2
+    - ...
+    - Run10
+    
 ## Config File:
 
 DataFrame from initFile.csv must be like below :
 (Example initFile.csv has good format)
 - First column must be named: class_names
+- Columns names 0 and 1 contain number of samples and number of polygon for each class.
 - Last row must contain dates (In the example below line 13), dates start column after class_names column.
 ```
-      class_names     0       1      2      3  ...    21     22     23    24    25
-0            Corn  0.57   0.720   0.15   0.30  ...  -1.0   -1.0   -1.0  -1.0  -1.0
-1   Corn_Ensilage  0.57   0.720   0.15   0.30  ...  -1.0   -1.0   -1.0  -1.0  -1.0
-2         Sorghum  0.62   0.770   0.15   0.30  ...  -1.0   -1.0   -1.0  -1.0  -1.0
-3       Sunflower  0.67   0.820   0.15   0.30  ...  -1.0   -1.0   -1.0  -1.0  -1.0
-4             Soy  0.67   0.820   0.15   0.30  ...  -1.0   -1.0   -1.0  -1.0  -1.0
-5           Wheat  0.52   0.670   0.20   0.35  ...  -1.0   -1.0   -1.0  -1.0  -1.0
-6        Rapeseed  0.70   0.800   0.05   0.20  ...  12.0  135.0  145.0   5.0  15.0
-7          Barley  0.52   0.670   0.20   0.35  ...  -1.0   -1.0   -1.0  -1.0  -1.0
-8       Wheat_Soy  0.50   0.550   0.10   0.15  ...  15.0  280.0  300.0  25.0  35.0
-9       Evergreen  0.01   0.015   0.55   0.70  ...  -1.0   -1.0   -1.0  -1.0  -1.0
-10      Decideous  0.20   0.350   0.40   0.50  ...  -1.0   -1.0   -1.0  -1.0  -1.0
-11          Water  0.01   0.020  -0.20   0.00  ...  -1.0   -1.0   -1.0  -1.0  -1.0
-12          Build  0.01   0.020   0.20   0.30  ...  -1.0   -1.0   -1.0  -1.0  -1.0
-13            NaN  1.00  26.000  51.00  76.00  ...   NaN    NaN    NaN   NaN   NaN
+      class_names    0   1      2       3  ...    21     22     23    24    25
+0            Corn  500  10   0.57   0.720  ...   NaN    NaN    NaN   NaN   NaN
+1   Corn_Ensilage  500  10   0.57   0.720  ...   NaN    NaN    NaN   NaN   NaN
+2         Sorghum  500  10   0.62   0.770  ...   NaN    NaN    NaN   NaN   NaN
+3       Sunflower  500  10   0.67   0.820  ...   NaN    NaN    NaN   NaN   NaN
+4             Soy  500  10   0.67   0.820  ...   NaN    NaN    NaN   NaN   NaN
+5           Wheat  500  10   0.52   0.670  ...   NaN    NaN    NaN   NaN   NaN
+6        Rapeseed  500  10   0.70   0.800  ...  12.0  135.0  145.0   5.0  15.0
+7          Barley  500  10   0.52   0.670  ...   NaN    NaN    NaN   NaN   NaN
+8       Wheat_Soy  500  10   0.50   0.550  ...  15.0  280.0  300.0  25.0  35.0
+9       Evergreen  500  10   0.01   0.015  ...   NaN    NaN    NaN   NaN   NaN
+10      Decideous  500  10   0.20   0.350  ...   NaN    NaN    NaN   NaN   NaN
+11          Water  500  10   0.01   0.020  ...   NaN    NaN    NaN   NaN   NaN
+12          Build  500  10   0.01   0.020  ...   NaN    NaN    NaN   NaN   NaN
+13            NaN    1  26  51.00  76.000  ...   NaN    NaN    NaN   NaN   NaN
 ```
+
+## Results
+
+
+
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
