@@ -1,5 +1,20 @@
 # Generating synthetic time series dataset to study the influence of class label noise on classification performance
 
+## Table of contents
+* [Introduction](#Introduction)
+* [Context](#Context)
+* [Prerequisites](#Prerequisites)
+* [Installation](#Installation)
+* [Quick use](#Quick-use)
+* [Usage](#Usage)
+* [Config File](#Config-File:)
+* [Results](#Results)
+* [Contributing](#Contributing)
+* [Contributors](#Contributors)
+* [License](#License)
+
+## Introduction
+
 This module generates synthetic univarite time series datasets that contain different level of label noise. The generated datasets include remote sensing dataset specificity with a polygon concept. The idea is to take into account the field campaign protocols where sample labels are assigned by polygons describing for example crop fields.
 This code supports the following journal and conference papers:
 ```
@@ -22,7 +37,6 @@ This code supports the following journal and conference papers:
   organization={IEEE}
 }
 ```
-
 
 ## Context
 
