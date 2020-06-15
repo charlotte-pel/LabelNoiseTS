@@ -79,6 +79,11 @@ class GenLabelNoiseTS:
         if self._verbose is True:
             print("Init Done !")
 
+    #  -----------------------------------------------------------------------------------------------------------------
+    #  External (Public) Functions of this class.
+    #  For normal use.
+    #  -----------------------------------------------------------------------------------------------------------------
+
     def getDataXY(self):
         """
         Public function
@@ -173,7 +178,7 @@ class GenLabelNoiseTS:
         """
         Intern function
         :param dfLabel: DataFrame containing name of class for each pixel profil
-        :return: X and Y. X is a new matrix test containing profils NDVI generate. Y is label matrix
+        :return: X and Y. X is a new matrix containing profils NDVI generate. Y is label matrix
         """
         if dfLabel is None:
             dfLabel = self._dfData
