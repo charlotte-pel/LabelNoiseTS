@@ -95,6 +95,10 @@ def svmWork(path, kernel, noiseArray, nbFirstRun, nbLastRun):
             del generator
         resultsArray = np.append(resultsArray, values=results, axis=0)
 
+    dfAccuracyCsv = pd.DataFrame(np.array(
+        pd.DataFrame(resultsArray.reshape(((nbLastRun - nbFirstRun + 1), len(noiseArray))), columns=noiseArray,
+                     index=indexRunList)).reshape(10, len(noiseArray)), columns=noiseArray).T
+
     dfAccuracyMeanSVM = pd.DataFrame(np.array(
         pd.DataFrame(resultsArray.reshape(((nbLastRun - nbFirstRun + 1), len(noiseArray))), columns=noiseArray,
                      index=indexRunList).mean()).reshape(1, len(noiseArray)), columns=noiseArray).T
@@ -105,4 +109,4 @@ def svmWork(path, kernel, noiseArray, nbFirstRun, nbLastRun):
     dfAccuracyMeanSVM.rename(columns={0: 'SVM-' + kernel.upper() + ' NDVI'}, inplace=True)
     dfAccuracySVM = dfAccuracyMeanSVM.join(dfAccuracyStdSVM)
 
-    return dfAccuracySVM
+    return dfAccuracySVM, dfAccuracyCsv

@@ -26,6 +26,10 @@ def randomForestWork(NJOBS, path, noiseArray, nbFirstRun, nbLastRun):
             del generator
         resultsArray = np.append(resultsArray, values=results, axis=0)
 
+    dfAccuracyCsv = pd.DataFrame(np.array(
+        pd.DataFrame(resultsArray.reshape(((nbLastRun - nbFirstRun + 1), len(noiseArray))), columns=noiseArray,
+                     index=indexRunList)).reshape(10, len(noiseArray)), columns=noiseArray).T
+
     dfAccuracyMeanRF = pd.DataFrame(np.array(
         pd.DataFrame(resultsArray.reshape(((nbLastRun - nbFirstRun + 1), len(noiseArray))), columns=noiseArray,
                      index=indexRunList).mean()).reshape(1, len(noiseArray)), columns=noiseArray).T
@@ -36,4 +40,4 @@ def randomForestWork(NJOBS, path, noiseArray, nbFirstRun, nbLastRun):
     dfAccuracyMeanRF.rename(columns={0: 'RF NDVI'}, inplace=True)
     dfAccuracyRF = dfAccuracyMeanRF.join(dfAccuracyStdRF)
 
-    return dfAccuracyRF
+    return dfAccuracyRF, dfAccuracyCsv

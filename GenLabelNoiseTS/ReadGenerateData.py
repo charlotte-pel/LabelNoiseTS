@@ -29,7 +29,7 @@ class ReadGenerateData:
         else:
             dfCsv = pd.read_hdf(filename, 'csvFile')
             npCsv = np.array(pd.DataFrame(dfCsv))[0]
-            dfData = pd.read_csv(npCsv[0])
+            dfData = pd.read_csv(rep+npCsv[0])
         samplesClass = dfData
         nbPixelClass = [len(samplesClass.loc[(samplesClass['label'] == i)]) for i in classNames]
         nbPixelClass = pd.DataFrame([nbPixelClass],columns=classNames)
@@ -52,9 +52,10 @@ class ReadGenerateData:
             dfName = pd.DataFrame(dfName)
         else:
             dfCsv = pd.read_hdf(filename, 'csvFile')
+            #print(dfCsv)
             dfName = pd.DataFrame(dfCsv)
             dfName = np.array(dfName)
-            name = [rep+name+'.csv']
+            name = [name+'.csv']
         dfName = np.array(dfName)
         if name in dfName:
             found = True

@@ -59,8 +59,8 @@ class GenLabelNoiseTS:
                     dfCsv = pd.read_hdf(self._rep + self._filename, 'csvFile')
                     npCsv = np.array(pd.DataFrame(dfCsv))
                     npCsv = npCsv.reshape((len(npCsv),))
-                    self._dfData = pd.DataFrame(pd.read_csv(npCsv[0]))
-                    self._convertCsvToh5(npCsv)
+                    self._dfData = pd.DataFrame(pd.read_csv(self._rep+npCsv[0]))
+                    self._convertCsvToh5(self._rep+npCsv)
                 except KeyError:
                     self._dfData = pd.DataFrame(pd.read_hdf(self._rep + self._filename, 'data'))
             else:
@@ -71,7 +71,7 @@ class GenLabelNoiseTS:
                     dfCsv = pd.read_hdf(self._rep + self._filename, 'csvFile')
                     npCsv = np.array(pd.DataFrame(dfCsv))
                     npCsv = npCsv.reshape((len(npCsv),))
-                    self._dfData = pd.DataFrame(pd.read_csv(npCsv[0]))
+                    self._dfData = pd.DataFrame(pd.read_csv(self._rep+npCsv[0]))
             if self._verbose is True:
                 print("The file already exists !!!")
         (_, Y) = self._generateXY()
