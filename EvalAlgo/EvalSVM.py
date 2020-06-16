@@ -4,6 +4,7 @@ from sklearn.metrics import accuracy_score
 from sklearn import svm
 from sklearn.model_selection import GridSearchCV
 
+
 def svmWork(path, kernel, noiseArray, nbFirstRun, nbLastRun):
     resultsArray = np.array([])
     indexRunList = []
@@ -49,7 +50,7 @@ def svmWork(path, kernel, noiseArray, nbFirstRun, nbLastRun):
                           2 ** (4 / 5)]}
 
             svc = svm.SVC(kernel=kernel, decision_function_shape='ovo')
-            clf = GridSearchCV(estimator=svc, param_grid=parameters, cv=None, scoring='accuracy')
+            clf = GridSearchCV(estimator=svc, param_grid=parameters, cv=None, scoring='accuracy', n_jobs=-1)
             clf.fit(XTrainNorm, ytrain)
 
             valC = clf.best_params_['C']
@@ -78,7 +79,7 @@ def svmWork(path, kernel, noiseArray, nbFirstRun, nbLastRun):
                           valC * 2 ** (4 / 5)]}
 
             svc = svm.SVC(kernel=kernel, decision_function_shape='ovo')
-            clf = GridSearchCV(estimator=svc, param_grid=parameters, cv=None, scoring='accuracy')
+            clf = GridSearchCV(estimator=svc, param_grid=parameters, cv=None, scoring='accuracy',n_jobs=-1)
             clf.fit(Xtrain, ytrain)
 
             valC = clf.best_params_['C']
@@ -97,7 +98,7 @@ def svmWork(path, kernel, noiseArray, nbFirstRun, nbLastRun):
 
     dfAccuracyCsv = pd.DataFrame(np.array(
         pd.DataFrame(resultsArray.reshape(((nbLastRun - nbFirstRun + 1), len(noiseArray))), columns=noiseArray,
-                     index=indexRunList)).reshape(10, len(noiseArray)), columns=noiseArray).T
+                     index=indexRunList)).reshape(nbLastRun, len(noiseArray)), columns=noiseArray).T
 
     dfAccuracyMeanSVM = pd.DataFrame(np.array(
         pd.DataFrame(resultsArray.reshape(((nbLastRun - nbFirstRun + 1), len(noiseArray))), columns=noiseArray,

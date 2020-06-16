@@ -28,7 +28,7 @@ def randomForestWork(NJOBS, path, noiseArray, nbFirstRun, nbLastRun):
 
     dfAccuracyCsv = pd.DataFrame(np.array(
         pd.DataFrame(resultsArray.reshape(((nbLastRun - nbFirstRun + 1), len(noiseArray))), columns=noiseArray,
-                     index=indexRunList)).reshape(10, len(noiseArray)), columns=noiseArray).T
+                     index=indexRunList)).reshape(nbLastRun, len(noiseArray)), columns=noiseArray).T
 
     dfAccuracyMeanRF = pd.DataFrame(np.array(
         pd.DataFrame(resultsArray.reshape(((nbLastRun - nbFirstRun + 1), len(noiseArray))), columns=noiseArray,
