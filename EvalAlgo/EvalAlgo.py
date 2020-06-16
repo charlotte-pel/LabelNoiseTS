@@ -4,7 +4,8 @@ from EvalAlgo.EvalSVM import *
 
 def EvalAlgo():
     NJOBS = 8
-    rootPath = 'E:/Documents/Images/Desktop/StageIrisa/data/'
+    #rootPath = 'E:/Documents/Images/Desktop/StageIrisa/data/'
+    rootPath = 'C:/Users/walkz/OneDrive/Bureau/StageIrisa/data/'
     pathTwoClass = rootPath + 'TwoClass/'
     pathFiveClass = rootPath + 'FiveClass/'
     pathTenClass = rootPath + 'TenClass/'
@@ -18,13 +19,17 @@ def EvalAlgo():
 
     (dfAccuracyRF,dfAccuracyCsvRF) = randomForestWork(NJOBS, pathTwoClass, noiseArray, nbFirstRun, nbLastRun)
 
-    dfAccuracyRF.to_csv(pathTwoClass + "AccuracyRF.csv")
-    dfAccuracySVML.to_csv(pathTwoClass + "AccuracySVM_Linear.csv")
-    dfAccuracySVMRBF.to_csv(pathTwoClass + "AccuracySVM_RBF.csv")
+    dfAccuracyRF.to_csv(pathTwoClass + "AccuracyRF.csv", index=False)
+    dfAccuracySVML.to_csv(pathTwoClass + "AccuracySVM_Linear.csv", index=False)
+    dfAccuracySVMRBF.to_csv(pathTwoClass + "AccuracySVM_RBF.csv", index=False)
 
     dfAccuracyCsvRF.to_csv(pathTwoClass + "AccuracyCsvRF.csv")
     dfAccuracyCsvSVML.to_csv(pathTwoClass + "AccuracyCsvSVM_Linear.csv")
     dfAccuracyCsvSVMRBF.to_csv(pathTwoClass + "AccuracyCsvSVM_RBF.csv")
+
+    dfAccuracyRF = pd.read_csv(pathTwoClass + 'AccuracyRF.csv')
+    dfAccuracySVML = pd.read_csv(pathTwoClass + 'AccuracySVM_Linear.csv')
+    dfAccuracySVMRBF = pd.read_csv(pathTwoClass+'AccuracySVM_RBF.csv')
 
     fig, ax = plt.subplots()
     dfAccuracyRF.plot(y='RF NDVI', kind='line', legend=True, yerr='RF NDVI STD', ax=ax)
