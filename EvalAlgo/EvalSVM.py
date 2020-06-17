@@ -51,7 +51,7 @@ def svmWork(path, kernel, noiseArray, nbFirstRun, nbLastRun):
 
             svc = svm.SVC(kernel=kernel, decision_function_shape='ovo')
             clf = GridSearchCV(estimator=svc, param_grid=parameters, cv=None, scoring='accuracy', n_jobs=-1)
-            clf.fit(XTrainNorm, ytrain)
+            clf.fit(XTrainNorm, ytrain.ravel())
 
             valC = clf.best_params_['C']
             if kernel == 'rbf':
@@ -79,8 +79,8 @@ def svmWork(path, kernel, noiseArray, nbFirstRun, nbLastRun):
                           valC * 2 ** (4 / 5)]}
 
             svc = svm.SVC(kernel=kernel, decision_function_shape='ovo')
-            clf = GridSearchCV(estimator=svc, param_grid=parameters, cv=None, scoring='accuracy',n_jobs=-1)
-            clf.fit(Xtrain, ytrain)
+            clf = GridSearchCV(estimator=svc, param_grid=parameters, cv=None, scoring='accuracy', n_jobs=-1)
+            clf.fit(Xtrain, ytrain.ravel())
 
             valC = clf.best_params_['C']
             if kernel == 'rbf':
