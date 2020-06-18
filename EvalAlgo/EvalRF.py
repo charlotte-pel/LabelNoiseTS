@@ -16,8 +16,7 @@ def randomForestWork(NJOBS, path, noiseArray, nbFirstRun, nbLastRun):
                                         verbose=False)
             (Xtrain, ytrain) = generator.getNoiseDataXY(j)
             (Xtest, ytest) = generator.getTestData(otherPath=path + '/Run10/')
-            clf = RandomForestClassifier(n_estimators=200, max_depth=25, max_features='sqrt', n_jobs=NJOBS,
-                                         random_state=0)
+            clf = RandomForestClassifier(n_estimators=200, max_depth=25, max_features='sqrt', n_jobs=NJOBS)
             clf.fit(Xtrain, ytrain)
             ytest_pred = clf.predict(Xtest)
             results.append(accuracy_score(ytest, ytest_pred))

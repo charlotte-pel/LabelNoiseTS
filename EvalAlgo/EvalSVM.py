@@ -33,21 +33,12 @@ def svmWork(path, kernel, noiseArray, nbFirstRun, nbLastRun):
             if kernel == 'rbf':
                 valG = 1
                 parameters = {
-                    'C': [2 ** -1, 2 ** -(4 / 5), 2 ** -(3 / 5), 2 ** -(2 / 5),
-                          2 ** -(1 / 5),
-                          2 ** 0, 2 ** (1 / 5), 2 ** (2 / 5), 2 ** (3 / 5),
-                          2 ** (4 / 5)],
-                    'gamma': [2 ** -1, 2 ** -(4 / 5), 2 ** -(3 / 5), 2 ** -(2 / 5),
-                              2 ** -(1 / 5),
-                              2 ** 0, 2 ** (1 / 5), 2 ** (2 / 5), 2 ** (3 / 5),
-                              2 ** (4 / 5)]}
+                    'C': [2 ** -5, 2 ** -4, 2 ** -3, 2 ** -2, 2 ** -1, 2 ** 0, 2 ** 1, 2 ** 2, 2 ** 3, 2 ** 4],
+                    'gamma': [2 ** -5, 2 ** -4, 2 ** -3, 2 ** -2, 2 ** -1, 2 ** 0, 2 ** 1, 2 ** 2, 2 ** 3, 2 ** 4]}
 
             elif kernel == 'linear':
                 parameters = {
-                    'C': [2 ** -1, 2 ** -(4 / 5), 2 ** -(3 / 5), 2 ** -(2 / 5),
-                          2 ** -(1 / 5),
-                          2 ** 0, 2 ** (1 / 5), 2 ** (2 / 5), 2 ** (3 / 5),
-                          2 ** (4 / 5)]}
+                    'C': [2 ** -5, 2 ** -4, 2 ** -3, 2 ** -2, 2 ** -1, 2 ** 0, 2 ** 1, 2 ** 2, 2 ** 3, 2 ** 4]}
 
             svc = svm.SVC(kernel=kernel, decision_function_shape='ovo')
             clf = GridSearchCV(estimator=svc, param_grid=parameters, cv=None, scoring='accuracy', n_jobs=-1)
@@ -85,9 +76,9 @@ def svmWork(path, kernel, noiseArray, nbFirstRun, nbLastRun):
             valC = clf.best_params_['C']
             if kernel == 'rbf':
                 valG = clf.best_params_['gamma']
-                clf = svm.SVC(C=valC, gamma=valG, kernel='rbf', decision_function_shape='ovo', random_state=0)
+                clf = svm.SVC(C=valC, gamma=valG, kernel='rbf', decision_function_shape='ovo')
             elif kernel == 'linear':
-                clf = svm.SVC(C=valC, kernel='linear', decision_function_shape='ovo', random_state=0)
+                clf = svm.SVC(C=valC, kernel='linear', decision_function_shape='ovo')
             clf.fit(XTrainNorm, ytrain)
             ytest_pred = clf.predict(XTestNorm)
             results.append(accuracy_score(ytest, ytest_pred))
