@@ -3,6 +3,7 @@ from GenLabelNoiseTS.GenLabelNoiseTS import *
 
 
 def main():
+    nbRuns = 10
     initPath = 'init_param_file.csv'
     rep = 'E:/Documents/Images/Desktop/StageIrisa/'
     nameDataDir = rep + 'data/'
@@ -28,7 +29,7 @@ def main():
         print('PROGRESS BAR GENERATE DATA :')
         for i in namesDir:
             os.mkdir(i, 0o755)
-            for j in range(10):
+            for j in range(nbRuns):
                 os.mkdir(i + '/Run' + str(j + 1), 0o755)
                 if i == nameDataDir + 'TwoClass':
                     generator = GenLabelNoiseTS(filename="dataFrame.h5", rep=i + '/Run' + str(j + 1) + '/',
