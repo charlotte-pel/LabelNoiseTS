@@ -10,17 +10,17 @@ def EvalAlgo(path):
 
     (dfAccuracySVML, dfAccuracyCsvSVML) = svmWork(path, 'linear', noiseArray, nbFirstRun, nbLastRun)
 
-    # (dfAccuracySVMRBF, dfAccuracyCsvSVMRBF) = svmWork(path, 'rbf', noiseArray, nbFirstRun, nbLastRun)
+    (dfAccuracySVMRBF, dfAccuracyCsvSVMRBF) = svmWork(path, 'rbf', noiseArray, nbFirstRun, nbLastRun)
 
     (dfAccuracyRF, dfAccuracyCsvRF) = randomForestWork(NJOBS, path, noiseArray, nbFirstRun, nbLastRun)
 
     dfAccuracyRF.to_csv(path + "AccuracyRF.csv")
     dfAccuracySVML.to_csv(path + "AccuracySVM_Linear.csv")
-    # dfAccuracySVMRBF.to_csv(path + "AccuracySVM_RBF.csv")
+    dfAccuracySVMRBF.to_csv(path + "AccuracySVM_RBF.csv")
 
     dfAccuracyCsvRF.to_csv(path + "AccuracyCsvRF.csv")
     dfAccuracyCsvSVML.to_csv(path + "AccuracyCsvSVM_Linear.csv")
-    # dfAccuracyCsvSVMRBF.to_csv(path + "AccuracyCsvSVM_RBF.csv")
+    dfAccuracyCsvSVMRBF.to_csv(path + "AccuracyCsvSVM_RBF.csv")
 
 
 def visualisationEval(path, nbClass):

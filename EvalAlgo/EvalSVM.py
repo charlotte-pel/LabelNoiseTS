@@ -9,6 +9,7 @@ def svmWork(path, kernel, noiseArray, nbFirstRun, nbLastRun):
     resultsArray = np.array([])
     indexRunList = []
     for i in range(nbFirstRun, nbLastRun + 1):
+        print('Run '+str(i))
         results = []
         indexRunList.append('Run' + str(i))
         for j in noiseArray:
@@ -40,7 +41,7 @@ def svmWork(path, kernel, noiseArray, nbFirstRun, nbLastRun):
                 parameters = {
                     'C': [2 ** -5, 2 ** -4, 2 ** -3, 2 ** -2, 2 ** -1, 2 ** 0, 2 ** 1, 2 ** 2, 2 ** 3, 2 ** 4]}
 
-            svc = svm.SVC(kernel=kernel, decision_function_shape='ovo')
+            svc = svm.SVC(kernel=kernel)
             clf = GridSearchCV(estimator=svc, param_grid=parameters, cv=None, scoring='accuracy', n_jobs=-1)
             clf.fit(XTrainNorm, ytrain.ravel())
 
@@ -69,16 +70,16 @@ def svmWork(path, kernel, noiseArray, nbFirstRun, nbLastRun):
                           valC * 2 ** 0, valC * 2 ** (1 / 5), valC * 2 ** (2 / 5), valC * 2 ** (3 / 5),
                           valC * 2 ** (4 / 5)]}
 
-            svc = svm.SVC(kernel=kernel, decision_function_shape='ovo')
+            svc = svm.SVC(kernel=kernel)
             clf = GridSearchCV(estimator=svc, param_grid=parameters, cv=None, scoring='accuracy', n_jobs=-1)
             clf.fit(Xtrain, ytrain.ravel())
 
             valC = clf.best_params_['C']
             if kernel == 'rbf':
                 valG = clf.best_params_['gamma']
-                clf = svm.SVC(C=valC, gamma=valG, kernel='rbf', decision_function_shape='ovo')
+                clf = svm.SVC(C=valC, gamma=valG, kernel='rbf')
             elif kernel == 'linear':
-                clf = svm.SVC(C=valC, kernel='linear', decision_function_shape='ovo')
+                clf = svm.SVC(C=valC, kernel='linear')
             clf.fit(XTrainNorm, ytrain)
             ytest_pred = clf.predict(XTestNorm)
             results.append(accuracy_score(ytest, ytest_pred))

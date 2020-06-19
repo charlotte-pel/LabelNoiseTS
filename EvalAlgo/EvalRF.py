@@ -9,6 +9,7 @@ def randomForestWork(NJOBS, path, noiseArray, nbFirstRun, nbLastRun):
     indexRunList = []
 
     for i in range(nbFirstRun, nbLastRun + 1):
+        print('Run ' + str(i))
         results = []
         indexRunList.append('Run' + str(i))
         for j in noiseArray:
