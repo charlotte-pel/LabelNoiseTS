@@ -29,6 +29,7 @@ def visualisationEval(path, nbClass):
     dfAccuracySVMRBF = pd.read_csv(path + 'AccuracySVM_RBF.csv', index_col=0)
 
     fig, ax = plt.subplots()
+    ax.set_aspect('equal', 'box')
     dfAccuracyRF.plot(y='RF NDVI', kind='line', legend=True, yerr='RF NDVI STD', ax=ax)
     dfAccuracySVML.plot(y='SVM-LINEAR NDVI', kind='line', legend=True, yerr='SVM-LINEAR NDVI STD', ax=ax)
     dfAccuracySVMRBF.plot(y='SVM-RBF NDVI', kind='line', legend=True, yerr='SVM-RBF NDVI STD', ax=ax)
