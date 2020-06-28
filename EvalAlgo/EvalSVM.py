@@ -1,3 +1,4 @@
+from EvalAlgo import EvalFunc
 from GenLabelNoiseTS.GenLabelNoiseTS import *
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import accuracy_score
@@ -8,28 +9,15 @@ from sklearn.model_selection import GridSearchCV
 def svmWork(path, kernel, noiseArray, nbFirstRun, nbLastRun, seed, systematicChange=False):
     resultsArray = np.array([])
     indexRunList = []
+    algoName = 'SVM-' + kernel.upper()
     for i in range(nbFirstRun, nbLastRun + 1):
         print(kernel)
         print('Run ' + str(i))
         results = []
         indexRunList.append('Run' + str(i))
         for j in noiseArray:
-            generator = GenLabelNoiseTS(filename="dataFrame.h5", rep=path + 'Run' + str(i) + '/', csv=True,
-                                        verbose=False)
-            if systematicChange is False:
-                (Xtrain, ytrain) = generator.getNoiseDataXY(j)
-            elif systematicChange is True:
-                a = {'Corn': 'Corn_Ensilage', 'Corn_Ensilage': 'Sorghum', 'Sorghum': 'Sunflower',
-                     'Sunflower': 'Soy',
-                     'Soy': 'Corn'}
-                (Xtrain, ytrain) = generator.getNoiseDataXY(j, a)
+            (Xtrain, Xtest, ytrain, ytest) = EvalFunc.getXtrainXtestYtrainYtest(path, systematicChange, seed, j, i)
 
-            randomState = np.random.RandomState(seed)
-            Xtrain = randomState.permutation(Xtrain)
-            randomState = np.random.RandomState(seed)
-            ytrain = randomState.permutation(ytrain)
-
-            (Xtest, ytest) = generator.getTestData(otherPath=path + '/Run10/')
             Xshape = Xtrain.shape
             meanXj = np.mean(Xtrain, axis=0)
             stdXj = np.std(Xtrain, axis=0)
@@ -103,21 +91,9 @@ def svmWork(path, kernel, noiseArray, nbFirstRun, nbLastRun, seed, systematicCha
             results.append(accuracy_score(ytest, ytest_pred))
             del svc
             del clf
-            del generator
         resultsArray = np.append(resultsArray, values=results, axis=0)
 
-    dfAccuracyCsv = pd.DataFrame(np.array(
-        pd.DataFrame(resultsArray.reshape(((nbLastRun - nbFirstRun + 1), len(noiseArray))), columns=noiseArray,
-                     index=indexRunList)).reshape(nbLastRun, len(noiseArray)), columns=noiseArray).T
+    (dfAccuracySVM, dfAccuracySVMCsv) = EvalFunc.makeDfAccuracyMeanStd(resultsArray, noiseArray, algoName, nbFirstRun,
+                                                                       nbLastRun, indexRunList)
 
-    dfAccuracyMeanSVM = pd.DataFrame(np.array(
-        pd.DataFrame(resultsArray.reshape(((nbLastRun - nbFirstRun + 1), len(noiseArray))), columns=noiseArray,
-                     index=indexRunList).mean()).reshape(1, len(noiseArray)), columns=noiseArray).T
-    dfAccuracyStdSVM = pd.DataFrame(np.array(
-        pd.DataFrame(resultsArray.reshape(((nbLastRun - nbFirstRun + 1), len(noiseArray))), columns=noiseArray,
-                     index=indexRunList).std()).reshape(1, len(noiseArray)), columns=noiseArray).T
-    dfAccuracyStdSVM.rename(columns={0: 'SVM-' + kernel.upper() + ' NDVI STD'}, inplace=True)
-    dfAccuracyMeanSVM.rename(columns={0: 'SVM-' + kernel.upper() + ' NDVI'}, inplace=True)
-    dfAccuracySVM = dfAccuracyMeanSVM.join(dfAccuracyStdSVM)
-
-    return dfAccuracySVM, dfAccuracyCsv
+    return dfAccuracySVM, dfAccuracySVMCsv

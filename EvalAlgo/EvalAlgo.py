@@ -7,7 +7,7 @@ def EvalAlgo(path, nbClass, seed, systematicChange=False):
     NJOBS = 8
     noiseArray = [round(i, 2) for i in np.arange(0, 1.05, 0.05)]
     nbFirstRun = 1
-    nbLastRun = 10
+    nbLastRun = 1
 
     (dfAccuracySVML, dfAccuracyCsvSVML) = svmWork(path, 'linear', noiseArray, nbFirstRun, nbLastRun, seed,
                                                   systematicChange)
@@ -65,6 +65,8 @@ def visualisationEval(path, nbClass, systematicChange=False):
     dfAccuracyTempCNN.plot(y='TempCNN NDVI', kind='line', legend=True, yerr='TempCNN NDVI STD', ax=ax)
 
     plt.title(nbClass)
+    plt.xlabel('Niveau de bruit')
+    plt.ylabel('Taux de bonnes classification')
     plt.grid()
     plt.axis([-0.01, 1.01, 0, 1])
     plt.show()

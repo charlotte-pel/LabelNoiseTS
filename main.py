@@ -6,19 +6,19 @@ from EvalAlgo.EvalAlgo import *
 
 
 def main():
-    rootPath = 'E:/Documents/Images/Desktop/StageIrisa/data/'
-    # rootPath = 'C:/Users/walkz/OneDrive/Bureau/StageIrisa/data/'
+    # rootPath = 'E:/Documents/Images/Desktop/StageIrisa/data/'
+    rootPath = 'C:/Users/walkz/OneDrive/Bureau/StageIrisa/data/'
 
     pathTwoClass = rootPath + 'TwoClass/'
     pathFiveClass = rootPath + 'FiveClass/'
     pathTenClass = rootPath + 'TenClass/'
 
-    systematicChange = True
-    nbclass = 5
+    systematicChange = False
+    nbclass = 2
     seed = 0
 
-    #EvalAlgo(pathFiveClass, nbclass, seed, systematicChange)
-    visualisationEval(pathFiveClass, 'Five classes Systematic change', systematicChange)
+    EvalAlgo(pathTwoClass, nbclass, seed, systematicChange)
+    visualisationEval(pathTwoClass, 'Two classes', systematicChange)
 
 
 def getNoiseMatrixForSpeRun(numRun, path):
