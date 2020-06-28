@@ -5,17 +5,30 @@ from sklearn import svm
 from sklearn.model_selection import GridSearchCV
 
 
-def svmWork(path, kernel, noiseArray, nbFirstRun, nbLastRun):
+def svmWork(path, kernel, noiseArray, nbFirstRun, nbLastRun, seed, systematicChange=False):
     resultsArray = np.array([])
     indexRunList = []
     for i in range(nbFirstRun, nbLastRun + 1):
-        print('Run '+str(i))
+        print(kernel)
+        print('Run ' + str(i))
         results = []
         indexRunList.append('Run' + str(i))
         for j in noiseArray:
             generator = GenLabelNoiseTS(filename="dataFrame.h5", rep=path + 'Run' + str(i) + '/', csv=True,
                                         verbose=False)
-            (Xtrain, ytrain) = generator.getNoiseDataXY(j)
+            if systematicChange is False:
+                (Xtrain, ytrain) = generator.getNoiseDataXY(j)
+            elif systematicChange is True:
+                a = {'Corn': 'Corn_Ensilage', 'Corn_Ensilage': 'Sorghum', 'Sorghum': 'Sunflower',
+                     'Sunflower': 'Soy',
+                     'Soy': 'Corn'}
+                (Xtrain, ytrain) = generator.getNoiseDataXY(j, a)
+
+            randomState = np.random.RandomState(seed)
+            Xtrain = randomState.permutation(Xtrain)
+            randomState = np.random.RandomState(seed)
+            ytrain = randomState.permutation(ytrain)
+
             (Xtest, ytest) = generator.getTestData(otherPath=path + '/Run10/')
             Xshape = Xtrain.shape
             meanXj = np.mean(Xtrain, axis=0)
@@ -32,7 +45,6 @@ def svmWork(path, kernel, noiseArray, nbFirstRun, nbLastRun):
             XTestNorm = np.array(XTestNorm).reshape(Xshape)
 
             if kernel == 'rbf':
-                valG = 1
                 parameters = {
                     'C': [2 ** -5, 2 ** -4, 2 ** -3, 2 ** -2, 2 ** -1, 2 ** 0, 2 ** 1, 2 ** 2, 2 ** 3, 2 ** 4],
                     'gamma': [2 ** -5, 2 ** -4, 2 ** -3, 2 ** -2, 2 ** -1, 2 ** 0, 2 ** 1, 2 ** 2, 2 ** 3, 2 ** 4]}
@@ -44,6 +56,9 @@ def svmWork(path, kernel, noiseArray, nbFirstRun, nbLastRun):
             svc = svm.SVC(kernel=kernel)
             clf = GridSearchCV(estimator=svc, param_grid=parameters, cv=None, scoring='accuracy', n_jobs=-1)
             clf.fit(XTrainNorm, ytrain.ravel())
+
+            # dfResults = pd.DataFrame(clf.cv_results_)
+            # dfResults.to_csv(path + 'dfResults' + kernel + '.csv')
 
             valC = clf.best_params_['C']
             if kernel == 'rbf':
@@ -73,6 +88,9 @@ def svmWork(path, kernel, noiseArray, nbFirstRun, nbLastRun):
             svc = svm.SVC(kernel=kernel)
             clf = GridSearchCV(estimator=svc, param_grid=parameters, cv=None, scoring='accuracy', n_jobs=-1)
             clf.fit(Xtrain, ytrain.ravel())
+
+            # dfResults = pd.DataFrame(clf.cv_results_)
+            # dfResults.to_csv(path + 'dfResults2' + kernel + '.csv')
 
             valC = clf.best_params_['C']
             if kernel == 'rbf':

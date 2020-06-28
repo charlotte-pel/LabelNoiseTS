@@ -1,15 +1,13 @@
+from TempCNN.TempCNN import TempCNN
 from GenLabelNoiseTS.GenLabelNoiseTS import *
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import confusion_matrix
-from sklearn.metrics import accuracy_score
 
 
-def randomForestWork(NJOBS, path, noiseArray, nbFirstRun, nbLastRun,seed, systematicChange=False):
+def tempCNNWork(path, nbClass, noiseArray, nbFirstRun, nbLastRun, seed, systematicChange=False):
     resultsArray = np.array([])
     indexRunList = []
 
     for i in range(nbFirstRun, nbLastRun + 1):
-        print('RF')
+        print('TempCNN')
         print('Run ' + str(i))
         results = []
         indexRunList.append('Run' + str(i))
@@ -30,13 +28,11 @@ def randomForestWork(NJOBS, path, noiseArray, nbFirstRun, nbLastRun,seed, system
             ytrain = randomState.permutation(ytrain)
 
             (Xtest, ytest) = generator.getTestData(otherPath=path + '/Run10/')
-            clf = RandomForestClassifier(n_estimators=200, max_depth=25, max_features='sqrt', n_jobs=NJOBS)
-            clf.fit(Xtrain, ytrain)
-            ytest_pred = clf.predict(Xtest)
-            results.append(accuracy_score(ytest, ytest_pred))
-            C = confusion_matrix(ytest, ytest_pred)
-            del clf
-            del generator
+
+            accuracy_score = TempCNN('TempCNN', Xtrain, ytrain, Xtest, ytest, nbClass)
+
+            results.append(accuracy_score)
+
         resultsArray = np.append(resultsArray, values=results, axis=0)
 
     dfAccuracyCsv = pd.DataFrame(np.array(
@@ -49,8 +45,8 @@ def randomForestWork(NJOBS, path, noiseArray, nbFirstRun, nbLastRun,seed, system
     dfAccuracyStdRF = pd.DataFrame(np.array(
         pd.DataFrame(resultsArray.reshape(((nbLastRun - nbFirstRun + 1), len(noiseArray))), columns=noiseArray,
                      index=indexRunList).std()).reshape(1, len(noiseArray)), columns=noiseArray).T
-    dfAccuracyStdRF.rename(columns={0: 'RF NDVI STD'}, inplace=True)
-    dfAccuracyMeanRF.rename(columns={0: 'RF NDVI'}, inplace=True)
+    dfAccuracyStdRF.rename(columns={0: 'TempCNN NDVI STD'}, inplace=True)
+    dfAccuracyMeanRF.rename(columns={0: 'TempCNN NDVI'}, inplace=True)
     dfAccuracyRF = dfAccuracyMeanRF.join(dfAccuracyStdRF)
 
     return dfAccuracyRF, dfAccuracyCsv
