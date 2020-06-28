@@ -75,7 +75,7 @@ def svmWork(path, kernel, noiseArray, nbFirstRun, nbLastRun, seed, systematicCha
 
             svc = svm.SVC(kernel=kernel)
             clf = GridSearchCV(estimator=svc, param_grid=parameters, cv=None, scoring='accuracy', n_jobs=-1)
-            clf.fit(Xtrain, ytrain.ravel())
+            clf.fit(XTrainNorm, ytrain.ravel())
 
             # dfResults = pd.DataFrame(clf.cv_results_)
             # dfResults.to_csv(path + 'dfResults2' + kernel + '.csv')

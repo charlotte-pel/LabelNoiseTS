@@ -7,7 +7,7 @@ def EvalAlgo(path, nbClass, seed, systematicChange=False):
     NJOBS = 8
     noiseArray = [round(i, 2) for i in np.arange(0, 1.05, 0.05)]
     nbFirstRun = 1
-    nbLastRun = 1
+    nbLastRun = 10
 
     (dfAccuracySVML, dfAccuracyCsvSVML) = svmWork(path, 'linear', noiseArray, nbFirstRun, nbLastRun, seed,
                                                   systematicChange)
