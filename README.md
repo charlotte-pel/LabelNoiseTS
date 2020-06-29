@@ -6,8 +6,9 @@
 * [Prerequisites](#Prerequisites)
 * [Installation](#Installation)
 * [Quick use](#Quick-use)
-* [Usage](#Usage)
+* [Generating data](#Generating-data)
 * [Config File](#Config-File)
+* [Evaluation of performances](#Evaluation-of-performances)
 * [Results](#Results)
 * [Contributing](#Contributing)
 * [Contributors](#Contributors)
@@ -53,6 +54,7 @@ And use:
 - Numpy
 - Pandas
 - Matplotlib (Only for visualisation)
+- Keras & Tensorflow (Only for TempCNN)
 
 ## Installation
 
@@ -61,16 +63,22 @@ Use the package manager [pip](https://pip.pypa.io/en/stable/) to install numpy, 
 ```bash
 pip install numpy
 pip install pandas
-pip install Matplotlib # (Only for visualisation)
+pip install matplotlib # (Only for visualisation)
+pip install keras tensorflow # (Only for TempCNN)
 ```
 
 ## Quick use
+#### For Generating data :
 
-Open and run the notebook: ExampleUse in jupyter notebook.\
+Open and run the notebook: ExampleUseGeneratingData in jupyter notebook.\
 Located at the root of the project folder
 
-## Usage
+#### For Evaluation :
 
+Open and run the notebook: ExampleUseEvaluation in jupyter notebook.\
+Located at the root of the project folder
+
+## Generating data
 ```python
 from GenLabelNoiseTS.GenLabelNoiseTS import *
 
@@ -82,14 +90,14 @@ a = {'Wheat': 'Barley', 'Barley': 'Wheat'}
 (Xtest,Ytest) = generator.getTestData()
 generator.visualisation('img/')
 ```
-To generate a dataset use python command below:
+Generating a dataset use python command below:
 ```bash
 python gen_data.py -d src/file/ -f data.h5 -nclass 10 -noise random -noise.level [0.05,0.1,0.15,0.2,0.25,0.3] -save_csv -v -vis
 # If you use dict don't put any space!!!
 python gen_data.py -d src/file/ -f data.h5 -nclass 10 -noise {'Wheat':('Barley','Soy'),'Barley':'Soy'} -noise.level [0.05,0.1,0.15,0.2,0.25,0.3] -save_csv -v -vis
 ```
 
-To generate dataset for performance evaluation of machine learning algorithms use python command below:
+Generating dataset for performance evaluation of machine learning algorithms use python command below:
 ```bash
 python Generating_a_dataset.py
 ```
@@ -155,10 +163,15 @@ DataFrame from initFile.csv must be like below :
 13            NaN    1  26  51.00  76.000  ...   NaN    NaN    NaN   NaN   NaN
 ```
 
+## Evaluation of performances
+
+WIP
+
 ## Results
-
-![Plots Results](/img/plotsResults.png)
-
+#### Generating data :
+![Plots Results Generating Data](/img/plotsResults.png)
+#### Evaluation :
+![Plots Results Evaluation](/img/results2_5_10Class.png)
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
