@@ -90,18 +90,18 @@ a = {'Wheat': 'Barley', 'Barley': 'Wheat'}
 (Xtest,Ytest) = generator.getTestData()
 generator.visualisation('img/')
 ```
-Generating a dataset use python command below:
+####Generating a dataset use python command below:
 ```bash
 python gen_data.py -d src/file/ -f data.h5 -nclass 10 -noise random -noise.level [0.05,0.1,0.15,0.2,0.25,0.3] -save_csv -v -vis
 # If you use dict don't put any space!!!
 python gen_data.py -d src/file/ -f data.h5 -nclass 10 -noise {'Wheat':('Barley','Soy'),'Barley':'Soy'} -noise.level [0.05,0.1,0.15,0.2,0.25,0.3] -save_csv -v -vis
 ```
 
-Generating dataset for performance evaluation of machine learning algorithms use python command below:
+####Generating dataset for performance evaluation of machine learning algorithms use python command below:
 ```bash
 python Generating_a_dataset.py
 ```
-An example of a dataset named data is at the root of the directory.
+####An example of a dataset named data is at the root of the directory.
 Dataset tree:
 - data
   - TwoClass
