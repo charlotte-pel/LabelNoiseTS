@@ -1,7 +1,4 @@
 import hashlib
-
-import numpy as np
-
 from GenLabelNoiseTS.ReadGenerateData import *
 
 

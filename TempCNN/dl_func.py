@@ -5,7 +5,6 @@
 """
 
 import time
-
 import numpy as np
 from keras import optimizers
 from keras.callbacks import ModelCheckpoint, EarlyStopping
