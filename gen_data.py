@@ -2,6 +2,7 @@ import ast
 import sys
 
 from GenLabelNoiseTS.GenLabelNoiseTS import *
+from pathVar import *
 
 
 # python gen_data.py -d src/file/ -f data.h5 -nclass 10 -noise random -noise.level [0.05,0.1,0.15,0.2,0.25,0.3] -save_csv -v -vis
@@ -9,7 +10,6 @@ from GenLabelNoiseTS.GenLabelNoiseTS import *
 # python gen_data.py -d src/file/ -f data.h5 -nclass 10 -noise {'Wheat':('Barley','Soy'),'Barley':'Soy'} -noise.level [0.05,0.1,0.15,0.2,0.25,0.3] -save_csv -v -vis
 
 def main():
-    pathVis = 'src/img/'
     args = list(sys.argv)
     a = {}
     i = 1
@@ -27,7 +27,7 @@ def main():
     if '-vis' not in list(a.keys()):
         a['-vis'] = False
     # a = {'Wheat': ('Barley','Soy','Build'),'Barley':'Soy'}
-    generator = GenLabelNoiseTS(rep=a['-d'],filename=a['-f'],csv=a['-save_csv'],verbose=a['-v'])
+    generator = GenLabelNoiseTS(rep=a['-d'], filename=a['-f'], csv=a['-save_csv'], verbose=a['-v'])
     (X, Y) = generator.getDataXY()
     if a['-vis'] is True:
         generator.visualisation(pathVis)

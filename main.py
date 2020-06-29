@@ -1,19 +1,12 @@
 from multiprocessing import Pool
 
 from EvalAlgo.EvalAlgo import *
-
+from pathVar import *
 
 # from CNNTemp.train_classifier import *
 
 
 def main():
-    # rootPath = 'E:/Documents/Images/Desktop/StageIrisa/data/'
-    rootPath = 'C:/Users/walkz/OneDrive/Bureau/StageIrisa/data/'
-
-    pathTwoClass = rootPath + 'TwoClass/'
-    pathFiveClass = rootPath + 'FiveClass/'
-    pathTenClass = rootPath + 'TenClass/'
-
     systematicChange = False
     nbclass = 2
     seed = 0
@@ -44,7 +37,6 @@ def checkNoiseForTwoFiveTenClass(verbose=False):
 
 
 def checkGeneratingNoise(nbSamples, nbClass, pathClass, verbose=False):
-    rootPath = 'C:/Users/walkz/OneDrive/Bureau/StageIrisa/data/'
     pathClass = rootPath + pathClass
     noiseArray = [round(i, 2) for i in np.arange(0, 1.05, 0.05)]
     nbFirstRun = 1

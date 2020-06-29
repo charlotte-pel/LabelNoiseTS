@@ -1,13 +1,13 @@
 import shutil
 
 from GenLabelNoiseTS.GenLabelNoiseTS import *
+from pathVar import *
 
 
 def main():
     nbRuns = 10
     initPath = 'init_param_file.csv'
-    rep = 'E:/Documents/Images/Desktop/StageIrisa/'
-    nameDataDir = rep + 'data/'
+    nameDataDir = rootPath
     namesDir = (nameDataDir + 'TwoClass', nameDataDir + 'FiveClass', nameDataDir + 'TenClass')
     if os.path.isdir(nameDataDir):
         print('Dir data/ already exist !')
