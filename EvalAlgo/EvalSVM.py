@@ -30,11 +30,9 @@ def svmWork(path, kernel, noiseArray, nbFirstRun, nbLastRun, seed, systematicCha
                     'C': [2 ** -5, 2 ** -4, 2 ** -3, 2 ** -2, 2 ** -1, 2 ** 0, 2 ** 1, 2 ** 2, 2 ** 3, 2 ** 4]}
 
             svc = svm.SVC(kernel=kernel)
-            clf = GridSearchCV(estimator=svc, param_grid=parameters, cv=None, scoring='accuracy', n_jobs=-1)
+            clf = GridSearchCV(estimator=svc, param_grid=parameters, cv=None, scoring='accuracy', n_jobs=-1,
+                               refit=False)
             clf.fit(XTrainNorm, ytrain.ravel())
-
-            # dfResults = pd.DataFrame(clf.cv_results_)
-            # dfResults.to_csv(path + 'dfResults' + kernel + '.csv')
 
             valC = clf.best_params_['C']
             if kernel == 'rbf':
@@ -62,19 +60,9 @@ def svmWork(path, kernel, noiseArray, nbFirstRun, nbLastRun, seed, systematicCha
                           valC * 2 ** (4 / 5)]}
 
             svc = svm.SVC(kernel=kernel)
-            clf = GridSearchCV(estimator=svc, param_grid=parameters, cv=None, scoring='accuracy', n_jobs=-1)
+            clf = GridSearchCV(estimator=svc, param_grid=parameters, cv=None, scoring='accuracy', n_jobs=-1, refit=True)
             clf.fit(XTrainNorm, ytrain.ravel())
 
-            # dfResults = pd.DataFrame(clf.cv_results_)
-            # dfResults.to_csv(path + 'dfResults2' + kernel + '.csv')
-
-            valC = clf.best_params_['C']
-            if kernel == 'rbf':
-                valG = clf.best_params_['gamma']
-                clf = svm.SVC(C=valC, gamma=valG, kernel='rbf')
-            elif kernel == 'linear':
-                clf = svm.SVC(C=valC, kernel='linear')
-            clf.fit(XTrainNorm, ytrain)
             ytest_pred = clf.predict(XTestNorm)
             results.append(accuracy_score(ytest, ytest_pred))
             del svc
