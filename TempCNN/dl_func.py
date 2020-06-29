@@ -13,7 +13,7 @@ from keras.layers import Conv1D, GRU, Bidirectional
 from keras.layers import Input, Dense, Activation, BatchNormalization, Dropout, Flatten
 from keras.models import Model, load_model
 from keras.regularizers import l2
-
+from keras.utils.np_utils import to_categorical
 
 #-----------------------------------------------------------------------
 #-----------------------------------------------------------------------
