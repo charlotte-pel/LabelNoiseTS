@@ -4,27 +4,15 @@
 	Training deep learning models, imcluding TempCNNs and GRU-RNNs.
 """
 
-
-import os, sys
-import argparse
-
-import numpy as np
-import pandas as pd
-import math
-import random
-import itertools
 import time
 
-import keras
-from keras import layers
+import numpy as np
 from keras import optimizers
-from keras.regularizers import l2
-from keras.layers import Input, Dense, Activation, BatchNormalization, Dropout, Flatten, Lambda, SpatialDropout1D, Concatenate
-from keras.layers import Conv1D, Conv2D, AveragePooling1D, MaxPooling1D, GlobalMaxPooling1D, GlobalAveragePooling1D, GRU, Bidirectional
-from keras.callbacks import Callback, ModelCheckpoint, History, EarlyStopping
+from keras.callbacks import ModelCheckpoint, EarlyStopping
+from keras.layers import Conv1D, GRU, Bidirectional
+from keras.layers import Input, Dense, Activation, BatchNormalization, Dropout, Flatten
 from keras.models import Model, load_model
-from keras.utils.np_utils import to_categorical
-from keras import backend as K
+from keras.regularizers import l2
 
 
 #-----------------------------------------------------------------------

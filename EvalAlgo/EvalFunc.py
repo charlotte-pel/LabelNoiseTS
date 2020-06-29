@@ -1,7 +1,7 @@
 from GenLabelNoiseTS.GenLabelNoiseTS import *
 
 
-def getXtrainXtestYtrainYtest(path, systematicChange, seed, noiseLevel, run):
+def getXtrainXtestYtrainYtest(path, noiseLevel, run, seed, systematicChange):
     generator = GenLabelNoiseTS(filename="dataFrame.h5", rep=path + 'Run' + str(run) + '/', csv=True,
                                 verbose=False)
     if systematicChange is False:

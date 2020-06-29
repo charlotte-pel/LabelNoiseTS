@@ -5,16 +5,18 @@
 """
 
 from TempCNN.dl_func import *
-from TempCNN.sits_func import *
 from TempCNN.res_func import *
+from TempCNN.sits_func import *
 
 
 # -----------------------------------------------------------------------
 # -----------------------------------------------------------------------
-# ---------------------			Temp CNN			------------------------
+# ---------------------			Temp CNN			---------------------
 # -----------------------------------------------------------------------
 # -----------------------------------------------------------------------
-
+# Deep Learning for the classification of Sentinel-2 image time series
+# Code come from: https://github.com/charlotte-pel/igarss2019-dl4sits
+# Authors: Dr. Charlotte Pelletier, Professor Geoffrey I. Webb, Dr. Francois Petitjean
 # -----------------------------------------------------------------------
 def TempCNN(classifier_type, X_train, y_train, X_test, y_test, nbClass):
     classif_type = ["RF", "TempCNN", "GRU-RNNbi", "GRU-RNN"]

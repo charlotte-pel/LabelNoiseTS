@@ -1,6 +1,8 @@
 import hashlib
-from GenLabelNoiseTS.ReadGenerateData import *
+
 import numpy as np
+
+from GenLabelNoiseTS.ReadGenerateData import *
 
 
 class GeneratorLabelNoise:

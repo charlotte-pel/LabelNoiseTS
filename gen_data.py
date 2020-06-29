@@ -1,6 +1,8 @@
-from GenLabelNoiseTS.GenLabelNoiseTS import *
-import sys
 import ast
+import sys
+
+from GenLabelNoiseTS.GenLabelNoiseTS import *
+
 
 # python gen_data.py -d src/file/ -f data.h5 -nclass 10 -noise random -noise.level [0.05,0.1,0.15,0.2,0.25,0.3] -save_csv -v -vis
 # If you use dict don't put any space!!!

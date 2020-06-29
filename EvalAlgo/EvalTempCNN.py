@@ -1,6 +1,6 @@
 from EvalAlgo import EvalFunc
-from TempCNN.TempCNN import TempCNN
 from GenLabelNoiseTS.GenLabelNoiseTS import *
+from TempCNN.TempCNN import TempCNN
 
 
 def tempCNNWork(path, nbClass, noiseArray, nbFirstRun, nbLastRun, seed, systematicChange=False):
@@ -13,7 +13,7 @@ def tempCNNWork(path, nbClass, noiseArray, nbFirstRun, nbLastRun, seed, systemat
         results = []
         indexRunList.append('Run' + str(i))
         for j in noiseArray:
-            (Xtrain, Xtest, ytrain, ytest) = EvalFunc.getXtrainXtestYtrainYtest(path, systematicChange, seed, j, i)
+            (Xtrain, Xtest, ytrain, ytest) = EvalFunc.getXtrainXtestYtrainYtest(path, j, i, seed, systematicChange)
 
             accuracy_score = TempCNN('TempCNN', Xtrain, ytrain, Xtest, ytest, nbClass)
 

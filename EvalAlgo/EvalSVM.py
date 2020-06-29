@@ -1,9 +1,9 @@
+from sklearn import svm
+from sklearn.metrics import accuracy_score
+from sklearn.model_selection import GridSearchCV
+
 from EvalAlgo import EvalFunc
 from GenLabelNoiseTS.GenLabelNoiseTS import *
-from sklearn.metrics import confusion_matrix
-from sklearn.metrics import accuracy_score
-from sklearn import svm
-from sklearn.model_selection import GridSearchCV
 
 
 def svmWork(path, kernel, noiseArray, nbFirstRun, nbLastRun, seed, systematicChange=False):
@@ -16,21 +16,9 @@ def svmWork(path, kernel, noiseArray, nbFirstRun, nbLastRun, seed, systematicCha
         results = []
         indexRunList.append('Run' + str(i))
         for j in noiseArray:
-            (Xtrain, Xtest, ytrain, ytest) = EvalFunc.getXtrainXtestYtrainYtest(path, systematicChange, seed, j, i)
+            (Xtrain, Xtest, ytrain, ytest) = EvalFunc.getXtrainXtestYtrainYtest(path, j, i, seed, systematicChange)
 
-            Xshape = Xtrain.shape
-            meanXj = np.mean(Xtrain, axis=0)
-            stdXj = np.std(Xtrain, axis=0)
-            XTrainNorm = []
-            XTestNorm = []
-            for n, k in zip(Xtrain, Xtest):
-                l = 0
-                for o, m in zip(n, k):
-                    XTrainNorm.append((o - meanXj[l]) / stdXj[l])
-                    XTestNorm.append((m - meanXj[l]) / stdXj[l])
-                    l += 1
-            XTrainNorm = np.array(XTrainNorm).reshape(Xshape)
-            XTestNorm = np.array(XTestNorm).reshape(Xshape)
+            (XTrainNorm, XTestNorm) = normalizingData(Xtrain, Xtest)
 
             if kernel == 'rbf':
                 parameters = {
@@ -97,3 +85,21 @@ def svmWork(path, kernel, noiseArray, nbFirstRun, nbLastRun, seed, systematicCha
                                                                        nbLastRun, indexRunList)
 
     return dfAccuracySVM, dfAccuracySVMCsv
+
+
+def normalizingData(Xtrain, Xtest):
+    Xshape = Xtrain.shape
+    meanXj = np.mean(Xtrain, axis=0)
+    stdXj = np.std(Xtrain, axis=0)
+    XTrainNorm = []
+    XTestNorm = []
+    for n, k in zip(Xtrain, Xtest):
+        l = 0
+        for o, m in zip(n, k):
+            XTrainNorm.append((o - meanXj[l]) / stdXj[l])
+            XTestNorm.append((m - meanXj[l]) / stdXj[l])
+            l += 1
+    XTrainNorm = np.array(XTrainNorm).reshape(Xshape)
+    XTestNorm = np.array(XTestNorm).reshape(Xshape)
+
+    return XTrainNorm, XTestNorm

@@ -15,7 +15,7 @@ def EvalAlgo(path, nbClass, seed, systematicChange=False):
     (dfAccuracySVMRBF, dfAccuracyCsvSVMRBF) = svmWork(path, 'rbf', noiseArray, nbFirstRun, nbLastRun, seed,
                                                       systematicChange)
 
-    (dfAccuracyRF, dfAccuracyCsvRF) = randomForestWork(NJOBS, path, noiseArray, nbFirstRun, nbLastRun, seed,
+    (dfAccuracyRF, dfAccuracyCsvRF) = randomForestWork(path, noiseArray, nbFirstRun, nbLastRun, seed, NJOBS,
                                                        systematicChange)
 
     (dfAccuracyTempCNN, dfAccuracyCsvTempCNN) = tempCNNWork(path, nbClass, noiseArray, nbFirstRun, nbLastRun, seed,
