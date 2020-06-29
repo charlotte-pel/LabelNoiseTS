@@ -1,5 +1,6 @@
+import numpy as np
+
 from EvalAlgo import EvalFunc
-from GenLabelNoiseTS.GenLabelNoiseTS import *
 from TempCNN.TempCNN import TempCNN
 
 

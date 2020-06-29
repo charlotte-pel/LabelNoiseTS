@@ -53,6 +53,8 @@ The code relies on Pyton 3.8\
 And use:
 - Numpy
 - Pandas
+- Tables
+- Jupyter Notebook (Only for use Jupyter Notebook)
 - Matplotlib (Only for visualisation)
 - Keras & Tensorflow (Only for TempCNN)
 
@@ -63,6 +65,8 @@ Use the package manager [pip](https://pip.pypa.io/en/stable/) to install numpy, 
 ```bash
 pip install numpy
 pip install pandas
+pip install tables
+pip install jupyter # (Only for use Jupyter Notebook)
 pip install matplotlib # (Only for visualisation)
 pip install keras tensorflow # (Only for TempCNN)
 ```
