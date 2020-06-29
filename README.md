@@ -169,7 +169,17 @@ DataFrame from initFile.csv must be like below :
 
 ## Evaluation of performances
 
-WIP
+```python
+from EvalAlgo.EvalAlgo import *
+from pathVar import *
+
+systematicChange = False
+nbclass = 2
+seed = 0
+
+EvalAlgo(pathTwoClass, nbclass, seed, systematicChange)
+visualisationEval(pathTwoClass, 'Two classes', systematicChange)
+```
 
 ## Results
 #### Generating data :
