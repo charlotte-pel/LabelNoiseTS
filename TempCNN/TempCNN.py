@@ -3,6 +3,7 @@
 """
 	Temp CNN
 """
+import sys
 
 from TempCNN.dl_func import *
 from TempCNN.res_func import *
