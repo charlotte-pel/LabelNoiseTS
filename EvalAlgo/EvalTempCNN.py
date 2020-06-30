@@ -5,6 +5,17 @@ from TempCNN.TempCNN import TempCNN
 
 
 def tempCNNWork(path, nbClass, noiseArray, nbFirstRun, nbLastRun, seed, systematicChange=False):
+    """
+    TempCNN evaluation function
+    :param path: Path to dataset
+    :param nbClass: Number of class in classification
+    :param noiseArray: Array containing all noise level
+    :param nbFirstRun: First run number (1)
+    :param nbLastRun: Last run number (10)
+    :param seed: seed for shuffle data
+    :param systematicChange: True if noise is systematic change, False if noise is random:
+    :return: dfAccuracyTempCNN, dfAccuracyTempCNNCsv
+    """
     resultsArray = np.array([])
     indexRunList = []
     algoName = 'TempCNN'

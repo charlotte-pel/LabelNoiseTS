@@ -4,6 +4,14 @@ from EvalAlgo.EvalTempCNN import *
 
 
 def EvalAlgo(path, nbClass, seed, systematicChange=False):
+    """
+    Functions for evaluation of RandomForest, SVM-Linear, SVM-RBF, TempCNN
+    :param path: Path to dataset
+    :param nbClass: Number of class in classification
+    :param seed: seed for shuffle data
+    :param systematicChange: True if noise is systematic change, False if noise is random
+    :return: None
+    """
     NJOBS = 8
     noiseArray = [round(i, 2) for i in np.arange(0, 1.05, 0.05)]
     nbFirstRun = 1
@@ -45,6 +53,13 @@ def EvalAlgo(path, nbClass, seed, systematicChange=False):
 
 
 def visualisationEval(path, nbClass, systematicChange=False):
+    """
+    Evaluation visualisation function
+    :param path: Path to dataset
+    :param nbClass: Number of class in classification
+    :param systematicChange: True if noise is systematic change, False if noise is random
+    :return: Show plot result of evaluation
+    """
     if systematicChange is False:
         dfAccuracyRF = pd.read_csv(path + 'AccuracyRF.csv', index_col=0)
         dfAccuracySVML = pd.read_csv(path + 'AccuracySVM_Linear.csv', index_col=0)

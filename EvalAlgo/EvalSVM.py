@@ -7,6 +7,17 @@ from GenLabelNoiseTS.GenLabelNoiseTS import *
 
 
 def svmWork(path, kernel, noiseArray, nbFirstRun, nbLastRun, seed, systematicChange=False):
+    """
+    SVM evaluation function
+    :param path: Path to dataset
+    :param kernel: SVM Kernel (Linear or RBF)
+    :param noiseArray: Array containing all noise level
+    :param nbFirstRun: First run number (1)
+    :param nbLastRun: Last run number (10)
+    :param seed: seed for shuffle data
+    :param systematicChange: True if noise is systematic change, False if noise is random
+    :return: dfAccuracySVM, dfAccuracySVMCsv
+    """
     resultsArray = np.array([])
     indexRunList = []
     algoName = 'SVM-' + kernel.upper()

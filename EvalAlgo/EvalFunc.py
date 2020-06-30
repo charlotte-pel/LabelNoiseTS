@@ -2,6 +2,15 @@ from GenLabelNoiseTS.GenLabelNoiseTS import *
 
 
 def getXtrainXtestYtrainYtest(path, noiseLevel, run, seed, systematicChange):
+    """
+    Function to get Xtrain, Xtest, Ytrain, Ytest
+    :param path: Path to dataset
+    :param noiseLevel: Noise level for Xtrain data
+    :param run: run number (1 -> 10)
+    :param seed: seed for shuffle data
+    :param systematicChange: True if noise is systematic change, False if noise is random
+    :return: Xtrain, Xtest, ytrain, ytest
+    """
     generator = GenLabelNoiseTS(filename="dataFrame.h5", rep=path + 'Run' + str(run) + '/', csv=True,
                                 verbose=False)
     if systematicChange is False:
@@ -23,6 +32,16 @@ def getXtrainXtestYtrainYtest(path, noiseLevel, run, seed, systematicChange):
 
 
 def makeDfAccuracyMeanStd(resultsArray, noiseArray, algoName, nbFirstRun, nbLastRun, indexRunList):
+    """
+    Function to make Accuracy Dataframe (Mean and STD)
+    :param resultsArray: results of evaluation
+    :param noiseArray: Array containing all noise level
+    :param algoName: Algorithm name like RF, SVM-Linear, ...
+    :param nbFirstRun: First run number (1)
+    :param nbLastRun: Last run number (10)
+    :param indexRunList: List of run
+    :return: dfAccuracy, dfAccuracyCsv
+    """
     dfAccuracyCsv = pd.DataFrame(np.array(
         pd.DataFrame(resultsArray.reshape(((nbLastRun - nbFirstRun + 1), len(noiseArray))), columns=noiseArray,
                      index=indexRunList)).reshape(nbLastRun, len(noiseArray)), columns=noiseArray).T

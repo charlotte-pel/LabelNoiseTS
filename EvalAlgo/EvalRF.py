@@ -7,6 +7,17 @@ from GenLabelNoiseTS.GenLabelNoiseTS import *
 
 
 def randomForestWork(path, noiseArray, nbFirstRun, nbLastRun, seed, NJOBS, systematicChange=False):
+    """
+    Random Forest evaluation function
+    :param path: Path to dataset
+    :param noiseArray: Array containing all noise level
+    :param nbFirstRun: First run number (1)
+    :param nbLastRun: Last run number (10)
+    :param seed: seed for shuffle data
+    :param NJOBS: Number of cores used
+    :param systematicChange: True if noise is systematic change, False if noise is random
+    :return: dfAccuracyRF, dfAccuracyRFCsv
+    """
     resultsArray = np.array([])
     indexRunList = []
     algoName = 'RF'
