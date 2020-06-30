@@ -206,9 +206,7 @@ class DrawProfiles:
         tmpDfData = dfData.loc[(dfData['label'] == className)]
         print(tmpDfData)
         #TODO Fix bug first launch
-        samplePolid = int(tmpDfData['polid'].sample(n=1))
-        print(samplePolid)
-        tmpDfData = tmpDfData.loc[(tmpDfData['polid'] == samplePolid)]
+        tmpDfData = tmpDfData.loc[(tmpDfData['polid'] == int(tmpDfData['polid'].sample(n=1)))]
         tmpDfData = tmpDfData.reset_index()
         del tmpDfData['polid']
         del tmpDfData['pixid']
