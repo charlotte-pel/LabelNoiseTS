@@ -194,13 +194,13 @@ from GenLabelNoiseTS.GenLabelNoiseTS import *
 
 generator = GenLabelNoiseTS(filename="dataFrame.h5", rep='pathToData' + 'Run' + str(1) + '/', csv=True,
                                 verbose=False)
-generator.visualisationProfilsMeanAllClass('yourPath/')
-generator.visualisationRandomOnePolyProfilOneClass('Corn', 'yourPath/')
-generator.visualisation20RandomMeanProfilsOneClass('Corn', 'yourPath/')
-generator.visualisation20RandomProfilsOneClass('Corn', 'yourPath/')
-generator.visualisationMeanProfilsOneClass('Corn', 'yourPath/')
-generator.visualisationProfilMeanOneClass('Corn', 'yourPath/')
-generator.visualisationProfilsOneClass('Corn', 'yourPath/')
+generator.visualisationProfilesMeanAllClass('yourPath/')
+generator.visualisationRandomOnePolyProfileOneClass('Corn', 'yourPath/')
+generator.visualisation20RandomMeanProfilesOneClass('Corn', 'yourPath/')
+generator.visualisation20RandomProfilesOneClass('Corn', 'yourPath/')
+generator.visualisationMeanProfilesOneClass('Corn', 'yourPath/')
+generator.visualisationProfileMeanOneClass('Corn', 'yourPath/')
+generator.visualisationProfilesOneClass('Corn', 'yourPath/')
 ```
 
 ## Results

@@ -65,8 +65,8 @@ def visualisationEval(path, nbClass, systematicChange=False):
     dfAccuracyTempCNN.plot(y='TempCNN NDVI', kind='line', legend=True, yerr='TempCNN NDVI STD', ax=ax)
 
     plt.title(nbClass)
-    plt.xlabel('Niveau de bruit')
-    plt.ylabel('Taux de bonnes classification')
+    plt.xlabel('Noise Level')
+    plt.ylabel('OA')
     plt.grid()
     plt.axis([-0.01, 1.01, 0, 1])
     plt.show()

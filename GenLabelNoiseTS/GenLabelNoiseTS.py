@@ -2,9 +2,9 @@ import os
 
 import h5py
 
-from GenLabelNoiseTS.DrawProfils import *
+from GenLabelNoiseTS.DrawProfiles import *
 from GenLabelNoiseTS.GeneratorLabelNoise import *
-from GenLabelNoiseTS.GeneratorNDVIProfils import *
+from GenLabelNoiseTS.GeneratorNDVIProfiles import *
 from GenLabelNoiseTS.WriteGenerateData import *
 
 
@@ -176,17 +176,18 @@ class GenLabelNoiseTS:
         for i in range(2, nbClass + 1):
             classNames.append(self._dfHeader[0][i][0])
         for i in classNames:
-            Drawprofils.drawProfilsOneClass(i, dfHeader=self._dfHeader, dfData=self._dfData, saveFile=saveFile, rep=rep)
-        Drawprofils.drawProfilsMeanAllClass(dfHeader=self._dfHeader, dfData=self._dfData, saveFile=saveFile, rep=rep)
+            DrawProfiles.drawProfilesOneClass(i, dfHeader=self._dfHeader, dfData=self._dfData, saveFile=saveFile,
+                                              rep=rep)
+        DrawProfiles.drawProfilesMeanAllClass(dfHeader=self._dfHeader, dfData=self._dfData, saveFile=saveFile, rep=rep)
 
-    def visualisationProfilsMeanAllClass(self, rep=None):
+    def visualisationProfilesMeanAllClass(self, rep=None):
         if rep is None:
             saveFile = False
         else:
             saveFile = True
-        Drawprofils.drawProfilsMeanAllClass(dfHeader=self._dfHeader, dfData=self._dfData, saveFile=saveFile, rep=rep)
+        DrawProfiles.drawProfilesMeanAllClass(dfHeader=self._dfHeader, dfData=self._dfData, saveFile=saveFile, rep=rep)
 
-    def visualisationProfilsOneClass(self, className, rep=None):
+    def visualisationProfilesOneClass(self, className, rep=None):
         """
             Public function for create visualisation in rep
             :param rep: Name of the rep
@@ -196,51 +197,52 @@ class GenLabelNoiseTS:
             saveFile = False
         else:
             saveFile = True
-        Drawprofils.drawProfilsOneClass(className, dfHeader=self._dfHeader, dfData=self._dfData, saveFile=saveFile,
-                                        rep=rep)
+        DrawProfiles.drawProfilesOneClass(className, dfHeader=self._dfHeader, dfData=self._dfData, saveFile=saveFile,
+                                          rep=rep)
 
-    def visualisationMeanProfilsOneClass(self, className, rep=None):
+    def visualisationMeanProfilesOneClass(self, className, rep=None):
         if rep is None:
             saveFile = False
         else:
             saveFile = True
-        Drawprofils.drawMeanProfilsOneClass(className, dfHeader=self._dfHeader, dfData=self._dfData, saveFile=saveFile,
-                                            rep=rep)
+        DrawProfiles.drawMeanProfilesOneClass(className, dfHeader=self._dfHeader, dfData=self._dfData,
+                                              saveFile=saveFile,
+                                              rep=rep)
 
-    def visualisationProfilMeanOneClass(self, className, rep=None):
+    def visualisationProfileMeanOneClass(self, className, rep=None):
         if rep is None:
             saveFile = False
         else:
             saveFile = True
-        Drawprofils.drawProfilMeanOneClass(className, dfHeader=self._dfHeader, dfData=self._dfData, saveFile=saveFile,
-                                           rep=rep)
+        DrawProfiles.drawProfileMeanOneClass(className, dfHeader=self._dfHeader, dfData=self._dfData, saveFile=saveFile,
+                                             rep=rep)
 
-    def visualisation20RandomProfilsOneClass(self, className, rep=None):
+    def visualisation20RandomProfilesOneClass(self, className, rep=None):
         if rep is None:
             saveFile = False
         else:
             saveFile = True
-        Drawprofils.draw20RandomProfilsOneClass(className, dfHeader=self._dfHeader, dfData=self._dfData,
-                                                saveFile=saveFile,
-                                                rep=rep)
+        DrawProfiles.draw20RandomProfilesOneClass(className, dfHeader=self._dfHeader, dfData=self._dfData,
+                                                  saveFile=saveFile,
+                                                  rep=rep)
 
-    def visualisation20RandomMeanProfilsOneClass(self, className, rep=None):
+    def visualisation20RandomMeanProfilesOneClass(self, className, rep=None):
         if rep is None:
             saveFile = False
         else:
             saveFile = True
-        Drawprofils.draw20RandomMeanProfilsOneClass(className, dfHeader=self._dfHeader, dfData=self._dfData,
-                                                    saveFile=saveFile,
-                                                    rep=rep)
+        DrawProfiles.draw20RandomMeanProfilesOneClass(className, dfHeader=self._dfHeader, dfData=self._dfData,
+                                                      saveFile=saveFile,
+                                                      rep=rep)
 
-    def visualisationRandomOnePolyProfilOneClass(self, className, rep=None):
+    def visualisationRandomOnePolyProfileOneClass(self, className, rep=None):
         if rep is None:
             saveFile = False
         else:
             saveFile = True
-        Drawprofils.drawRandomOnePolyProfilOneClass(className, dfHeader=self._dfHeader, dfData=self._dfData,
-                                                    saveFile=saveFile,
-                                                    rep=rep)
+        DrawProfiles.drawRandomOnePolyProfileOneClass(className, dfHeader=self._dfHeader, dfData=self._dfData,
+                                                      saveFile=saveFile,
+                                                      rep=rep)
 
     #  -----------------------------------------------------------------------------------------------------------------
     #  Intern (Private) Functions of this class.
@@ -335,9 +337,9 @@ class GenLabelNoiseTS:
         Intern function
         :return: 2 DataFrame Header and Data
         """
-        (dfHeader, dfData) = GeneratorNDVIProfils.generatorNDVIProfils(seed=self._seedData,
-                                                                       initFilename=self._initFilename,
-                                                                       classList=self._classList)
+        (dfHeader, dfData) = GeneratorNDVIProfiles.generatorNDVIProfiles(seed=self._seedData,
+                                                                         initFilename=self._initFilename,
+                                                                         classList=self._classList)
         return dfHeader, dfData
 
     def _strClassNamesToInt(self, X, Y):

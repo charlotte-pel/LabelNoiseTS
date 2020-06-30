@@ -2,14 +2,14 @@ import numpy as np
 import pandas as pd
 
 
-class GeneratorNDVIProfils:
+class GeneratorNDVIProfiles:
     """
-    Class GeneratorNDVIProfils
+    Class GeneratorNDVIProfiles
     The class contains only static method/function
     """
 
     @staticmethod
-    def generatorNDVIProfils(seed, initFilename, classList=None):
+    def generatorNDVIProfiles(seed, initFilename, classList=None):
         """
         :param seed:
         :param initFilename:
@@ -51,12 +51,12 @@ class GeneratorNDVIProfils:
         # Double or simple sigmoid
         db_sigmo = np.where(np.sum(param_val[:, 14:], axis=1) != -param_val[:,14:].shape[1], 26, 14)
 
-        unique_sequencePolid = GeneratorNDVIProfils._uniqueid(randomState)
-        unique_sequencePixid = GeneratorNDVIProfils._uniqueid(randomState)
+        unique_sequencePolid = GeneratorNDVIProfiles._uniqueid(randomState)
+        unique_sequencePixid = GeneratorNDVIProfiles._uniqueid(randomState)
 
         dfHeader = []
         tmpDataFrame = []
-        tmpProfils = []
+        tmpProfiles = []
         # Write the header
         # N = nbClass
         # dates
@@ -87,7 +87,7 @@ class GeneratorNDVIProfils:
 
             for i in range(0, len(nb_Samples_Polygons[0])):  # id poly
                 polid = next(unique_sequencePolid)
-                sigmo_param = GeneratorNDVIProfils._generate_double_sigmo_parameters(range_param, randomState)
+                sigmo_param = GeneratorNDVIProfiles._generate_double_sigmo_parameters(range_param, randomState)
                 # Calculation of Gaussian parameters
 
                 # Calculation of x2
@@ -107,7 +107,7 @@ class GeneratorNDVIProfils:
                 # Amplitude of regrowth
                 A_gauss = randomState.rand() / 3
 
-                if GeneratorNDVIProfils._strcmp(class_names[add], 'Evergreen') | GeneratorNDVIProfils._strcmp(
+                if GeneratorNDVIProfiles._strcmp(class_names[add], 'Evergreen') | GeneratorNDVIProfiles._strcmp(
                         class_names[add], 'Decideous'):
                     A_gauss = 0
 
@@ -135,12 +135,12 @@ class GeneratorNDVIProfils:
                     reduce_sigmo_param[:, 1] = np.where(reduce_sigmo_param[:, 1] > range_param[:, 1], range_param[:, 1],
                                                         reduce_sigmo_param[:, 1])
 
-                    sample_sigmo_param = GeneratorNDVIProfils._generate_double_sigmo_parameters(reduce_sigmo_param, randomState)
+                    sample_sigmo_param = GeneratorNDVIProfiles._generate_double_sigmo_parameters(reduce_sigmo_param, randomState)
 
                     if db_sigmo[add] == 14:
-                        init_profil = GeneratorNDVIProfils._sigmoProfil(sample_sigmo_param, dates)
+                        init_profil = GeneratorNDVIProfiles._sigmoProfil(sample_sigmo_param, dates)
                     else:
-                        init_profil = GeneratorNDVIProfils._doubleSigmoProfil(sample_sigmo_param, dates)
+                        init_profil = GeneratorNDVIProfiles._doubleSigmoProfil(sample_sigmo_param, dates)
 
                     norm_pdf = 0.05 * (2 * randomState.rand(1, len(dates)))
                     vec_noisy_dates = randomState.permutation(randomState.randint(0, len(dates), size=len(dates)))
@@ -164,15 +164,15 @@ class GeneratorNDVIProfils:
                     # Return min between np.ones((1, np.size(profil))) and profil
                     profil = np.where(np.ones((1, np.size(profil))) < profil, np.ones((1, np.size(profil))), profil)
                     tmpDataFrame.append([class_names[add], polid, next(unique_sequencePixid)])
-                    tmpProfils.append(profil[0])
+                    tmpProfiles.append(profil[0])
 
         tmpDataFrame = np.array(tmpDataFrame)
-        tmpProfils = np.array(tmpProfils)
-        tmplen = len(tmpProfils[0])
-        tmpProfils = np.transpose(tmpProfils)
+        tmpProfiles = np.array(tmpProfiles)
+        tmplen = len(tmpProfiles[0])
+        tmpProfiles = np.transpose(tmpProfiles)
         dfData = pd.DataFrame(tmpDataFrame, columns=['label', 'polid', 'pixid', ])
         for i in range(tmplen):
-            dfData['d' + str(i + 1)] = tmpProfils[i]
+            dfData['d' + str(i + 1)] = tmpProfiles[i]
         dfData = dfData.sort_values(by=['pixid'])
         return dfHeader, dfData
 
@@ -223,8 +223,8 @@ class GeneratorNDVIProfils:
                dates = [0,25,50,...]
         :return: a double sigmo profil
         """
-        profil1 = GeneratorNDVIProfils._sigmoProfil(samples_sigmo_param[:, :6], dates)
-        profil2 = GeneratorNDVIProfils._sigmoProfil(samples_sigmo_param[:, 6:], dates) + 0.05
+        profil1 = GeneratorNDVIProfiles._sigmoProfil(samples_sigmo_param[:, :6], dates)
+        profil2 = GeneratorNDVIProfiles._sigmoProfil(samples_sigmo_param[:, 6:], dates) + 0.05
         return profil1 + profil2
 
     @staticmethod
