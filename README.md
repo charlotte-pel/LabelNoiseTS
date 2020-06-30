@@ -170,6 +170,10 @@ DataFrame from initFile.csv must be like below :
 
 ## Evaluation of performances
 
+Save Accuracy Scores in two csv file:
+- All Accuracy scores for each run, Ex: "AccuracyCsvRF.csv"
+- Average accuracy score for all runs, Ex: "AccuracyRF.csv" (Use for evaluation visualisation)
+
 ```python
 from EvalAlgo.EvalAlgo import *
 from pathVar import *
