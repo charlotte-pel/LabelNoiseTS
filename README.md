@@ -9,6 +9,7 @@
 * [Generating data](#Generating-data)
 * [Config File](#Config-File)
 * [Evaluation of performances](#Evaluation-of-performances)
+* [Visualisation](#Visualisation)
 * [Results](#Results)
 * [Contributing](#Contributing)
 * [Contributors](#Contributors)
@@ -182,6 +183,7 @@ visualisationEval(pathTwoClass, 'Two classes', systematicChange)
 ```
 ## Visualisation
 
+#### Data visualisation :
 If 'yourPath/' is None, visualisation will not be save in external file.\
 If you specify 'yourPath/', visualisation will be save in external file.
 
@@ -202,7 +204,14 @@ generator.visualisationMeanProfilesOneClass('Corn', 'yourPath/')
 generator.visualisationProfileMeanOneClass('Corn', 'yourPath/')
 generator.visualisationProfilesOneClass('Corn', 'yourPath/')
 ```
+#### Evaluation visualisation :
+```python
+from EvalAlgo.EvalAlgo import *
+from pathVar import *
+systematicChange = False
 
+visualisationEval(pathTwoClass, 'Two classes', systematicChange)
+```
 ## Results
 #### Generating data :
 ![Plots Results Generating Data](/img/plotsResults.png)
