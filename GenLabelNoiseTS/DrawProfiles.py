@@ -45,11 +45,12 @@ class DrawProfiles:
         """
         nbClass = len(dfHeader)-2
         dates = np.array(dfHeader.loc[0, :])[0]
-        tmpDfData = dfData.groupby(['label']).mean()
-        tmpDfData = tmpDfData.reset_index()
-        tmpDfData = tmpDfData.set_index('label')
+        tmpDfData = dfData
         del tmpDfData['polid']
         del tmpDfData['pixid']
+        tmpDfData = dfData.groupby(['label']).mean()
+        # tmpDfData = tmpDfData.reset_index()
+        # tmpDfData = tmpDfData.set_index('label')
         tmpDfData = tmpDfData.T
         tmpDfData.insert(0, 'dates', dates, True)
         tmpDfData.plot(x='dates', kind='line')
@@ -77,11 +78,11 @@ class DrawProfiles:
         """
         dates = np.array(dfHeader.loc[0, :])[0]
         tmpDfData = dfData.loc[(dfData['label'] == className)]
+        del tmpDfData['polid']
+        del tmpDfData['pixid']
         tmpDfData = tmpDfData.groupby(['label']).mean()
         tmpDfData = tmpDfData.reset_index()
         tmpDfData = tmpDfData.set_index('label')
-        del tmpDfData['polid']
-        del tmpDfData['pixid']
         tmpDfData = tmpDfData.T
         tmpDfData.insert(0, 'dates', dates, True)
         tmpDfData.plot(x='dates', y=className, kind='line', legend=False)
@@ -108,10 +109,10 @@ class DrawProfiles:
         """
         dates = np.array(dfHeader.loc[0, :])[0]
         tmpDfData = dfData.loc[(dfData['label'] == className)]
+        del tmpDfData['pixid']
         tmpDfData = tmpDfData.groupby(['label', 'polid']).mean()
         tmpDfData = tmpDfData.reset_index()
         del tmpDfData['polid']
-        del tmpDfData['pixid']
         tmpDfData = tmpDfData.set_index('label')
         tmpDfData = tmpDfData.T
         tmpDfData.insert(0, 'dates', dates, True)
@@ -203,7 +204,11 @@ class DrawProfiles:
         """
         dates = np.array(dfHeader.loc[0, :])[0]
         tmpDfData = dfData.loc[(dfData['label'] == className)]
-        tmpDfData = tmpDfData.loc[(tmpDfData['polid'] == int(tmpDfData['polid'].sample(n=1)))]
+        print(tmpDfData)
+        #TODO Fix bug first launch
+        samplePolid = int(tmpDfData['polid'].sample(n=1))
+        print(samplePolid)
+        tmpDfData = tmpDfData.loc[(tmpDfData['polid'] == samplePolid)]
         tmpDfData = tmpDfData.reset_index()
         del tmpDfData['polid']
         del tmpDfData['pixid']

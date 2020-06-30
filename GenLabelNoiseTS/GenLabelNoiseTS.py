@@ -171,21 +171,24 @@ class GenLabelNoiseTS:
             saveFile = False
         else:
             saveFile = True
-        nbClass = len(self._dfHeader) - 1
+        nbClass = len(self._dfHeader) - 2
         classNames = []
-        for i in range(2, nbClass + 1):
+        for i in range(2, nbClass + 2):
             classNames.append(self._dfHeader[0][i][0])
         for i in classNames:
-            DrawProfiles.drawProfilesOneClass(i, dfHeader=self._dfHeader, dfData=self._dfData, saveFile=saveFile,
+            DrawProfiles.drawProfilesOneClass(i, dfHeader=self._dfHeader.copy(), dfData=self._dfData.copy(),
+                                              saveFile=saveFile,
                                               rep=rep)
-        DrawProfiles.drawProfilesMeanAllClass(dfHeader=self._dfHeader, dfData=self._dfData, saveFile=saveFile, rep=rep)
+        DrawProfiles.drawProfilesMeanAllClass(dfHeader=self._dfHeader.copy(), dfData=self._dfData.copy(),
+                                              saveFile=saveFile, rep=rep)
 
     def visualisationProfilesMeanAllClass(self, rep=None):
         if rep is None:
             saveFile = False
         else:
             saveFile = True
-        DrawProfiles.drawProfilesMeanAllClass(dfHeader=self._dfHeader, dfData=self._dfData, saveFile=saveFile, rep=rep)
+        DrawProfiles.drawProfilesMeanAllClass(dfHeader=self._dfHeader.copy(), dfData=self._dfData.copy(),
+                                              saveFile=saveFile, rep=rep)
 
     def visualisationProfilesOneClass(self, className, rep=None):
         """
@@ -197,7 +200,8 @@ class GenLabelNoiseTS:
             saveFile = False
         else:
             saveFile = True
-        DrawProfiles.drawProfilesOneClass(className, dfHeader=self._dfHeader, dfData=self._dfData, saveFile=saveFile,
+        DrawProfiles.drawProfilesOneClass(className, dfHeader=self._dfHeader.copy(), dfData=self._dfData.copy(),
+                                          saveFile=saveFile,
                                           rep=rep)
 
     def visualisationMeanProfilesOneClass(self, className, rep=None):
@@ -205,7 +209,7 @@ class GenLabelNoiseTS:
             saveFile = False
         else:
             saveFile = True
-        DrawProfiles.drawMeanProfilesOneClass(className, dfHeader=self._dfHeader, dfData=self._dfData,
+        DrawProfiles.drawMeanProfilesOneClass(className, dfHeader=self._dfHeader.copy(), dfData=self._dfData.copy(),
                                               saveFile=saveFile,
                                               rep=rep)
 
@@ -214,7 +218,8 @@ class GenLabelNoiseTS:
             saveFile = False
         else:
             saveFile = True
-        DrawProfiles.drawProfileMeanOneClass(className, dfHeader=self._dfHeader, dfData=self._dfData, saveFile=saveFile,
+        DrawProfiles.drawProfileMeanOneClass(className, dfHeader=self._dfHeader.copy(), dfData=self._dfData.copy(),
+                                             saveFile=saveFile,
                                              rep=rep)
 
     def visualisation20RandomProfilesOneClass(self, className, rep=None):
@@ -222,7 +227,7 @@ class GenLabelNoiseTS:
             saveFile = False
         else:
             saveFile = True
-        DrawProfiles.draw20RandomProfilesOneClass(className, dfHeader=self._dfHeader, dfData=self._dfData,
+        DrawProfiles.draw20RandomProfilesOneClass(className, dfHeader=self._dfHeader.copy(), dfData=self._dfData.copy(),
                                                   saveFile=saveFile,
                                                   rep=rep)
 
@@ -231,7 +236,8 @@ class GenLabelNoiseTS:
             saveFile = False
         else:
             saveFile = True
-        DrawProfiles.draw20RandomMeanProfilesOneClass(className, dfHeader=self._dfHeader, dfData=self._dfData,
+        DrawProfiles.draw20RandomMeanProfilesOneClass(className, dfHeader=self._dfHeader.copy(),
+                                                      dfData=self._dfData.copy(),
                                                       saveFile=saveFile,
                                                       rep=rep)
 
@@ -240,7 +246,8 @@ class GenLabelNoiseTS:
             saveFile = False
         else:
             saveFile = True
-        DrawProfiles.drawRandomOnePolyProfileOneClass(className, dfHeader=self._dfHeader, dfData=self._dfData,
+        DrawProfiles.drawRandomOnePolyProfileOneClass(className, dfHeader=self._dfHeader.copy(),
+                                                      dfData=self._dfData.copy(),
                                                       saveFile=saveFile,
                                                       rep=rep)
 
