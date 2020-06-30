@@ -180,6 +180,28 @@ seed = 0
 EvalAlgo(pathTwoClass, nbclass, seed, systematicChange)
 visualisationEval(pathTwoClass, 'Two classes', systematicChange)
 ```
+## Visualisation
+
+If 'yourPath/' is None, visualisation will not be save in external file.\
+If you specify 'yourPath/', visualisation will be save in external file.
+
+Except for visualisationProfilsMeanAllClass, you need specify a class Name besides 'yourPath/'
+
+By default 'yourPath/' is None
+
+```python
+from GenLabelNoiseTS.GenLabelNoiseTS import *
+
+generator = GenLabelNoiseTS(filename="dataFrame.h5", rep='pathToData' + 'Run' + str(1) + '/', csv=True,
+                                verbose=False)
+generator.visualisationProfilsMeanAllClass('yourPath/')
+generator.visualisationRandomOnePolyProfilOneClass('Corn', 'yourPath/')
+generator.visualisation20RandomMeanProfilsOneClass('Corn', 'yourPath/')
+generator.visualisation20RandomProfilsOneClass('Corn', 'yourPath/')
+generator.visualisationMeanProfilsOneClass('Corn', 'yourPath/')
+generator.visualisationProfilMeanOneClass('Corn', 'yourPath/')
+generator.visualisationProfilsOneClass('Corn', 'yourPath/')
+```
 
 ## Results
 #### Generating data :

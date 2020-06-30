@@ -60,8 +60,8 @@ class GenLabelNoiseTS:
                     dfCsv = pd.read_hdf(self._rep + self._filename, 'csvFile')
                     npCsv = np.array(pd.DataFrame(dfCsv))
                     npCsv = npCsv.reshape((len(npCsv),))
-                    self._dfData = pd.DataFrame(pd.read_csv(self._rep+npCsv[0]))
-                    self._convertCsvToh5(self._rep+npCsv)
+                    self._dfData = pd.DataFrame(pd.read_csv(self._rep + npCsv[0]))
+                    self._convertCsvToh5(self._rep + npCsv)
                 except KeyError:
                     self._dfData = pd.DataFrame(pd.read_hdf(self._rep + self._filename, 'data'))
             else:
@@ -72,7 +72,7 @@ class GenLabelNoiseTS:
                     dfCsv = pd.read_hdf(self._rep + self._filename, 'csvFile')
                     npCsv = np.array(pd.DataFrame(dfCsv))
                     npCsv = npCsv.reshape((len(npCsv),))
-                    self._dfData = pd.DataFrame(pd.read_csv(self._rep+npCsv[0]))
+                    self._dfData = pd.DataFrame(pd.read_csv(self._rep + npCsv[0]))
             if self._verbose is True:
                 print("The file already exists !!!")
         (_, Y) = self._generateXY()
@@ -157,19 +157,90 @@ class GenLabelNoiseTS:
             noiseMatrix[i, j] += 1
         return noiseMatrix
 
-    def visualisation(self, rep):
+    #  -----------------------------------------------------------------------------------------------------------------
+    #  Visualisation Functions of this class.
+    #  -----------------------------------------------------------------------------------------------------------------
+
+    def visualisation(self, rep=None):
         """
         Public function for create visualisation in rep
         :param rep: Name of the rep
         :return: None
         """
+        if rep is None:
+            saveFile = False
+        else:
+            saveFile = True
         nbClass = len(self._dfHeader) - 1
         classNames = []
-        for i in range(1, nbClass + 1):
+        for i in range(2, nbClass + 1):
             classNames.append(self._dfHeader[0][i][0])
         for i in classNames:
-            Drawprofils.drawProfilClass(i, dfHeader=self._dfHeader, dfData=self._dfData, vis=True, rep=rep)
-        Drawprofils.drawProfilMeanClass(dfHeader=self._dfHeader, dfData=self._dfData, vis=True, rep=rep)
+            Drawprofils.drawProfilsOneClass(i, dfHeader=self._dfHeader, dfData=self._dfData, saveFile=saveFile, rep=rep)
+        Drawprofils.drawProfilsMeanAllClass(dfHeader=self._dfHeader, dfData=self._dfData, saveFile=saveFile, rep=rep)
+
+    def visualisationProfilsMeanAllClass(self, rep=None):
+        if rep is None:
+            saveFile = False
+        else:
+            saveFile = True
+        Drawprofils.drawProfilsMeanAllClass(dfHeader=self._dfHeader, dfData=self._dfData, saveFile=saveFile, rep=rep)
+
+    def visualisationProfilsOneClass(self, className, rep=None):
+        """
+            Public function for create visualisation in rep
+            :param rep: Name of the rep
+            :return: None
+        """
+        if rep is None:
+            saveFile = False
+        else:
+            saveFile = True
+        Drawprofils.drawProfilsOneClass(className, dfHeader=self._dfHeader, dfData=self._dfData, saveFile=saveFile,
+                                        rep=rep)
+
+    def visualisationMeanProfilsOneClass(self, className, rep=None):
+        if rep is None:
+            saveFile = False
+        else:
+            saveFile = True
+        Drawprofils.drawMeanProfilsOneClass(className, dfHeader=self._dfHeader, dfData=self._dfData, saveFile=saveFile,
+                                            rep=rep)
+
+    def visualisationProfilMeanOneClass(self, className, rep=None):
+        if rep is None:
+            saveFile = False
+        else:
+            saveFile = True
+        Drawprofils.drawProfilMeanOneClass(className, dfHeader=self._dfHeader, dfData=self._dfData, saveFile=saveFile,
+                                           rep=rep)
+
+    def visualisation20RandomProfilsOneClass(self, className, rep=None):
+        if rep is None:
+            saveFile = False
+        else:
+            saveFile = True
+        Drawprofils.draw20RandomProfilsOneClass(className, dfHeader=self._dfHeader, dfData=self._dfData,
+                                                saveFile=saveFile,
+                                                rep=rep)
+
+    def visualisation20RandomMeanProfilsOneClass(self, className, rep=None):
+        if rep is None:
+            saveFile = False
+        else:
+            saveFile = True
+        Drawprofils.draw20RandomMeanProfilsOneClass(className, dfHeader=self._dfHeader, dfData=self._dfData,
+                                                    saveFile=saveFile,
+                                                    rep=rep)
+
+    def visualisationRandomOnePolyProfilOneClass(self, className, rep=None):
+        if rep is None:
+            saveFile = False
+        else:
+            saveFile = True
+        Drawprofils.drawRandomOnePolyProfilOneClass(className, dfHeader=self._dfHeader, dfData=self._dfData,
+                                                    saveFile=saveFile,
+                                                    rep=rep)
 
     #  -----------------------------------------------------------------------------------------------------------------
     #  Intern (Private) Functions of this class.
