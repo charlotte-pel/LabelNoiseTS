@@ -166,96 +166,30 @@ class GenLabelNoiseTS:
     #  -----------------------------------------------------------------------------------------------------------------
     #  Visualisation Functions of this class.
     #  -----------------------------------------------------------------------------------------------------------------
+    def visuTest(self, typePlot, className=None, nbProlfile=20, rep=None):
+        DrawProfiles.drawProfiles(self._dfHeader.copy(), self._dfData.copy(), typePlot=typePlot, className=className,
+                                  nbProfile=nbProlfile, rep=rep)
 
-    def visualisation(self, rep=None):
-        """
-        Public function for create visualisation in rep
-        :param rep: Name of the rep
-        :return: None
-        """
-        if rep is None:
-            saveFile = False
-        else:
-            saveFile = True
-        nbClass = len(self._dfHeader) - 2
-        classNames = []
-        for i in range(2, nbClass + 2):
-            classNames.append(self._dfHeader[0][i][0])
-        for i in classNames:
-            DrawProfiles.drawProfilesOneClass(i, dfHeader=self._dfHeader.copy(), dfData=self._dfData.copy(),
-                                              saveFile=saveFile,
-                                              rep=rep)
-        DrawProfiles.drawProfilesMeanAllClass(dfHeader=self._dfHeader.copy(), dfData=self._dfData.copy(),
-                                              saveFile=saveFile, rep=rep)
-
-    def visualisationProfilesMeanAllClass(self, rep=None):
-        if rep is None:
-            saveFile = False
-        else:
-            saveFile = True
-        DrawProfiles.drawProfilesMeanAllClass(dfHeader=self._dfHeader.copy(), dfData=self._dfData.copy(),
-                                              saveFile=saveFile, rep=rep)
-
-    def visualisationProfilesOneClass(self, className, rep=None):
-        """
-            Public function for create visualisation in rep
-            :param rep: Name of the rep
-            :return: None
-        """
-        if rep is None:
-            saveFile = False
-        else:
-            saveFile = True
-        DrawProfiles.drawProfilesOneClass(className, dfHeader=self._dfHeader.copy(), dfData=self._dfData.copy(),
-                                          saveFile=saveFile,
-                                          rep=rep)
-
-    def visualisationMeanProfilesOneClass(self, className, rep=None):
-        if rep is None:
-            saveFile = False
-        else:
-            saveFile = True
-        DrawProfiles.drawMeanProfilesOneClass(className, dfHeader=self._dfHeader.copy(), dfData=self._dfData.copy(),
-                                              saveFile=saveFile,
-                                              rep=rep)
-
-    def visualisationProfileMeanOneClass(self, className, rep=None):
-        if rep is None:
-            saveFile = False
-        else:
-            saveFile = True
-        DrawProfiles.drawProfileMeanOneClass(className, dfHeader=self._dfHeader.copy(), dfData=self._dfData.copy(),
-                                             saveFile=saveFile,
-                                             rep=rep)
-
-    def visualisation20RandomProfilesOneClass(self, className, rep=None):
-        if rep is None:
-            saveFile = False
-        else:
-            saveFile = True
-        DrawProfiles.draw20RandomProfilesOneClass(className, dfHeader=self._dfHeader.copy(), dfData=self._dfData.copy(),
-                                                  saveFile=saveFile,
-                                                  rep=rep)
-
-    def visualisation20RandomMeanProfilesOneClass(self, className, rep=None):
-        if rep is None:
-            saveFile = False
-        else:
-            saveFile = True
-        DrawProfiles.draw20RandomMeanProfilesOneClass(className, dfHeader=self._dfHeader.copy(),
-                                                      dfData=self._dfData.copy(),
-                                                      saveFile=saveFile,
-                                                      rep=rep)
-
-    def visualisationRandomOnePolyProfileOneClass(self, className, rep=None):
-        if rep is None:
-            saveFile = False
-        else:
-            saveFile = True
-        DrawProfiles.drawRandomOnePolyProfileOneClass(className, dfHeader=self._dfHeader.copy(),
-                                                      dfData=self._dfData.copy(),
-                                                      saveFile=saveFile,
-                                                      rep=rep)
+    # def visualisation(self, rep=None):
+    #     """
+    #     Public function for create visualisation in rep
+    #     :param rep: Name of the rep
+    #     :return: None
+    #     """
+    #     if rep is None:
+    #         saveFile = False
+    #     else:
+    #         saveFile = True
+    #     nbClass = len(self._dfHeader) - 2
+    #     classNames = []
+    #     for i in range(2, nbClass + 2):
+    #         classNames.append(self._dfHeader[0][i][0])
+    #     for i in classNames:
+    #         DrawProfiles.drawProfilesOneClass(i, dfHeader=self._dfHeader.copy(), dfData=self._dfData.copy(),
+    #                                           saveFile=saveFile,
+    #                                           rep=rep)
+    #     DrawProfiles.drawProfilesMeanAllClass(dfHeader=self._dfHeader.copy(), dfData=self._dfData.copy(),
+    #                                           saveFile=saveFile, rep=rep)
 
     #  -----------------------------------------------------------------------------------------------------------------
     #  Intern (Private) Functions of this class.
