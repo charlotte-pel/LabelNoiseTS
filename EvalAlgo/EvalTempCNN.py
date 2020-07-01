@@ -11,7 +11,7 @@ from keras.regularizers import l2
 from keras.utils.np_utils import to_categorical
 
 
-def tempCNNWork(path, nbClass, noiseArray, nbFirstRun, nbLastRun, seed, systematicChange=False):
+def tempCNNWork(path, nbClass, noiseArray, nbFirstRun, nbLastRun, seed, systematicChange=False, nbunits_conv=64, nbunits_fc=256):
     """
     TempCNN evaluation function
     :param path: Path to dataset
@@ -34,7 +34,7 @@ def tempCNNWork(path, nbClass, noiseArray, nbFirstRun, nbLastRun, seed, systemat
         for j in noiseArray:
             (Xtrain, Xtest, ytrain, ytest) = EvalFunc.getXtrainXtestYtrainYtest(path, j, i, seed, systematicChange)
 
-            accuracy_score = TempCNN(Xtrain, ytrain, Xtest, ytest, nbClass)
+            accuracy_score = TempCNN(Xtrain, ytrain, Xtest, ytest, nbClass, nbunits_conv, nbunits_fc)
 
             results.append(accuracy_score)
 
@@ -56,7 +56,7 @@ def tempCNNWork(path, nbClass, noiseArray, nbFirstRun, nbLastRun, seed, systemat
 # Code come from: https://github.com/charlotte-pel/igarss2019-dl4sits
 # Authors: Dr. Charlotte Pelletier, Professor Geoffrey I. Webb, Dr. Francois Petitjean
 # -----------------------------------------------------------------------
-def TempCNN(X_train, y_train, X_test, y_test, nbClass):
+def TempCNN(X_train, y_train, X_test, y_test, nbClass, nbunits_conv, nbunits_fc):
     classifier_type = 'TempCNN'
     # Parameters
     # -- general
@@ -86,7 +86,7 @@ def TempCNN(X_train, y_train, X_test, y_test, nbClass):
     X_test = normalizingData(X_test, min_per, max_per)
     y_test_one_hot = to_categorical(y_test, nbClass)
 
-    model = Archi_TempCNN(X_train, nbClass)
+    model = Archi_TempCNN(X_train, nbClass, nbunits_conv, nbunits_fc)
 
     res_mat[0], res_mat[1], model, model_hist, res_mat[2], res_mat[3] = \
         trainTestModel(model, X_train, y_train_one_hot, X_test, y_test_one_hot, model_file, n_epochs=n_epochs,
@@ -102,7 +102,7 @@ def TempCNN(X_train, y_train, X_test, y_test, nbClass):
     return float(res_mat[0])
 
 
-def Archi_TempCNN(X, nbclasses):
+def Archi_TempCNN(X, nbclasses, nbunits_conv, nbunits_fc):
     # -- get the input sizes
     m, L, depth = X.shape
     input_shape = (L, depth)
@@ -112,8 +112,8 @@ def Archi_TempCNN(X, nbclasses):
     dropout_rate = 0.5
     nb_conv = 3
     nb_fc = 1
-    nbunits_conv = 64  # 32
-    nbunits_fc = 256  # 128
+    # nbunits_conv = 64  # 32
+    # nbunits_fc = 256  # 128
 
     # Define the input placeholder.
     X_input = Input(input_shape)
