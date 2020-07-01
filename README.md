@@ -75,12 +75,12 @@ pip install keras tensorflow # (Only for TempCNN)
 ## Quick use
 #### For Generating data :
 
-Open and run the notebook: ExampleUseGeneratingData in jupyter notebook.\
+Open and run the Jupyter notebook: `ExampleUseGeneratingData.ipynb`\
 Located at the root of the project folder
 
 #### For Evaluation :
 
-Open and run the notebook: ExampleUseEvaluation in jupyter notebook.\
+Open and run the Jupyter notebook: `ExampleUseEvaluation.ipynb`\
 Located at the root of the project folder
 
 ## Generating data
@@ -171,8 +171,8 @@ DataFrame from initFile.csv must be like below :
 ## Evaluation of performances
 
 Save Accuracy Scores in two csv file:
-- All Accuracy scores for each run, Ex: "AccuracyCsvRF.csv"
-- Average accuracy scores for all runs, Ex: "AccuracyRF.csv" (Use for evaluation visualisation)
+- All Accuracy scores for each run, Ex: `AccuracyCsvRF.csv`
+- Average accuracy scores for all runs, Ex: `AccuracyRF.csv` (Use for evaluation visualisation)
 
 ```python
 from EvalAlgo.EvalAlgo import *

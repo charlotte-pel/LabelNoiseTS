@@ -20,7 +20,12 @@ def svmWork(path, kernel, noiseArray, nbFirstRun, nbLastRun, seed, systematicCha
     """
     resultsArray = np.array([])
     indexRunList = []
-    algoName = 'SVM-' + kernel.upper()
+
+    if kernel.upper() == 'LINEAR':
+        algoName = 'SVM-Linear'
+    elif kernel.upper() == 'RBF':
+        algoName = 'SVM-RBF'
+
     for i in range(nbFirstRun, nbLastRun + 1):
         print(kernel)
         print('Run ' + str(i))
