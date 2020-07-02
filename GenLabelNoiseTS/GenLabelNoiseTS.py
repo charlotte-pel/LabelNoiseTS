@@ -164,12 +164,25 @@ class GenLabelNoiseTS:
     #  Visualisation Functions of this class.
     #  -----------------------------------------------------------------------------------------------------------------
     def visualisation(self, typePlot, className=None, nbProlfile=20, dir=None):
+        """
+        Visualisation function to draw plot
+        :param typePlot: typePlot = 'all' or 'mean' or 'random' or 'randomPoly'
+        :param className: None or Name of the class
+        :param nbProfile: Number of profile for typePlot = random
+        :param dir: If dir = None show plot, if dir is specify plot will be save in dir
+        :return: No return -> Draw graph or save in file depending of dir value
+        """
         if dir is not None:
             dir = Path(dir)
         DrawProfiles.drawProfiles(self._dfHeader.copy(), self._dfData.copy(), typePlot=typePlot, className=className,
                                   nbProfile=nbProlfile, dir=dir)
 
     def defaultVisualisation(self, dir=None):
+        """
+        Draw by default one plot by class to show all profiles and one mean plot
+        :param dir: If dir = None show plot, if dir is specify plot will be save in dir
+        :return: No return -> Draw graph or save in file depending of dir value
+        """
         if dir is not None:
             dir = Path(dir)
         DrawProfiles.drawProfiles(self._dfHeader.copy(), self._dfData.copy(), typePlot='mean', className=None, dir=dir)

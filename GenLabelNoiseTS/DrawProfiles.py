@@ -15,8 +15,8 @@ class DrawProfiles:
         :param typePlot: typePlot = 'all' or 'mean' or 'random' or 'randomPoly'
         :param className: None or Name of the class
         :param nbProfile: Number of profile for typePlot = random
-        :param dir: If dir = None show plot, if dir is specify plot will be save in dir.
-        :return: No return -> Draw graph or save in file
+        :param dir: If dir = None show plot, if dir is specify plot will be save in dir
+        :return: No return -> Draw graph or save in file depending of dir value
         """
         if typePlot not in ['all', 'mean', 'random', 'randomPoly']:
             print('typePlot ERROR')
