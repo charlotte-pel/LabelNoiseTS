@@ -3,10 +3,21 @@ import numpy as np
 import sys
 from pathlib import Path
 
+
 class DrawProfiles:
 
     @staticmethod
     def drawProfiles(dfHeader, dfData, typePlot, className=None, nbProfile=20, dir=None):
+        """
+        Drawn data plot.
+        :param dfHeader: DataFrame contain Header
+        :param dfData: DataFrame contain Data
+        :param typePlot: typePlot = 'all' or 'mean' or 'random' or 'randomPoly'
+        :param className: None or Name of the class
+        :param nbProfile: Number of profile for typePlot = random
+        :param dir: If dir = None show plot, if dir is specify plot will be save in dir.
+        :return: No return -> Draw graph or save in file
+        """
         if typePlot not in ['all', 'mean', 'random', 'randomPoly']:
             print('typePlot ERROR')
             sys.exit(0)
