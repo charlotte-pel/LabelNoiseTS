@@ -16,13 +16,20 @@ def EvalAlgo(path, nbClass, seed, systematicChange=False, outPathResults=None, n
     :return: None
     """
 
-    if outPathResults is None:
+    if path is None:
         if nbClass == 2:
-            outPathResults = './results/Evals/TwoClass/'
+            path = './results/Evals/TwoClass/'
+            nbClass = 'Two class'
         elif nbClass == 5:
-            outPathResults = './results/Evals/FiveClass/'
+            if systematicChange is False:
+                path = './results/Evals/FiveClass/'
+                nbClass = 'Five class'
+            else:
+                path = './results/Evals/FiveClass/systematicChange/'
+                nbClass = 'Five class Systematic Change'
         elif nbClass == 10:
-            outPathResults = './results/Evals/TenClass/'
+            path = './results/Evals/TenClass/'
+            nbClass = 'Ten class'
 
     NJOBS = 8
     noiseArray = [round(i, 2) for i in np.arange(0, 1.05, 0.05)]
@@ -79,8 +86,12 @@ def visualisationEval(nbClass, path=None, systematicChange=False):
             path = './results/Evals/TwoClass/'
             nbClass = 'Two class'
         elif nbClass == 5:
-            path = './results/Evals/FiveClass/'
-            nbClass = 'Five class'
+            if systematicChange is False:
+                path = './results/Evals/FiveClass/'
+                nbClass = 'Five class'
+            else:
+                path = './results/Evals/FiveClass/systematicChange/'
+                nbClass = 'Five class Systematic Change'
         elif nbClass == 10:
             path = './results/Evals/TenClass/'
             nbClass = 'Ten class'

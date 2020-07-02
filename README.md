@@ -98,9 +98,10 @@ generator.visualisation('img/')
 ```
 #### Generating a dataset use python command below
 ```bash
-python gen_data.py -d src/file/ -f data.h5 -nbClass 10 -noise random -noise.level [0.05,0.1,0.15,0.2,0.25,0.3] -save_csv -v -vis
-# If you use dict don't put any space!!!
-python gen_data.py -d src/file/ -f data.h5 -nbClass 10 -noise {'Wheat':('Barley','Soy'),'Barley':'Soy'} -noise.level [0.05,0.1,0.15,0.2,0.25,0.3] -save_csv -v -vis
+python gen_data.py -d src/file/ -f dataFrame.h5 -nbClass 10 -noise random -noise.level [0.05,0.1,0.15,0.2,0.25,0.3] -save_csv -v -vis
+# If you use dict don't put any space!!! 
+# Do it like this: {'Wheat':('Barley','Soy'),'Barley':'Soy'}
+python gen_data.py -d src/file/ -f dataFrame.h5 -nbClass 10 -noise {'Wheat':('Barley','Soy'),'Barley':'Soy'} -noise.level [0.05,0.1,0.15,0.2,0.25,0.3] -save_csv -v -vis
 ```
 This command allow generating data in specific rep. Choose name file, number of classes, noise type, noise level, type of save file, verbose mode, making visualisation.\
 For this command, these options are mandatory:
