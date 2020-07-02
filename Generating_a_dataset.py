@@ -1,7 +1,8 @@
 import shutil
 
 from GenLabelNoiseTS.GenLabelNoiseTS import *
-from pathVar import *
+
+rootPath = './data/'
 
 
 def main():

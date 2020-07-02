@@ -2,7 +2,6 @@ import ast
 import sys
 
 from GenLabelNoiseTS.GenLabelNoiseTS import *
-from pathVar import *
 
 
 # python gen_data.py -d src/file/ -f dataFrame.h5 -nbClass 10 -noise random -noise.level [0.05,0.1,0.15,0.2,0.25,0.3] -save_csv -v -vis
@@ -44,7 +43,7 @@ def main():
     generator = GenLabelNoiseTS(rep=a['-d'], filename=a['-f'], classList=classList, csv=a['-save_csv'], verbose=a['-v'])
     (X, Y) = generator.getDataXY()
     if a['-vis'] is True:
-        generator.visualisation(pathVis)
+        generator.visualisation('./results/plots/')
     a['-noise.level'] = a['-noise.level'].replace('[', '')
     a['-noise.level'] = a['-noise.level'].replace(']', '')
     a['-noise.level'] = list(a['-noise.level'].split(","))

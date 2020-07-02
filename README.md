@@ -195,7 +195,10 @@ Save Accuracy Scores in two csv file:
 
 ```python
 from EvalAlgo.EvalAlgo import *
-from pathVar import *
+
+pathTwoClass = './data/TwoClass/'
+pathFiveClass = './data/FiveClass/'
+pathTenClass = './data/TenClass/'
 
 systematicChange = False
 nbclass = 2
@@ -230,7 +233,11 @@ generator.visualisationProfilesOneClass('Corn', 'yourPath/')
 #### Evaluation visualisation
 ```python
 from EvalAlgo.EvalAlgo import *
-from pathVar import *
+
+pathTwoClass = './data/TwoClass/'
+pathFiveClass = './data/FiveClass/'
+pathTenClass = './data/TenClass/'
+
 systematicChange = False
 
 visualisationEval(pathTwoClass, 'Two classes', systematicChange)

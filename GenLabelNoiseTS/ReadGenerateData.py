@@ -5,11 +5,10 @@ import pandas as pd
 
 
 class ReadGenerateData:
-
     warnings.filterwarnings("ignore")
 
     @staticmethod
-    def readGenerateDataH5DataFrame(filename,rep,csv=False):
+    def readGenerateDataH5DataFrame(filename, rep, csv=False):
         """
 
         :param filename: the name of the file in which the data will be entered
@@ -31,14 +30,14 @@ class ReadGenerateData:
         else:
             dfCsv = pd.read_hdf(filename, 'csvFile')
             npCsv = np.array(pd.DataFrame(dfCsv))[0]
-            dfData = pd.read_csv(rep+npCsv[0])
+            dfData = pd.read_csv(rep + npCsv[0])
         samplesClass = dfData
         nbPixelClass = [len(samplesClass.loc[(samplesClass['label'] == i)]) for i in classNames]
-        nbPixelClass = pd.DataFrame([nbPixelClass],columns=classNames)
+        nbPixelClass = pd.DataFrame([nbPixelClass], columns=classNames)
         return nbClass, dates, classNames, samplesClass, nbPixelClass
 
     @staticmethod
-    def getAlreadyGenNoise(filename,rep,name, csv=False):
+    def getAlreadyGenNoise(filename, rep, name, csv=False):
         """
 
         :param filename: the name of the file in which the data will be entered
@@ -54,17 +53,17 @@ class ReadGenerateData:
             dfName = pd.DataFrame(dfName)
         else:
             dfCsv = pd.read_hdf(filename, 'csvFile')
-            #print(dfCsv)
+            # print(dfCsv)
             dfName = pd.DataFrame(dfCsv)
             dfName = np.array(dfName)
-            name = [name+'.csv']
+            name = [name + '.csv']
         dfName = np.array(dfName)
         if name in dfName:
             found = True
         return found
 
     @staticmethod
-    def getByNameNoise(filename,rep,name,csv=False):
+    def getByNameNoise(filename, rep, name, csv=False):
         """
 
         :param filename: the name of the file in which the data will be entered
@@ -77,6 +76,6 @@ class ReadGenerateData:
         if csv is False:
             dfNoise = pd.read_hdf(filename, name)
         else:
-            dfNoise = pd.read_csv(rep+name+'.csv')
+            dfNoise = pd.read_csv(rep + name + '.csv')
         dfNoise = pd.DataFrame(dfNoise)
         return dfNoise
