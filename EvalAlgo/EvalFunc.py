@@ -27,7 +27,7 @@ def getXtrainXtestYtrainYtest(path, noiseLevel, run, seed, systematicChange):
     randomState = np.random.RandomState(seed)
     ytrain = randomState.permutation(ytrain)
 
-    (Xtest, ytest) = generator.getTestData(otherPath=path / '/Run10/')
+    (Xtest, ytest) = generator.getTestData(otherPath=path / 'Run10/')
 
     return Xtrain, Xtest, ytrain, ytest
 

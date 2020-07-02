@@ -15,31 +15,26 @@ def EvalAlgo(path, nbClass, seed, systematicChange=False, outPathResults=None, n
     :param outPathResults: path to results directory
     :return: None
     """
-
-    if path is None:
-        if nbClass == 2:
-            path = Path('./results/Evals/TwoClass/')
-            nbClass = 'Two class'
-        elif nbClass == 5:
-            if systematicChange is False:
-                path = Path('./results/Evals/FiveClass/')
-                nbClass = 'Five class'
-            else:
-                path = Path('./results/Evals/FiveClass/systematicChange/')
-                nbClass = 'Five class Systematic Change'
-        elif nbClass == 10:
-            path = Path('./results/Evals/TenClass/')
-            nbClass = 'Ten class'
-    else:
-        path = Path(path)
-
-    if outPathResults is not None:
-        outPathResults = Path(outPathResults)
-
     NJOBS = 8
     noiseArray = [round(i, 2) for i in np.arange(0, 1.05, 0.05)]
     nbFirstRun = 1
     nbLastRun = 10
+
+    if outPathResults is None:
+        if nbClass == 2:
+            outPathResults = Path('./results/Evals/TwoClass/')
+        elif nbClass == 5:
+            if systematicChange is False:
+                outPathResults = Path('./results/Evals/FiveClass/')
+            else:
+                outPathResults = Path('./results/Evals/FiveClass/systematicChange/')
+                nbClass = 'Five class Systematic Change'
+        elif nbClass == 10:
+            outPathResults = Path('./results/Evals/TenClass/')
+    else:
+        outPathResults = Path(outPathResults)
+
+    path = Path(path)
 
     (dfAccuracySVML, dfAccuracyCsvSVML) = svmWork(path, 'linear', noiseArray, nbFirstRun, nbLastRun, seed,
                                                   systematicChange)
@@ -135,47 +130,3 @@ def visualisationEval(nbClass, path=None, systematicChange=False):
     plt.grid()
     plt.axis([-0.01, 1.01, 0, 1])
     plt.show()
-
-
-# def visuTempCNN(nbClass, path=None, systematicChange=False):
-#     if path is None:
-#         if nbClass == 2:
-#             path = './results/Evals/TwoClass/TempCNN/'
-#             nbClass = 'Two class'
-#         elif nbClass == 5:
-#             path = './results/Evals/FiveClass/TempCNN/'
-#             nbClass = 'Five class'
-#         elif nbClass == 10:
-#             path = './results/Evals/TenClass/TempCNN/'
-#             nbClass = 'Ten class'
-#
-#     if systematicChange is False or None:
-#         if systematicChange is None:
-#             print('Error systematicChange is not False or True !!!')
-#             print('systematicChange will be set to False')
-#
-#         dfAccuracyTempCNN1 = pd.read_csv(path + 'AccuracyTempCNN1.csv', index_col=0)
-#         dfAccuracyTempCNN2 = pd.read_csv(path + 'AccuracyTempCNN2.csv', index_col=0)
-#         dfAccuracyTempCNN3 = pd.read_csv(path + 'AccuracyTempCNN3.csv', index_col=0)
-#
-#     elif systematicChange is True:
-#         dfAccuracyTempCNN1 = pd.read_csv(path + 'AccuracyScTempCNN1.csv', index_col=0)
-#         dfAccuracyTempCNN2 = pd.read_csv(path + 'AccuracyScTempCNN2.csv', index_col=0)
-#         dfAccuracyTempCNN3 = pd.read_csv(path + 'AccuracyScTempCNN3.csv', index_col=0)
-#     else:
-#         print('Error systematicChange is not False/None or True!!!')
-#         print('End of program')
-#         sys.exit(0)
-#
-#     fig, ax = plt.subplots()
-#     ax.set_aspect('equal', 'box')
-#     dfAccuracyTempCNN1.plot(y='TempCNN NDVI Arch 1', kind='line', legend=True, yerr='TempCNN NDVI STD', ax=ax)
-#     dfAccuracyTempCNN2.plot(y='TempCNN NDVI Arch 2', kind='line', legend=True, yerr='TempCNN NDVI STD', ax=ax)
-#     dfAccuracyTempCNN3.plot(y='TempCNN NDVI Arch 3', kind='line', legend=True, yerr='TempCNN NDVI STD', ax=ax)
-#
-#     plt.title(nbClass)
-#     plt.xlabel('Noise Level')
-#     plt.ylabel('Overall Accuracy')
-#     plt.grid()
-#     plt.axis([-0.01, 1.01, 0, 1])
-#     plt.show()
