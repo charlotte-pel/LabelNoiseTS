@@ -3,6 +3,12 @@ from multiprocessing import Pool
 
 
 def getNoiseMatrixForSpeRun(numRun, path):
+    """
+    Get noise matrix for specific run
+    :param numRun: Run number
+    :param path: path to data
+    :return: None -> Print noise matrix for each noise level
+    """
     path = Path(path)
     noiseArray = [round(i, 2) for i in np.arange(0, 1.05, 0.05)]
     generator = GenLabelNoiseTS(filename="dataFrame.h5", dir=path / ('Run' + str(numRun) + '/'), csv=True,
@@ -15,6 +21,11 @@ def getNoiseMatrixForSpeRun(numRun, path):
 
 
 def checkNoiseForTwoFiveTenClass(verbose=False):
+    """
+
+    :param verbose: Verbose mode -> True or False
+    :return: None -> Get error if noise generation is wrong
+    """
     print('Check Starting....')
     with Pool(6) as p:
         p.starmap(checkGeneratingNoise,
@@ -25,6 +36,14 @@ def checkNoiseForTwoFiveTenClass(verbose=False):
 
 
 def checkGeneratingNoise(nbSamples, nbClass, path, verbose=False):
+    """
+
+    :param nbSamples: Number of sample per class
+    :param nbClass: Number of class
+    :param path: path to data
+    :param verbose: Verbose mode -> True or False
+    :return: None -> Get error if noise generation is wrong
+    """
     path = Path(path)
     noiseArray = [round(i, 2) for i in np.arange(0, 1.05, 0.05)]
     nbFirstRun = 1
