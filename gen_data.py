@@ -4,9 +4,9 @@ import sys
 from GenLabelNoiseTS.GenLabelNoiseTS import *
 
 
-# python gen_data.py -d src/file/ -f dataFrame.h5 -nbClass 10 -noise random -noise.level [0.05,0.1,0.15,0.2,0.25,0.3] -save_csv -v -vis
+# python gen_data.py -d src/file/ -f dataFrame.h5 -noClass 10 -noise random -noise.level [0.05,0.1,0.15,0.2,0.25,0.3] -save_csv -v -vis
 # If you use dict don't put any space!!!
-# python gen_data.py -d src/file/ -f dataFrame.h5 -nbClass 10 -noise {'Wheat':('Barley','Soy'),'Barley':'Soy'} -noise.level [0.05,0.1,0.15,0.2,0.25,0.3] -save_csv -v -vis
+# python gen_data.py -d src/file/ -f dataFrame.h5 -noClass 10 -noise {'Wheat':('Barley','Soy'),'Barley':'Soy'} -noise.level [0.05,0.1,0.15,0.2,0.25,0.3] -save_csv -v -vis
 
 def main():
     initPath = 'init_param_file.csv'
@@ -27,11 +27,11 @@ def main():
     if '-vis' not in list(a.keys()):
         a['-vis'] = False
 
-    if a['-nbClass'] == str(2):
+    if a['-noClass'] == str(2):
         classList = ('Corn', 'Corn_Ensilage')
-    elif a['-nbClass'] == str(5):
+    elif a['-noClass'] == str(5):
         classList = ('Corn', 'Corn_Ensilage', 'Sorghum', 'Sunflower', 'Soy')
-    elif a['-nbClass'] == str(10):
+    elif a['-noClass'] == str(10):
         classList = ('Corn', 'Corn_Ensilage', 'Sorghum', 'Sunflower', 'Soy',
                      'Wheat', 'Rapeseed', 'Barley',
                      'Evergreen', 'Decideous')
