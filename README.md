@@ -55,9 +55,11 @@ And use:
 - Numpy
 - Pandas
 - Tables
-- Jupyter Notebook (Only for use Jupyter Notebook)
-- Matplotlib (Only for visualisation)
-- Keras & Tensorflow (Only for TempCNN)
+- h5py (HDF5 for Python)
+- Jupyter Notebook (only for use Jupyter Notebook)
+- Matplotlib (only for visualisation)
+- Scikit-Learn, use to train traditional machine learning algorithms including Support Vector Machines (SVM) and Random Forest (RF)
+- Keras & Tensorflow, use to train deep learning architectures such as Temporal Convolutional Neural Network (TempCNN)
 
 ## Installation
 
@@ -68,54 +70,54 @@ pip install numpy
 pip install pandas
 pip install tables
 pip install h5py
-pip install jupyter # (Only for use Jupyter Notebook)
-pip install matplotlib # (Only for visualisation)
-pip install keras==2.4.3 tensorflow==2.2.0 # (Only for TempCNN)
+pip install jupyter 
+pip install matplotlib
+pip install sklearn
+pip install keras==2.4.3 tensorflow==2.2.0 
 ```
 
 ## Quick use
-#### For Generating data
+There are a set of Jupyter notebooks available in the `notebook` folder, for example:
+* `ExampleUseGeneratingData.ipynb` generates data...
+* `ExampleUseEvaluation.ipynb` trains the following models on...
 
-Open and run the Jupyter notebook: `ExampleUseGeneratingData.ipynb`\
-Located at the root of the project folder
-
-#### For Evaluation
-
-Open and run the Jupyter notebook: `ExampleUseEvaluation.ipynb`\
-Located at the root of the project folder
-
-## Generating data
+## Data generation
+The following Python code is used to generate a 2-class dataset (wheat and barley) composed of the original data `(X,Y)`, the original data corrupted by 5 % of random class label noise `(Xnoise,Ynoise)`, and some non noisy test data (`(Xtest,Ytest)`. `X` (of size `(n,l)`) is the data matrix (numpy array) composed of `n` time series of length `l` (`X[i,j]` represents the NDVI value of the `i` observation at time `j`), and `Y` is the label vector (of size `n`) associated to each time series.
 ```python
 from GenLabelNoiseTS.GenLabelNoiseTS import *
 
 path = './somePath/'
 # Example with a list of two class and systematic change.
-generator = GenLabelNoiseTS(filename="dataFrame.h5", classList=('Wheat','Barley'), csv=True, verbose=True, dir=path)
+generator = GenLabelNoiseTS(filename="dataset.h5", classList=('Wheat','Barley'), csv=True, verbose=True, dir=path/to/dir)
 a = {'Wheat': 'Barley', 'Barley': 'Wheat'}
 (X,Y) = generator.getDataXY()
-(Xnoise,YNoise) = generator.getNoiseDataXY(0.05,a)
+(Xnoise,Ynoise) = generator.getNoiseDataXY(0.05,a)
 (Xtest,Ytest) = (generator.getTestData())
 generator.defaultVisualisation()
 ```
-#### Generating a dataset use python command below
+#### Generating a dataset using a Python command line
+A dataset can be generated with the following Python command line.
 ```bash
-python gen_data.py -d src/file/ -f dataFrame.h5 -nbClass 10 -noise random -noise.level [0.05,0.1,0.15,0.2,0.25,0.3] -save_csv -v -vis
-# If you use dict don't put any space!!! 
-# Do it like this: {'Wheat':('Barley','Soy'),'Barley':'Soy'}
-python gen_data.py -d src/file/ -f dataFrame.h5 -nbClass 10 -noise {'Wheat':('Barley','Soy'),'Barley':'Soy'} -noise.level [0.05,0.1,0.15,0.2,0.25,0.3] -save_csv -v -vis
+# Generating a non-noisy synthetic dataset composed of original data and some corrupted version with a random class label noise applied to each class
+python gen_data.py -d path/to/dir -f dataset.h5 -noClass 10 -noise random -noise.level [0.05,0.1,0.15,0.2,0.25,0.3] -save_csv -v -vis
+# Generating a non-noisy synthetic dataset composed of original data and some corrupted version with a systematic class label noise applied to each class
+python gen_data.py -d path/to/dir -f dataset.h5 -noClass 10 -noise {'Wheat':('Barley','Soy'),'Barley':'Soy'} -noise.level [0.05,0.1,0.15,0.2,0.25,0.3] -save_csv -v -vis
+# The dictionary is used to add a systematic noise to the original data. In this example, the wheat labels are always changed to either barley or soy.
+# The dictionay should not contain any space: {'Wheat':('Barley','Soy'),'Barley':'Soy'}
 ```
-This command allow generating data in specific rep. Choose name file, number of classes, noise type, noise level, type of save file, verbose mode, making visualisation.\
-For this command, these options are mandatory:
-- -d + 'repPath' -> To specify repertory path
-- -f + 'nameFile' -> To specify name file must be .h5
-- -nbClass + 'nbClass' -> To specify number of classes
-- -noise + random or dict -> Two noise type: random and systematic change, for systematic need using Python dictionary like {'Wheat':('Barley','Soy'),'Barley':'Soy'}
-- -noise.level + [float,...] -> Array containing noise levels
+This command generates a dataset in the specified directory `path/to/dir`. The complete dataset is stored in the HDF5 `dataset.h5`. It includes non-noisy data as well as noisy data contaminated by different level of noise (`noise.level`).\
+The following options are mandatory:
+- `-d path/to/dir`: directory path
+- `-f fileName`: file name (should be a .h5 file)
+- `-noClass 10`: number of class presents in the generated dataset
+- `-noise random`: type of class label noise added to the data. Either `random` or a dictionary for systematic noise. The dictionary needs to be in a Python format: {'Wheat':('Barley','Soy'),'Barley':'Soy'}.
+- `-noise.level [0.05,0.1]`: a list containing the noise levels added to the data.
 
-These options are optional:
-- -save_csv -> If you want saving data and noise data in csv file
-- -v -> Verbose Mode
-- -vis -> Saving default visualisation
+The following options are optional:
+- `-save_csv`: the data will be also saved in csv files (one file per type of noise and per level of noise)
+- `-v`: verbose mode
+- `-vis`: saving some default visualisation
+
 #### Generating dataset for performance evaluation of machine learning algorithms use python command below
 ```bash
 python Generating_a_dataset.py
@@ -163,13 +165,12 @@ Dataset tree:
     - ...
     - Run10
     
-## Config File
+## Configuration file
 
-DataFrame from initFile.csv must be like below :
-(Example initFile.csv has good format)
-- First column must be named: class_names
-- Columns names 0 and 1 contain number of samples and number of polygon for each class.
-- Last row must contain dates (In the example below line 13), dates start column after class_names column.
+The configuration file `initFile.csv` is a data frame (converted into csv file) with the following format:
+- The first column must be named: `class_names`.
+- The `0` and `1` columns contain the number of samples and the number of polygons for each class. The following columns contain parameter values used to parametrized a double logistic function (please refer to the Remote Sensing journal paper).
+- The last row (line 13 in the folloing example) must contain days of year (dates). The days of year are inserted from column `0`.
 ```
       class_names    0   1      2       3  ...    21     22     23    24    25
 0            Corn  500  10   0.57   0.720  ...   NaN    NaN    NaN   NaN   NaN
@@ -211,17 +212,11 @@ visualisationEval(pathTwoClass, 'Two classes', systematicChange)
 ## Visualisation
 
 #### Data visualisation
-If 'yourPath/' is None, visualisation will not be save in external file.\
-If you specify 'yourPath/', visualisation will be save in external file.
-
-Except for visualisationProfilsMeanAllClass, you need specify a class Name besides 'yourPath/'
-
-By default 'yourPath/' is None
-
+The following code retrieves the data contain in `dataset.h5` file and performs several visualisation on the non-noisy data.
 ```python
 from GenLabelNoiseTS.GenLabelNoiseTS import *
 
-generator = GenLabelNoiseTS(filename="dataFrame.h5", dir='pathToData' + 'Run' + str(1) + '/', csv=True,
+generator = GenLabelNoiseTS(filename="dataset.h5", dir='pathToData' + 'Run' + str(1) + '/', csv=True,
                                 verbose=False)
 generator.visualisation(typePlot='mean')
 generator.visualisation(typePlot='mean', className='Corn')
@@ -229,7 +224,15 @@ generator.visualisation(typePlot='all', className='Corn')
 generator.visualisation(typePlot='random', className='Corn', nbProlfile=20)
 generator.visualisation(typePlot='randomPoly', className='Corn')
 ```
-#### Evaluation visualisation
+
+If 'yourPath/' is None, visualisation will not be save in external file.\
+If you specify 'yourPath/', visualisation will be save in external file.
+
+Except for visualisationProfilsMeanAllClass, you need specify a class Name besides 'yourPath/'
+
+By default 'yourPath/' is None
+
+#### Algorithm performance visualisation
 ```python
 from EvalAlgo.EvalAlgo import *
 
