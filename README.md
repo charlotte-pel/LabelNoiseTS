@@ -89,7 +89,7 @@ Located at the root of the project folder
 from GenLabelNoiseTS.GenLabelNoiseTS import *
 
 # Example with a list of two class and systematic change.
-generator = GenLabelNoiseTS(filename="dataFrame.h5", classList=('Wheat','Barley'), csv=True, verbose=True, rep="file/")
+generator = GenLabelNoiseTS(filename="dataFrame.h5", classList=('Wheat','Barley'), csv=True, verbose=True, dir="file/")
 a = {'Wheat': 'Barley', 'Barley': 'Wheat'}
 (X,Y) = generator.getDataXY()
 (Xnoise,YNoise) = generator.getNoiseDataXY(0.05,a)
@@ -220,15 +220,13 @@ By default 'yourPath/' is None
 ```python
 from GenLabelNoiseTS.GenLabelNoiseTS import *
 
-generator = GenLabelNoiseTS(filename="dataFrame.h5", rep='pathToData' + 'Run' + str(1) + '/', csv=True,
+generator = GenLabelNoiseTS(filename="dataFrame.h5", dir='pathToData' + 'Run' + str(1) + '/', csv=True,
                                 verbose=False)
-generator.visualisationProfilesMeanAllClass('yourPath/')
-generator.visualisationRandomOnePolyProfileOneClass('Corn', 'yourPath/')
-generator.visualisation20RandomMeanProfilesOneClass('Corn', 'yourPath/')
-generator.visualisation20RandomProfilesOneClass('Corn', 'yourPath/')
-generator.visualisationMeanProfilesOneClass('Corn', 'yourPath/')
-generator.visualisationProfileMeanOneClass('Corn', 'yourPath/')
-generator.visualisationProfilesOneClass('Corn', 'yourPath/')
+generator.visuTest(typePlot='mean')
+generator.visuTest(typePlot='mean', className='Corn')
+generator.visuTest(typePlot='all', className='Corn')
+generator.visuTest(typePlot='random', className='Corn', nbProlfile=20)
+generator.visuTest(typePlot='randomPoly', className='Corn')
 ```
 #### Evaluation visualisation
 ```python

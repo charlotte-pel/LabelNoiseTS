@@ -6,7 +6,7 @@ import sys
 class DrawProfiles:
 
     @staticmethod
-    def drawProfiles(dfHeader, dfData, typePlot, className=None, nbProfile=20, rep=None):
+    def drawProfiles(dfHeader, dfData, typePlot, className=None, nbProfile=20, dir=None):
         if typePlot not in ['all', 'mean', 'random', 'randomPoly']:
             print('typePlot ERROR')
             sys.exit(0)
@@ -52,16 +52,16 @@ class DrawProfiles:
         plt.ylabel('NDVI')
         plt.axis([0, 350, 0, 1])
 
-        if rep is None:
+        if dir is None:
             plt.show()
         else:
             if typePlot == 'mean' and className is None:
-                plt.savefig(rep + 'plotProfilesMeanAllClass_' + str(nbClass) + 'class')
+                plt.savefig(dir + 'plotProfilesMeanAllClass_' + str(nbClass) + 'class')
             elif typePlot == 'mean' and className is not None:
-                plt.savefig(rep + 'plotProfileMeanOneClass_' + className)
+                plt.savefig(dir + 'plotProfileMeanOneClass_' + className)
             elif typePlot == 'all' and className is not None:
-                plt.savefig(rep + 'plotProfilesOneClass_' + className)
+                plt.savefig(dir + 'plotProfilesOneClass_' + className)
             elif typePlot == 'random' and className is not None:
-                plt.savefig(rep + 'plot20RandomProfilesOneClass_' + className)
+                plt.savefig(dir + 'plot20RandomProfilesOneClass_' + className)
             elif typePlot == 'randomPoly' and className is not None:
-                plt.savefig(rep + 'plotRandomOnePolyProfileOneClass_' + className)
+                plt.savefig(dir + 'plotRandomOnePolyProfileOneClass_' + className)

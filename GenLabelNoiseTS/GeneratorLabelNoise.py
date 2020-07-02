@@ -7,11 +7,11 @@ class GeneratorLabelNoise:
     """
     Noise generating class.
     """
-    def __init__(self, filename, rep, noiseLevel, seed, dfNbPixPerPolidList, dictClass=None, csv=False):
+    def __init__(self, filename, dir, noiseLevel, seed, dfNbPixPerPolidList, dictClass=None, csv=False):
         """
 
         :param filename: Name of the save file
-        :param rep: Directory where the file is located
+        :param dir: Directory where the file is located
         :param noiseLevel: Percentage of label to be noisy
         :param seed: Seed for RandomState
         :param dfNbPixPerPolidList: Dataframe containg a list of number of pixel per polygon
@@ -20,12 +20,12 @@ class GeneratorLabelNoise:
         """
 
         self._filename = filename
-        self._rep = rep
+        self._dir = dir
         self._csv = csv
         self._dictClass = dictClass
         (_, _, self._classNames, self._samplesClass,
          self._nbPixelClass) = ReadGenerateData.readGenerateDataH5DataFrame(
-            self._filename, self._rep, self._csv)
+            self._filename, self._dir, self._csv)
         self._noiseLevel = noiseLevel
 
         # Number of pixels to be noisy

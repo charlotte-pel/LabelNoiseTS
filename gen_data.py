@@ -40,7 +40,7 @@ def main():
         print('Only 2,5 or 10 class')
         sys.exit(0)
 
-    generator = GenLabelNoiseTS(rep=a['-d'], filename=a['-f'], classList=classList, csv=a['-save_csv'], verbose=a['-v'])
+    generator = GenLabelNoiseTS(dir=a['-d'], filename=a['-f'], classList=classList, csv=a['-save_csv'], verbose=a['-v'])
     (X, Y) = generator.getDataXY()
     if a['-vis'] is True:
         generator.visualisation('./results/plots/')

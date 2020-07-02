@@ -10,12 +10,12 @@ from GenLabelNoiseTS.WriteGenerateData import *
 
 class GenLabelNoiseTS:
 
-    def __init__(self, filename, rep='', outPathVis=None, classList=None, pathInitFile=None, seedData=None, csv=False,
+    def __init__(self, filename, dir='', outPathVis=None, classList=None, pathInitFile=None, seedData=None, csv=False,
                  verbose=False):
         """
 
         :param filename: Name of the file h5
-        :param rep: name of the rep
+        :param dir: name of the dir
         :param classList: List of class names for generate data.
         :param pathInitFile: Path to initParamFile
         :param seedData: seed for randomState
@@ -36,13 +36,13 @@ class GenLabelNoiseTS:
         self._verbose = verbose
         if self._verbose is True:
             print("Init Start !")
-        self._rep = rep
+        self._dir = dir
         self._filename = filename
         self._dfTest = None
         self._csv = csv
         self._seedData = seedData
         # Test if not file exist
-        if not os.path.isfile(self._rep + self._filename):
+        if not os.path.isfile(self._dir + self._filename):
             # Path to initFilename
             if pathInitFile is None:
                 self._initFilename = 'init_param_file.csv'
@@ -52,33 +52,33 @@ class GenLabelNoiseTS:
             self._dfHeader = dfHeader
             self._nbPixPerPolid = self._getDfNbPixPerPolidList()
             self._dfData = dfData
-            WriteGenerateData.writeGenerateDataToH5(self._filename, self._rep, self._dfHeader, self._dfData, self._csv)
+            WriteGenerateData.writeGenerateDataToH5(self._filename, self._dir, self._dfHeader, self._dfData, self._csv)
             if self._verbose is True:
                 print("Generate Data Done !")
 
         else:
             # File exist
-            self._dfHeader = pd.DataFrame(pd.read_hdf(self._rep + self._filename, 'header'))
+            self._dfHeader = pd.DataFrame(pd.read_hdf(self._dir + self._filename, 'header'))
             self._nbPixPerPolid = self._getDfNbPixPerPolidList()
             # Test if convert is needed
             if csv is False:
                 try:
-                    dfCsv = pd.read_hdf(self._rep + self._filename, 'csvFile')
+                    dfCsv = pd.read_hdf(self._dir + self._filename, 'csvFile')
                     npCsv = np.array(pd.DataFrame(dfCsv))
                     npCsv = npCsv.reshape((len(npCsv),))
-                    self._dfData = pd.DataFrame(pd.read_csv(self._rep + npCsv[0]))
-                    self._convertCsvToh5(self._rep + npCsv)
+                    self._dfData = pd.DataFrame(pd.read_csv(self._dir + npCsv[0]))
+                    self._convertCsvToh5(self._dir + npCsv)
                 except KeyError:
-                    self._dfData = pd.DataFrame(pd.read_hdf(self._rep + self._filename, 'data'))
+                    self._dfData = pd.DataFrame(pd.read_hdf(self._dir + self._filename, 'data'))
             else:
                 try:
-                    self._dfData = pd.DataFrame(pd.read_hdf(self._rep + self._filename, 'data'))
+                    self._dfData = pd.DataFrame(pd.read_hdf(self._dir + self._filename, 'data'))
                     self._converth5ToCsv()
                 except KeyError:
-                    dfCsv = pd.read_hdf(self._rep + self._filename, 'csvFile')
+                    dfCsv = pd.read_hdf(self._dir + self._filename, 'csvFile')
                     npCsv = np.array(pd.DataFrame(dfCsv))
                     npCsv = npCsv.reshape((len(npCsv),))
-                    self._dfData = pd.DataFrame(pd.read_csv(self._rep + npCsv[0]))
+                    self._dfData = pd.DataFrame(pd.read_csv(self._dir + npCsv[0]))
             if self._verbose is True:
                 print("The file already exists !!!")
         (_, Y) = self._generateXY()
@@ -166,17 +166,17 @@ class GenLabelNoiseTS:
     #  -----------------------------------------------------------------------------------------------------------------
     #  Visualisation Functions of this class.
     #  -----------------------------------------------------------------------------------------------------------------
-    def visuTest(self, typePlot, className=None, nbProlfile=20, rep=None):
+    def visuTest(self, typePlot, className=None, nbProlfile=20, dir=None):
         DrawProfiles.drawProfiles(self._dfHeader.copy(), self._dfData.copy(), typePlot=typePlot, className=className,
-                                  nbProfile=nbProlfile, rep=rep)
+                                  nbProfile=nbProlfile, dir=dir)
 
-    # def visualisation(self, rep=None):
+    # def visualisation(self, dir=None):
     #     """
-    #     Public function for create visualisation in rep
-    #     :param rep: Name of the rep
+    #     Public function for create visualisation in dir
+    #     :param dir: Name of the dir
     #     :return: None
     #     """
-    #     if rep is None:
+    #     if dir is None:
     #         saveFile = False
     #     else:
     #         saveFile = True
@@ -187,9 +187,9 @@ class GenLabelNoiseTS:
     #     for i in classNames:
     #         DrawProfiles.drawProfilesOneClass(i, dfHeader=self._dfHeader.copy(), dfData=self._dfData.copy(),
     #                                           saveFile=saveFile,
-    #                                           rep=rep)
+    #                                           dir=dir)
     #     DrawProfiles.drawProfilesMeanAllClass(dfHeader=self._dfHeader.copy(), dfData=self._dfData.copy(),
-    #                                           saveFile=saveFile, rep=rep)
+    #                                           saveFile=saveFile, dir=dir)
 
     #  -----------------------------------------------------------------------------------------------------------------
     #  Intern (Private) Functions of this class.
@@ -220,8 +220,8 @@ class GenLabelNoiseTS:
         :return: DataFrame like this columns=['pixid', 'noisy', 'label']
         """
         name = self._genName(dictClassSystematicChange, noiseLevel)
-        if not ReadGenerateData.getAlreadyGenNoise(self._filename, self._rep, name, self._csv):
-            generatorNoise = GeneratorLabelNoise(filename=self._filename, rep=self._rep,
+        if not ReadGenerateData.getAlreadyGenNoise(self._filename, self._dir, name, self._csv):
+            generatorNoise = GeneratorLabelNoise(filename=self._filename, dir=self._dir,
                                                  noiseLevel=noiseLevel, seed=seedNoise,
                                                  dfNbPixPerPolidList=self._nbPixPerPolid,
                                                  dictClass=dictClassSystematicChange,
@@ -236,14 +236,14 @@ class GenLabelNoiseTS:
                 tmpDictSeed[str(noiseLevel) + '_' + str(dictClassSystematicChange)] = seedNoise
 
             self._dfHeader.loc[1:1, 0:0] = np.array(tmpDictSeed)
-            WriteGenerateData.updateDfHeader(self._filename, self._rep, self._dfHeader)
-            WriteGenerateData.writeGenerateNoisyData(self._filename, self._rep, noiseLevel, dfNoise, systematicChange,
+            WriteGenerateData.updateDfHeader(self._filename, self._dir, self._dfHeader)
+            WriteGenerateData.writeGenerateNoisyData(self._filename, self._dir, noiseLevel, dfNoise, systematicChange,
                                                      self._csv, dictClassSystematicChange)
             del generatorNoise
             if self._verbose is True:
                 print("Generate Noise Done !")
         else:
-            dfNoise = ReadGenerateData.getByNameNoise(self._filename, self._rep, name, self._csv)
+            dfNoise = ReadGenerateData.getByNameNoise(self._filename, self._dir, name, self._csv)
             if self._verbose is True:
                 print("Generate Noise Already Done !")
         return dfNoise
@@ -255,26 +255,26 @@ class GenLabelNoiseTS:
         """
         if self._csv is False:
             try:
-                dfTest = pd.DataFrame(pd.read_hdf(self._rep + self._filename, 'test'))
+                dfTest = pd.DataFrame(pd.read_hdf(self._dir + self._filename, 'test'))
                 if self._verbose is True:
                     print('Generate Test already Done !')
             except KeyError:
                 (dfHeader, dfTest) = self._genData()
-                WriteGenerateData.writeTest(self._filename, self._rep, dfTest, self._csv)
+                WriteGenerateData.writeTest(self._filename, self._dir, dfTest, self._csv)
                 if self._verbose is True:
                     print('Generate Test Done !')
         else:
             if otherPath is None:
-                repPath = self._rep
+                dirPath = self._dir
             else:
-                repPath = otherPath
+                dirPath = otherPath
             try:
-                dfTest = pd.DataFrame(pd.read_csv(repPath + 'test.csv'))
+                dfTest = pd.DataFrame(pd.read_csv(dirPath + 'test.csv'))
                 if self._verbose is True:
                     print('Generate Test already Done !')
             except FileNotFoundError:
                 (dfHeader, dfTest) = self._genData()
-                WriteGenerateData.writeTest(self._filename, repPath, dfTest, self._csv)
+                WriteGenerateData.writeTest(self._filename, dirPath, dfTest, self._csv)
                 if self._verbose is True:
                     print('Generate Test Done !')
         return dfTest
@@ -304,27 +304,27 @@ class GenLabelNoiseTS:
             print('Convert Csv To h5 start...')
         # Test if dataset Test exist
         try:
-            dfTest = pd.DataFrame(pd.read_csv(self._rep + 'test.csv'))
+            dfTest = pd.DataFrame(pd.read_csv(self._dir + 'test.csv'))
         except FileNotFoundError:
             dfTest = None
         # Save old path
         tmpFileName = self._filename
         # Remove path of test.csv
-        npCsv = npCsv[npCsv != self._rep + 'test.csv']
+        npCsv = npCsv[npCsv != self._dir + 'test.csv']
         self._filename = "test.h5"
         # Write dataset Data
-        WriteGenerateData.writeGenerateDataToH5(self._filename, self._rep, self._dfHeader, self._dfData, self._csv)
+        WriteGenerateData.writeGenerateDataToH5(self._filename, self._dir, self._dfHeader, self._dfData, self._csv)
         # If dataset Test exist
         if dfTest is not None:
             # Write dataset Test and remove csv file
-            WriteGenerateData.writeTest(self._filename, self._rep, dfTest, self._csv)
-            os.remove(self._rep + 'test.csv')
+            WriteGenerateData.writeTest(self._filename, self._dir, dfTest, self._csv)
+            os.remove(self._dir + 'test.csv')
         # Get content of LUT
-        npLutCsv = np.array(pd.DataFrame(pd.read_csv(self._rep + 'lut.csv'))['dict'])
+        npLutCsv = np.array(pd.DataFrame(pd.read_csv(self._dir + 'lut.csv'))['dict'])
         # String to dict
         npLutCsv = [eval(i) for i in npLutCsv]
         # Remove path of data.csv
-        npCsv = npCsv[npCsv != self._rep + 'data.csv']
+        npCsv = npCsv[npCsv != self._dir + 'data.csv']
         # Write noisy dataset
         for i in range(len(npCsv)):
             systematicChange = npCsv[i].split("/")[-1].split(".")[0]
@@ -334,18 +334,18 @@ class GenLabelNoiseTS:
             # Get noise level
             noiseLevel = int(tmpstring[1]) / 100
             if len(npLutCsv) == 0:
-                WriteGenerateData.writeGenerateNoisyData(self._filename, self._rep, noiseLevel, dfNoise,
+                WriteGenerateData.writeGenerateNoisyData(self._filename, self._dir, noiseLevel, dfNoise,
                                                          systematicChange,
                                                          self._csv, None)
             else:
-                WriteGenerateData.writeGenerateNoisyData(self._filename, self._rep, noiseLevel, dfNoise,
+                WriteGenerateData.writeGenerateNoisyData(self._filename, self._dir, noiseLevel, dfNoise,
                                                          systematicChange, self._csv, npLutCsv[i - 1])
 
-            os.remove(self._rep + systematicChange + '.csv')
-        os.remove(self._rep + 'data.csv')
-        os.remove(self._rep + 'lut.csv')
-        os.remove(self._rep + tmpFileName)
-        os.rename(self._rep + self._filename, self._rep + tmpFileName)
+            os.remove(self._dir + systematicChange + '.csv')
+        os.remove(self._dir + 'data.csv')
+        os.remove(self._dir + 'lut.csv')
+        os.remove(self._dir + tmpFileName)
+        os.rename(self._dir + self._filename, self._dir + tmpFileName)
         self._filename = tmpFileName
         if self._verbose is True:
             print('Convert Csv To h5 done !')
@@ -358,25 +358,25 @@ class GenLabelNoiseTS:
         if self._verbose is True:
             print('Convert h5 To Csv start...')
         # Get name of dataset
-        file = h5py.File(self._rep + self._filename, 'r')
+        file = h5py.File(self._dir + self._filename, 'r')
         tmptab = list(file.keys())
         file.close()
         tmpDfNoise = []
         # Test if dataset Test exist
         try:
-            dfTest = pd.read_hdf(self._rep + self._filename, tmptab[tmptab.index('test')])
+            dfTest = pd.read_hdf(self._dir + self._filename, tmptab[tmptab.index('test')])
             del tmptab[tmptab.index('test')]
         except ValueError:
             dfTest = None
         # Get dataset by name
-        self._dfData = pd.read_hdf(self._rep + self._filename, tmptab[tmptab.index('data')])
-        self._dfHeader = pd.read_hdf(self._rep + self._filename, tmptab[tmptab.index('header')])
+        self._dfData = pd.read_hdf(self._dir + self._filename, tmptab[tmptab.index('data')])
+        self._dfHeader = pd.read_hdf(self._dir + self._filename, tmptab[tmptab.index('header')])
         self._nbPixPerPolid = self._getDfNbPixPerPolidList()
         tmpDfHeaderNoise = np.array(
-            pd.DataFrame(pd.read_hdf(self._rep + self._filename, tmptab[tmptab.index('headerNoise')])))
+            pd.DataFrame(pd.read_hdf(self._dir + self._filename, tmptab[tmptab.index('headerNoise')])))
         # Reshape to horizontal array
         tmpDfHeaderNoise = tmpDfHeaderNoise.reshape((len(tmpDfHeaderNoise),))
-        npLutCsv = np.array(pd.DataFrame(pd.read_hdf(self._rep + self._filename, 'lut'))['dict'])
+        npLutCsv = np.array(pd.DataFrame(pd.read_hdf(self._dir + self._filename, 'lut'))['dict'])
         # Remove already processed datasets
         del tmptab[tmptab.index('data')]
         del tmptab[tmptab.index('header')]
@@ -384,17 +384,17 @@ class GenLabelNoiseTS:
         del tmptab[tmptab.index('lut')]
         # Get noisy Dataframe
         for i in tmptab:
-            tmpDfNoise.append(pd.read_hdf(self._rep + self._filename, i))
+            tmpDfNoise.append(pd.read_hdf(self._dir + self._filename, i))
         tmpFileName = self._filename
 
         # Save old path
         self._filename = "test.h5"
         # Write dataset Data
-        WriteGenerateData.writeGenerateDataToH5(self._filename, self._rep, self._dfHeader, self._dfData, self._csv)
+        WriteGenerateData.writeGenerateDataToH5(self._filename, self._dir, self._dfHeader, self._dfData, self._csv)
         # If dataset Test exist
         if dfTest is not None:
             # Write dataset Test and remove csv file
-            WriteGenerateData.writeTest(self._filename, self._rep, dfTest, self._csv)
+            WriteGenerateData.writeTest(self._filename, self._dir, dfTest, self._csv)
         # String to dict
         npLutCsv = [eval(i) for i in npLutCsv]
         # Write noisy dataset
@@ -405,10 +405,10 @@ class GenLabelNoiseTS:
             dfNoise = j
             # Get noise level
             noiseLevel = int(tmpstring[1]) / 100
-            WriteGenerateData.writeGenerateNoisyData(self._filename, self._rep, noiseLevel, dfNoise, systematicChange,
+            WriteGenerateData.writeGenerateNoisyData(self._filename, self._dir, noiseLevel, dfNoise, systematicChange,
                                                      self._csv, k)
-        os.remove(self._rep + tmpFileName)
-        os.rename(self._rep + self._filename, self._rep + tmpFileName)
+        os.remove(self._dir + tmpFileName)
+        os.rename(self._dir + self._filename, self._dir + tmpFileName)
         self._filename = tmpFileName
         if self._verbose is True:
             print('Convert h5 To Csv done !')

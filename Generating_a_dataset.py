@@ -34,11 +34,11 @@ def main():
             for j in range(nbRuns):
                 os.mkdir(i + '/Run' + str(j + 1), 0o755)
                 if i == nameDataDir + 'TwoClass':
-                    generator = GenLabelNoiseTS(filename="dataFrame.h5", rep=i + '/Run' + str(j + 1) + '/',
+                    generator = GenLabelNoiseTS(filename="dataFrame.h5", dir=i + '/Run' + str(j + 1) + '/',
                                                 pathInitFile=initPath, classList=('Corn', 'Corn_Ensilage'),
                                                 csv=True, verbose=False)
                 elif i == nameDataDir + 'FiveClass':
-                    generator = GenLabelNoiseTS(filename="dataFrame.h5", rep=i + '/Run' + str(j + 1) + '/',
+                    generator = GenLabelNoiseTS(filename="dataFrame.h5", dir=i + '/Run' + str(j + 1) + '/',
                                                 pathInitFile=initPath,
                                                 classList=('Corn', 'Corn_Ensilage', 'Sorghum', 'Sunflower', 'Soy'),
                                                 csv=True, verbose=False)
@@ -46,7 +46,7 @@ def main():
                          'Sunflower': 'Soy',
                          'Soy': 'Corn'}
                 elif i == nameDataDir + 'TenClass':
-                    generator = GenLabelNoiseTS(filename="dataFrame.h5", rep=i + '/Run' + str(j + 1) + '/',
+                    generator = GenLabelNoiseTS(filename="dataFrame.h5", dir=i + '/Run' + str(j + 1) + '/',
                                                 pathInitFile=initPath,
                                                 classList=('Corn', 'Corn_Ensilage', 'Sorghum', 'Sunflower', 'Soy',
                                                            'Wheat', 'Rapeseed', 'Barley',
