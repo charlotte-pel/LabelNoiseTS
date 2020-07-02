@@ -67,18 +67,19 @@ Use the package manager [pip](https://pip.pypa.io/en/stable/) to install numpy, 
 pip install numpy
 pip install pandas
 pip install tables
+pip install h5py
 pip install jupyter # (Only for use Jupyter Notebook)
 pip install matplotlib # (Only for visualisation)
-pip install keras tensorflow # (Only for TempCNN)
+pip install keras==2.4.3 tensorflow==2.2.0 # (Only for TempCNN)
 ```
 
 ## Quick use
-#### For Generating data :
+#### For Generating data
 
 Open and run the Jupyter notebook: `ExampleUseGeneratingData.ipynb`\
 Located at the root of the project folder
 
-#### For Evaluation :
+#### For Evaluation
 
 Open and run the Jupyter notebook: `ExampleUseEvaluation.ipynb`\
 Located at the root of the project folder
@@ -95,18 +96,35 @@ a = {'Wheat': 'Barley', 'Barley': 'Wheat'}
 (Xtest,Ytest) = generator.getTestData()
 generator.visualisation('img/')
 ```
-#### Generating a dataset use python command below:
+#### Generating a dataset use python command below
 ```bash
-python gen_data.py -d src/file/ -f data.h5 -nclass 10 -noise random -noise.level [0.05,0.1,0.15,0.2,0.25,0.3] -save_csv -v -vis
+python gen_data.py -d src/file/ -f data.h5 -nbClass 10 -noise random -noise.level [0.05,0.1,0.15,0.2,0.25,0.3] -save_csv -v -vis
 # If you use dict don't put any space!!!
-python gen_data.py -d src/file/ -f data.h5 -nclass 10 -noise {'Wheat':('Barley','Soy'),'Barley':'Soy'} -noise.level [0.05,0.1,0.15,0.2,0.25,0.3] -save_csv -v -vis
+python gen_data.py -d src/file/ -f data.h5 -nbClass 10 -noise {'Wheat':('Barley','Soy'),'Barley':'Soy'} -noise.level [0.05,0.1,0.15,0.2,0.25,0.3] -save_csv -v -vis
 ```
+This command allow generating data in specific rep. Choose name file, number of classes, noise type, noise level, type of save file, verbose mode, making visualisation.\
+For this command, these options are mandatory:
+- -d + 'repPath' -> To specify repertory path
+- -f + 'nameFile' -> To specify name file must be .h5
+- -nbClass + 'nbClass' -> To specify number of classes
+- -noise + random or dict -> Two noise type: random and systematic change, for systematic need using Python dictionary like {'Wheat':('Barley','Soy'),'Barley':'Soy'}
+- -noise.level + [float,...] -> Array containing noise levels
 
-#### Generating dataset for performance evaluation of machine learning algorithms use python command below:
+These options are optional:
+- -save_csv -> If you want saving data and noise data in csv file
+- -v -> Verbose Mode
+- -vis -> Saving default visualisation
+#### Generating dataset for performance evaluation of machine learning algorithms use python command below
 ```bash
 python Generating_a_dataset.py
 ```
-#### An example of a dataset named data is at the root of the directory.
+This command allow creating a dataset like the one you can find above.
+- Ten runs for each classification problem (TwoClass, FiveClass, TenClass)
+- For each run 21 noise levels, begin to 0% to 100% with a step of 5%.
+- For TwoClass noise type is random.
+- For FiveClass noise types are random (21 noise levels) and systematic change (21 noise levels).
+- For TenClass noise type is random. 
+#### An example of a dataset named data is at the root of the directory
 Dataset tree:
 - data
   - TwoClass
@@ -187,7 +205,7 @@ visualisationEval(pathTwoClass, 'Two classes', systematicChange)
 ```
 ## Visualisation
 
-#### Data visualisation :
+#### Data visualisation
 If 'yourPath/' is None, visualisation will not be save in external file.\
 If you specify 'yourPath/', visualisation will be save in external file.
 
@@ -208,7 +226,7 @@ generator.visualisationMeanProfilesOneClass('Corn', 'yourPath/')
 generator.visualisationProfileMeanOneClass('Corn', 'yourPath/')
 generator.visualisationProfilesOneClass('Corn', 'yourPath/')
 ```
-#### Evaluation visualisation :
+#### Evaluation visualisation
 ```python
 from EvalAlgo.EvalAlgo import *
 from pathVar import *
@@ -217,9 +235,9 @@ systematicChange = False
 visualisationEval(pathTwoClass, 'Two classes', systematicChange)
 ```
 ## Results
-#### Generating data :
+#### Generating data
 ![Plots Results Generating Data](/img/plotsResults.png)
-#### Evaluation :
+#### Evaluation
 ![Plots Results Evaluation](/img/results2_5_10Class.png)
 
 ## Contributing

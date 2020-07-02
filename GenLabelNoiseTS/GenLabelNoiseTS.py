@@ -24,7 +24,7 @@ class GenLabelNoiseTS:
         """
 
         if outPathVis is None:
-            self._outPathVis = '../results/plots/'
+            self._outPathVis = './results/plots/'
         else:
             self._outPathVis = outPathVis
 
