@@ -43,7 +43,7 @@ def main():
     generator = GenLabelNoiseTS(dir=a['-d'], filename=a['-f'], classList=classList, csv=a['-save_csv'], verbose=a['-v'])
     (X, Y) = generator.getDataXY()
     if a['-vis'] is True:
-        generator.visualisation('./results/plots/')
+        generator.defaultVisualisation(dir='./results/plots/')
     a['-noise.level'] = a['-noise.level'].replace('[', '')
     a['-noise.level'] = a['-noise.level'].replace(']', '')
     a['-noise.level'] = list(a['-noise.level'].split(","))

@@ -166,30 +166,14 @@ class GenLabelNoiseTS:
     #  -----------------------------------------------------------------------------------------------------------------
     #  Visualisation Functions of this class.
     #  -----------------------------------------------------------------------------------------------------------------
-    def visuTest(self, typePlot, className=None, nbProlfile=20, dir=None):
+    def visualisation(self, typePlot, className=None, nbProlfile=20, dir=None):
         DrawProfiles.drawProfiles(self._dfHeader.copy(), self._dfData.copy(), typePlot=typePlot, className=className,
                                   nbProfile=nbProlfile, dir=dir)
 
-    # def visualisation(self, dir=None):
-    #     """
-    #     Public function for create visualisation in dir
-    #     :param dir: Name of the dir
-    #     :return: None
-    #     """
-    #     if dir is None:
-    #         saveFile = False
-    #     else:
-    #         saveFile = True
-    #     nbClass = len(self._dfHeader) - 2
-    #     classNames = []
-    #     for i in range(2, nbClass + 2):
-    #         classNames.append(self._dfHeader[0][i][0])
-    #     for i in classNames:
-    #         DrawProfiles.drawProfilesOneClass(i, dfHeader=self._dfHeader.copy(), dfData=self._dfData.copy(),
-    #                                           saveFile=saveFile,
-    #                                           dir=dir)
-    #     DrawProfiles.drawProfilesMeanAllClass(dfHeader=self._dfHeader.copy(), dfData=self._dfData.copy(),
-    #                                           saveFile=saveFile, dir=dir)
+    def defaultVisualisation(self, dir=None):
+        DrawProfiles.drawProfiles(self._dfHeader.copy(), self._dfData.copy(), typePlot='mean', className=None, dir=dir)
+        for i in self._classList:
+            DrawProfiles.drawProfiles(self._dfHeader.copy(), self._dfData.copy(), typePlot='all', className=i, dir=dir)
 
     #  -----------------------------------------------------------------------------------------------------------------
     #  Intern (Private) Functions of this class.
