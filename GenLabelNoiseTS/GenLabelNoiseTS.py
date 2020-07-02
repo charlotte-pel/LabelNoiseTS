@@ -10,7 +10,7 @@ from GenLabelNoiseTS.WriteGenerateData import *
 
 class GenLabelNoiseTS:
 
-    def __init__(self, filename, dir='', outPathVis=None, classList=None, pathInitFile=None, seedData=None, csv=False,
+    def __init__(self, filename, dir='', classList=None, pathInitFile=None, seedData=None, csv=False,
                  verbose=False):
         """
 
@@ -22,11 +22,6 @@ class GenLabelNoiseTS:
         :param csv: Csv Option True or False
         :param verbose: Show print : True or False
         """
-
-        if outPathVis is None:
-            self._outPathVis = './results/plots/'
-        else:
-            self._outPathVis = outPathVis
 
         self._classList = classList
 
