@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import sys
-
+from pathlib import Path
 
 class DrawProfiles:
 
@@ -10,6 +10,9 @@ class DrawProfiles:
         if typePlot not in ['all', 'mean', 'random', 'randomPoly']:
             print('typePlot ERROR')
             sys.exit(0)
+
+        if dir is not None:
+            dir = Path(dir)
 
         dates = np.array(dfHeader.loc[0, :])[0]
         nbClass = len(dfHeader) - 2
@@ -56,12 +59,12 @@ class DrawProfiles:
             plt.show()
         else:
             if typePlot == 'mean' and className is None:
-                plt.savefig(dir + 'plotProfilesMeanAllClass_' + str(nbClass) + 'class')
+                plt.savefig(dir / ('plotProfilesMeanAllClass_' + str(nbClass) + 'class'))
             elif typePlot == 'mean' and className is not None:
-                plt.savefig(dir + 'plotProfileMeanOneClass_' + className)
+                plt.savefig(dir / ('plotProfileMeanOneClass_' + className))
             elif typePlot == 'all' and className is not None:
-                plt.savefig(dir + 'plotProfilesOneClass_' + className)
+                plt.savefig(dir / ('plotProfilesOneClass_' + className))
             elif typePlot == 'random' and className is not None:
-                plt.savefig(dir + 'plot20RandomProfilesOneClass_' + className)
+                plt.savefig(dir / ('plot20RandomProfilesOneClass_' + className))
             elif typePlot == 'randomPoly' and className is not None:
-                plt.savefig(dir + 'plotRandomOnePolyProfileOneClass_' + className)
+                plt.savefig(dir / ('plotRandomOnePolyProfileOneClass_' + className))

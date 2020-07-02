@@ -1,6 +1,6 @@
 from EvalAlgo import EvalFunc
 import time
-
+from pathlib import Path
 import numpy as np
 from keras import optimizers
 from keras.callbacks import ModelCheckpoint, EarlyStopping
@@ -23,6 +23,9 @@ def tempCNNWork(path, nbClass, noiseArray, nbFirstRun, nbLastRun, seed, systemat
     :param systematicChange: True if noise is systematic change, False if noise is random:
     :return: dfAccuracyTempCNN, dfAccuracyTempCNNCsv
     """
+
+    path = Path(path)
+
     resultsArray = np.array([])
     indexRunList = []
     algoName = 'TempCNN'

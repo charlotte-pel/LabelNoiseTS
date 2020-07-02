@@ -18,6 +18,9 @@ def randomForestWork(path, noiseArray, nbFirstRun, nbLastRun, seed, NJOBS, syste
     :param systematicChange: True if noise is systematic change, False if noise is random
     :return: dfAccuracyRF, dfAccuracyRFCsv
     """
+
+    path = Path(path)
+
     resultsArray = np.array([])
     indexRunList = []
     algoName = 'RF'

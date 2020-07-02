@@ -1,5 +1,5 @@
 from GenLabelNoiseTS.GenLabelNoiseTS import *
-
+from pathlib import Path
 
 def getXtrainXtestYtrainYtest(path, noiseLevel, run, seed, systematicChange):
     """
@@ -11,7 +11,8 @@ def getXtrainXtestYtrainYtest(path, noiseLevel, run, seed, systematicChange):
     :param systematicChange: True if noise is systematic change, False if noise is random
     :return: Xtrain, Xtest, ytrain, ytest
     """
-    generator = GenLabelNoiseTS(filename="dataFrame.h5", rep=path + 'Run' + str(run) + '/', csv=True,
+    path = Path(path)
+    generator = GenLabelNoiseTS(filename="dataFrame.h5", dir=path / ('Run' + str(run) + '/'), csv=True,
                                 verbose=False)
     if systematicChange is False:
         (Xtrain, ytrain) = generator.getNoiseDataXY(noiseLevel)
@@ -26,7 +27,7 @@ def getXtrainXtestYtrainYtest(path, noiseLevel, run, seed, systematicChange):
     randomState = np.random.RandomState(seed)
     ytrain = randomState.permutation(ytrain)
 
-    (Xtest, ytest) = generator.getTestData(otherPath=path + '/Run10/')
+    (Xtest, ytest) = generator.getTestData(otherPath=path / '/Run10/')
 
     return Xtrain, Xtest, ytrain, ytest
 

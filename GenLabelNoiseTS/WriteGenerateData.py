@@ -1,5 +1,5 @@
 import warnings
-
+from pathlib import Path
 import numpy as np
 import pandas as pd
 
@@ -18,7 +18,8 @@ class WriteGenerateData:
         :param csv: Csv Option True or False
         :return:
         """
-        filename = dir + filename
+        dir = Path(dir)
+        filename = dir / filename
         hdf = pd.HDFStore(filename)
         hdf.put('headerNoise', pd.DataFrame(None, columns=['name']))
         dfLutCsv = pd.DataFrame(None, columns=['dict', 'csv'])
@@ -27,8 +28,8 @@ class WriteGenerateData:
             hdf.put('data', dfData)
             hdf.put('lut', dfLutCsv)
         else:
-            dfData.to_csv(dir + 'data.csv', index=False)
-            dfLutCsv.to_csv(dir + 'lut.csv', index=False)
+            dfData.to_csv(dir / 'data.csv', index=False)
+            dfLutCsv.to_csv(dir / 'lut.csv', index=False)
             dfCsv = pd.DataFrame(np.array(['data.csv']), columns=['csv'])
             hdf.put('csvFile', dfCsv)
         hdf.close()
@@ -46,7 +47,8 @@ class WriteGenerateData:
         :param dict: Dict used for generate noise
         :return:
         """
-        filename = dir + filename
+        dir = Path(dir)
+        filename = dir / filename
         if systematicChange is not None:
             name = systematicChange
             if csv is False:
@@ -59,11 +61,11 @@ class WriteGenerateData:
                 hdf.close()
                 WriteGenerateData.writeHeaderNoise(filename, name)
             else:
-                dfLutCsv = pd.DataFrame(pd.read_csv(dir + 'lut.csv'))
+                dfLutCsv = pd.DataFrame(pd.read_csv(dir / 'lut.csv'))
                 dfLutCsv = dfLutCsv.append(pd.DataFrame([[str(dict), name + '.csv']], columns=['dict', 'csv']))
-                dfLutCsv.to_csv(dir + 'lut.csv', index=False)
+                dfLutCsv.to_csv(dir / 'lut.csv', index=False)
 
-                dfNoisy.to_csv(dir + name + '.csv', index=False)
+                dfNoisy.to_csv(dir / (name + '.csv'), index=False)
                 dfCsv = pd.read_hdf(filename, 'csvFile')
                 dfCsv = pd.DataFrame(dfCsv)
                 dfCsv = dfCsv.append(pd.DataFrame(np.array([name + '.csv']), columns=['csv']))
@@ -82,11 +84,11 @@ class WriteGenerateData:
                 hdf.close()
                 WriteGenerateData.writeHeaderNoise(filename, name)
             else:
-                dfLutCsv = pd.DataFrame(pd.read_csv(dir + 'lut.csv'))
+                dfLutCsv = pd.DataFrame(pd.read_csv(dir / 'lut.csv'))
                 dfLutCsv = dfLutCsv.append(pd.DataFrame([[str(dict), name + '.csv']], columns=['dict', 'csv']))
-                dfLutCsv.to_csv(dir + 'lut.csv', index=False)
+                dfLutCsv.to_csv(dir / 'lut.csv', index=False)
 
-                dfNoisy.to_csv(dir + name + '.csv', index=False)
+                dfNoisy.to_csv(dir / (name + '.csv'), index=False)
                 dfCsv = pd.read_hdf(filename, 'csvFile')
                 dfCsv = pd.DataFrame(dfCsv)
                 dfCsv = dfCsv.append(pd.DataFrame(np.array([name + '.csv']), columns=['csv']))
@@ -102,6 +104,7 @@ class WriteGenerateData:
         :param name: Name of new Noisy dataset
         :return:
         """
+        filename = Path(filename)
         dfHeaderNoise = pd.read_hdf(filename, 'headerNoise')
         dfHeaderNoise = pd.DataFrame(dfHeaderNoise)
         dfHeaderNoise = dfHeaderNoise.append(pd.DataFrame(np.array([[name]]), columns=['name']))
@@ -119,13 +122,14 @@ class WriteGenerateData:
         :param csv: Csv Option True or False
         :return:
         """
-        filename = dir + filename
+        dir = Path(dir)
+        filename = dir / filename
         if csv is False:
             hdf = pd.HDFStore(filename)
             hdf.put('test', test)
             hdf.close()
         else:
-            test.to_csv(dir + 'test.csv', index=False)
+            test.to_csv(dir / 'test.csv', index=False)
             dfCsv = pd.read_hdf(filename, 'csvFile')
             dfCsv = pd.DataFrame(dfCsv)
             dfCsv = dfCsv.append(pd.DataFrame(np.array(['test.csv']), columns=['csv']))
@@ -135,7 +139,8 @@ class WriteGenerateData:
 
     @staticmethod
     def updateDfHeader(filename, dir, dfHeader):
-        filename = dir + filename
+        dir = Path(dir)
+        filename = dir / filename
         hdf = pd.HDFStore(filename)
         hdf.put('header', dfHeader)
         hdf.close()

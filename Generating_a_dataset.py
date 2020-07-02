@@ -2,14 +2,14 @@ import shutil
 
 from GenLabelNoiseTS.GenLabelNoiseTS import *
 
-rootPath = './data/'
-
+#rootPath = './data/'
+rootPath = 'C:/Users/walkz/OneDrive/Bureau/StageIrisa/data'
 
 def main():
     nbRuns = 10
     initPath = 'init_param_file.csv'
-    nameDataDir = rootPath
-    namesDir = (nameDataDir + 'TwoClass', nameDataDir + 'FiveClass', nameDataDir + 'TenClass')
+    nameDataDir = Path(rootPath)
+    namesDir = (nameDataDir / 'TwoClass', nameDataDir / 'FiveClass', nameDataDir / 'TenClass')
     if os.path.isdir(nameDataDir):
         print('Dir data/ already exist !')
         print('Do you want delete dir data/ ? [y(Yes) or n(No)]')
@@ -32,21 +32,21 @@ def main():
         for i in namesDir:
             os.mkdir(i, 0o755)
             for j in range(nbRuns):
-                os.mkdir(i + '/Run' + str(j + 1), 0o755)
-                if i == nameDataDir + 'TwoClass':
-                    generator = GenLabelNoiseTS(filename="dataFrame.h5", dir=i + '/Run' + str(j + 1) + '/',
+                os.mkdir(i / ('Run' + str(j + 1)), 0o755)
+                if i == nameDataDir / 'TwoClass':
+                    generator = GenLabelNoiseTS(filename="dataFrame.h5", dir=i / ('Run' + str(j + 1) + '/'),
                                                 pathInitFile=initPath, classList=('Corn', 'Corn_Ensilage'),
                                                 csv=True, verbose=False)
-                elif i == nameDataDir + 'FiveClass':
-                    generator = GenLabelNoiseTS(filename="dataFrame.h5", dir=i + '/Run' + str(j + 1) + '/',
+                elif i == nameDataDir / 'FiveClass':
+                    generator = GenLabelNoiseTS(filename="dataFrame.h5", dir=i / ('Run' + str(j + 1) + '/'),
                                                 pathInitFile=initPath,
                                                 classList=('Corn', 'Corn_Ensilage', 'Sorghum', 'Sunflower', 'Soy'),
                                                 csv=True, verbose=False)
                     a = {'Corn': 'Corn_Ensilage', 'Corn_Ensilage': 'Sorghum', 'Sorghum': 'Sunflower',
                          'Sunflower': 'Soy',
                          'Soy': 'Corn'}
-                elif i == nameDataDir + 'TenClass':
-                    generator = GenLabelNoiseTS(filename="dataFrame.h5", dir=i + '/Run' + str(j + 1) + '/',
+                elif i == nameDataDir / 'TenClass':
+                    generator = GenLabelNoiseTS(filename="dataFrame.h5", dir=i / ('Run' + str(j + 1) + '/'),
                                                 pathInitFile=initPath,
                                                 classList=('Corn', 'Corn_Ensilage', 'Sorghum', 'Sunflower', 'Soy',
                                                            'Wheat', 'Rapeseed', 'Barley',
@@ -55,7 +55,7 @@ def main():
                 for k in noiseArray:
                     generator.getNoiseDataXY(k)
                     printProgressBar(l, lMax)
-                    if i == nameDataDir + 'FiveClass':
+                    if i == nameDataDir / 'FiveClass':
                         generator.getNoiseDataXY(k, a)
                         l += 1
                     l += 1

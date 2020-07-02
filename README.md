@@ -88,13 +88,14 @@ Located at the root of the project folder
 ```python
 from GenLabelNoiseTS.GenLabelNoiseTS import *
 
+path = './somePath/'
 # Example with a list of two class and systematic change.
-generator = GenLabelNoiseTS(filename="dataFrame.h5", classList=('Wheat','Barley'), csv=True, verbose=True, dir="file/")
+generator = GenLabelNoiseTS(filename="dataFrame.h5", classList=('Wheat','Barley'), csv=True, verbose=True, dir=path)
 a = {'Wheat': 'Barley', 'Barley': 'Wheat'}
 (X,Y) = generator.getDataXY()
 (Xnoise,YNoise) = generator.getNoiseDataXY(0.05,a)
-(Xtest,Ytest) = generator.getTestData()
-generator.visualisation('img/')
+(Xtest,Ytest) = (generator.getTestData())
+generator.defaultVisualisation()
 ```
 #### Generating a dataset use python command below
 ```bash
@@ -222,11 +223,11 @@ from GenLabelNoiseTS.GenLabelNoiseTS import *
 
 generator = GenLabelNoiseTS(filename="dataFrame.h5", dir='pathToData' + 'Run' + str(1) + '/', csv=True,
                                 verbose=False)
-generator.visuTest(typePlot='mean')
-generator.visuTest(typePlot='mean', className='Corn')
-generator.visuTest(typePlot='all', className='Corn')
-generator.visuTest(typePlot='random', className='Corn', nbProlfile=20)
-generator.visuTest(typePlot='randomPoly', className='Corn')
+generator.visualisation(typePlot='mean')
+generator.visualisation(typePlot='mean', className='Corn')
+generator.visualisation(typePlot='all', className='Corn')
+generator.visualisation(typePlot='random', className='Corn', nbProlfile=20)
+generator.visualisation(typePlot='randomPoly', className='Corn')
 ```
 #### Evaluation visualisation
 ```python

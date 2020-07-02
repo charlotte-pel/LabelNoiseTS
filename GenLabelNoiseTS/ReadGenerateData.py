@@ -1,5 +1,5 @@
 import warnings
-
+from pathlib import Path
 import numpy as np
 import pandas as pd
 
@@ -16,7 +16,8 @@ class ReadGenerateData:
         :param csv: Csv Option True or False
         :return:
         """
-        filename = dir + filename
+        dir = Path(dir)
+        filename = dir / filename
         dfheader = pd.read_hdf(filename, 'header')
         dfheader = pd.DataFrame(dfheader)
         nbClass = len(dfheader) - 2
@@ -30,7 +31,7 @@ class ReadGenerateData:
         else:
             dfCsv = pd.read_hdf(filename, 'csvFile')
             npCsv = np.array(pd.DataFrame(dfCsv))[0]
-            dfData = pd.read_csv(dir + npCsv[0])
+            dfData = pd.read_csv(dir / npCsv[0])
         samplesClass = dfData
         nbPixelClass = [len(samplesClass.loc[(samplesClass['label'] == i)]) for i in classNames]
         nbPixelClass = pd.DataFrame([nbPixelClass], columns=classNames)
@@ -46,14 +47,14 @@ class ReadGenerateData:
         :param csv: Csv Option True or False
         :return: True if and only if dataset named "name" is found
         """
-        filename = dir + filename
+        dir = Path(dir)
+        filename = dir / filename
         found = False
         if csv is False:
             dfName = pd.read_hdf(filename, 'headerNoise')
             dfName = pd.DataFrame(dfName)
         else:
             dfCsv = pd.read_hdf(filename, 'csvFile')
-            # print(dfCsv)
             dfName = pd.DataFrame(dfCsv)
             dfName = np.array(dfName)
             name = [name + '.csv']
@@ -72,10 +73,11 @@ class ReadGenerateData:
         :param csv: Csv Option True or False
         :return: DataFrame format like that columns=['pixid', 'noisy', 'label']
         """
-        filename = dir + filename
+        dir = Path(dir)
+        filename = dir / filename
         if csv is False:
             dfNoise = pd.read_hdf(filename, name)
         else:
-            dfNoise = pd.read_csv(dir + name + '.csv')
+            dfNoise = pd.read_csv(dir / (name + '.csv'))
         dfNoise = pd.DataFrame(dfNoise)
         return dfNoise

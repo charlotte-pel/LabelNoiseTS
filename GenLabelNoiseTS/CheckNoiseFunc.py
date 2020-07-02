@@ -3,8 +3,9 @@ from multiprocessing import Pool
 
 
 def getNoiseMatrixForSpeRun(numRun, path):
+    path = Path(path)
     noiseArray = [round(i, 2) for i in np.arange(0, 1.05, 0.05)]
-    generator = GenLabelNoiseTS(filename="dataFrame.h5", dir=path + 'Run' + str(numRun) + '/', csv=True,
+    generator = GenLabelNoiseTS(filename="dataFrame.h5", dir=path / ('Run' + str(numRun) + '/'), csv=True,
                                 verbose=False)
     (Xtrue, ytrue) = generator.getDataXY()
     for i in noiseArray:
@@ -24,6 +25,7 @@ def checkNoiseForTwoFiveTenClass(verbose=False):
 
 
 def checkGeneratingNoise(nbSamples, nbClass, path, verbose=False):
+    path = Path(path)
     noiseArray = [round(i, 2) for i in np.arange(0, 1.05, 0.05)]
     nbFirstRun = 1
     nbLastRun = 10
@@ -40,7 +42,7 @@ def checkGeneratingNoise(nbSamples, nbClass, path, verbose=False):
                 print('nbClass = ' + str(nbClass))
                 print('NoiseLevel = ' + str(j))
 
-            generator = GenLabelNoiseTS(filename="dataFrame.h5", dir=path + 'Run' + str(i) + '/', csv=True,
+            generator = GenLabelNoiseTS(filename="dataFrame.h5", dir=path / ('Run' + str(i) + '/'), csv=True,
                                         verbose=False)
             (Xtrain, ytrain) = generator.getNoiseDataXY(j)
             (Xtrue, ytrue) = generator.getDataXY()

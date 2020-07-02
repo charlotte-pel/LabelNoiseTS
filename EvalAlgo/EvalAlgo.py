@@ -18,18 +18,23 @@ def EvalAlgo(path, nbClass, seed, systematicChange=False, outPathResults=None, n
 
     if path is None:
         if nbClass == 2:
-            path = './results/Evals/TwoClass/'
+            path = Path('./results/Evals/TwoClass/')
             nbClass = 'Two class'
         elif nbClass == 5:
             if systematicChange is False:
-                path = './results/Evals/FiveClass/'
+                path = Path('./results/Evals/FiveClass/')
                 nbClass = 'Five class'
             else:
-                path = './results/Evals/FiveClass/systematicChange/'
+                path = Path('./results/Evals/FiveClass/systematicChange/')
                 nbClass = 'Five class Systematic Change'
         elif nbClass == 10:
-            path = './results/Evals/TenClass/'
+            path = Path('./results/Evals/TenClass/')
             nbClass = 'Ten class'
+    else:
+        path = Path(path)
+
+    if outPathResults is not None:
+        outPathResults = Path(outPathResults)
 
     NJOBS = 8
     noiseArray = [round(i, 2) for i in np.arange(0, 1.05, 0.05)]
@@ -50,26 +55,26 @@ def EvalAlgo(path, nbClass, seed, systematicChange=False, outPathResults=None, n
                                                             nbunits_fc=nbunits_fc)
 
     if systematicChange is False:
-        dfAccuracyRF.to_csv(outPathResults + "AccuracyRF.csv")
-        dfAccuracySVML.to_csv(outPathResults + "AccuracySVM_Linear.csv")
-        dfAccuracySVMRBF.to_csv(outPathResults + "AccuracySVM_RBF.csv")
-        dfAccuracyTempCNN.to_csv(outPathResults + "AccuracyTempCNN.csv")
+        dfAccuracyRF.to_csv(outPathResults / "AccuracyRF.csv")
+        dfAccuracySVML.to_csv(outPathResults / "AccuracySVM_Linear.csv")
+        dfAccuracySVMRBF.to_csv(outPathResults / "AccuracySVM_RBF.csv")
+        dfAccuracyTempCNN.to_csv(outPathResults / "AccuracyTempCNN.csv")
 
-        dfAccuracyCsvRF.to_csv(outPathResults + "AccuracyCsvRF.csv")
-        dfAccuracyCsvSVML.to_csv(outPathResults + "AccuracyCsvSVM_Linear.csv")
-        dfAccuracyCsvSVMRBF.to_csv(outPathResults + "AccuracyCsvSVM_RBF.csv")
-        dfAccuracyCsvTempCNN.to_csv(outPathResults + "AccuracyCsvTempCNN.csv")
+        dfAccuracyCsvRF.to_csv(outPathResults / "AccuracyCsvRF.csv")
+        dfAccuracyCsvSVML.to_csv(outPathResults / "AccuracyCsvSVM_Linear.csv")
+        dfAccuracyCsvSVMRBF.to_csv(outPathResults / "AccuracyCsvSVM_RBF.csv")
+        dfAccuracyCsvTempCNN.to_csv(outPathResults / "AccuracyCsvTempCNN.csv")
 
     elif systematicChange is True:
-        dfAccuracyRF.to_csv(outPathResults + "AccuracyScRF.csv")
-        dfAccuracySVML.to_csv(outPathResults + "AccuracyScSVM_Linear.csv")
-        dfAccuracySVMRBF.to_csv(outPathResults + "AccuracyScSVM_RBF.csv")
-        dfAccuracyTempCNN.to_csv(outPathResults + "AccuracyScTempCNN.csv")
+        dfAccuracyRF.to_csv(outPathResults / "AccuracyScRF.csv")
+        dfAccuracySVML.to_csv(outPathResults / "AccuracyScSVM_Linear.csv")
+        dfAccuracySVMRBF.to_csv(outPathResults / "AccuracyScSVM_RBF.csv")
+        dfAccuracyTempCNN.to_csv(outPathResults / "AccuracyScTempCNN.csv")
 
-        dfAccuracyCsvRF.to_csv(outPathResults + "AccuracyCsvScRF.csv")
-        dfAccuracyCsvSVML.to_csv(outPathResults + "AccuracyCsvScSVM_Linear.csv")
-        dfAccuracyCsvSVMRBF.to_csv(outPathResults + "AccuracyCsvScSVM_RBF.csv")
-        dfAccuracyCsvTempCNN.to_csv(outPathResults + "AccuracyCsvScTempCNN.csv")
+        dfAccuracyCsvRF.to_csv(outPathResults / "AccuracyCsvScRF.csv")
+        dfAccuracyCsvSVML.to_csv(outPathResults / "AccuracyCsvScSVM_Linear.csv")
+        dfAccuracyCsvSVMRBF.to_csv(outPathResults / "AccuracyCsvScSVM_RBF.csv")
+        dfAccuracyCsvTempCNN.to_csv(outPathResults / "AccuracyCsvScTempCNN.csv")
 
 
 def visualisationEval(nbClass, path=None, systematicChange=False):
@@ -83,33 +88,35 @@ def visualisationEval(nbClass, path=None, systematicChange=False):
 
     if path is None:
         if nbClass == 2:
-            path = './results/Evals/TwoClass/'
+            path = Path('./results/Evals/TwoClass/')
             nbClass = 'Two class'
         elif nbClass == 5:
             if systematicChange is False:
-                path = './results/Evals/FiveClass/'
+                path = Path('./results/Evals/FiveClass/')
                 nbClass = 'Five class'
             else:
-                path = './results/Evals/FiveClass/systematicChange/'
+                path = Path('./results/Evals/FiveClass/systematicChange/')
                 nbClass = 'Five class Systematic Change'
         elif nbClass == 10:
-            path = './results/Evals/TenClass/'
+            path = Path('./results/Evals/TenClass/')
             nbClass = 'Ten class'
+    else:
+        path = Path(path)
 
     if systematicChange is False or None:
         if systematicChange is None:
             print('Error systematicChange is not False or True !!!')
             print('systematicChange will be set to False')
-        dfAccuracyRF = pd.read_csv(path + 'AccuracyRF.csv', index_col=0)
-        dfAccuracySVML = pd.read_csv(path + 'AccuracySVM_Linear.csv', index_col=0)
-        dfAccuracySVMRBF = pd.read_csv(path + 'AccuracySVM_RBF.csv', index_col=0)
-        dfAccuracyTempCNN = pd.read_csv(path + 'AccuracyTempCNN.csv', index_col=0)
+        dfAccuracyRF = pd.read_csv(path / 'AccuracyRF.csv', index_col=0)
+        dfAccuracySVML = pd.read_csv(path / 'AccuracySVM_Linear.csv', index_col=0)
+        dfAccuracySVMRBF = pd.read_csv(path / 'AccuracySVM_RBF.csv', index_col=0)
+        dfAccuracyTempCNN = pd.read_csv(path / 'AccuracyTempCNN.csv', index_col=0)
 
     elif systematicChange is True:
-        dfAccuracyRF = pd.read_csv(path + 'AccuracyScRF.csv', index_col=0)
-        dfAccuracySVML = pd.read_csv(path + 'AccuracyScSVM_Linear.csv', index_col=0)
-        dfAccuracySVMRBF = pd.read_csv(path + 'AccuracyScSVM_RBF.csv', index_col=0)
-        dfAccuracyTempCNN = pd.read_csv(path + 'AccuracyScTempCNN.csv', index_col=0)
+        dfAccuracyRF = pd.read_csv(path / 'AccuracyScRF.csv', index_col=0)
+        dfAccuracySVML = pd.read_csv(path / 'AccuracyScSVM_Linear.csv', index_col=0)
+        dfAccuracySVMRBF = pd.read_csv(path / 'AccuracyScSVM_RBF.csv', index_col=0)
+        dfAccuracyTempCNN = pd.read_csv(path / 'AccuracyScTempCNN.csv', index_col=0)
     else:
         print('Error systematicChange is not False/None or True!!!')
         print('End of program')

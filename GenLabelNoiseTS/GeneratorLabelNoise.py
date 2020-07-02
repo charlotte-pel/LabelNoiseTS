@@ -1,5 +1,5 @@
 import hashlib
-
+from pathlib import Path
 from GenLabelNoiseTS.ReadGenerateData import *
 
 
@@ -18,9 +18,8 @@ class GeneratorLabelNoise:
         :param dictClass: The dictionary used for systematic change
         :param csv: If the option csv is activated
         """
-
         self._filename = filename
-        self._dir = dir
+        self._dir = Path(dir)
         self._csv = csv
         self._dictClass = dictClass
         (_, _, self._classNames, self._samplesClass,

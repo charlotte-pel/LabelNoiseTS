@@ -18,6 +18,9 @@ def svmWork(path, kernel, noiseArray, nbFirstRun, nbLastRun, seed, systematicCha
     :param systematicChange: True if noise is systematic change, False if noise is random
     :return: dfAccuracySVM, dfAccuracySVMCsv
     """
+
+    path = Path(path)
+
     resultsArray = np.array([])
     indexRunList = []
 
