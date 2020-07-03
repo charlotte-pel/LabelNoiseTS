@@ -68,8 +68,10 @@ def visualisationEval(path):
     """
 
     path = Path(path)
-    if path.stem == ('random' or 'systematic'):
+    if path.stem == 'random':
         nbClass = path.parent.stem
+    elif path.stem == 'systematic':
+        nbClass = path.parent.stem + ' Systematic change'
     else:
         nbClass = path.stem
 
