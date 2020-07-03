@@ -7,12 +7,12 @@ pathFiveClass = './data/FiveClass/'
 pathTenClass = './data/TenClass/'
 
 def main():
-    systematicChange = False
-    nbclass = 2
+    systematicChange = True
+    nbclass = 5
     seed = 0
 
-    EvalAlgo(pathTwoClass, nbclass, seed, systematicChange)
-    visualisationEval(2, None, False)
+    EvalAlgo(pathFiveClass, nbclass, seed, systematicChange)
+    #visualisationEval(2, None, False)
     # visualisationEval(5, None, False)
     # visualisationEval(5, None, True)
     # visualisationEval(10, None, False)

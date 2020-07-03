@@ -22,15 +22,15 @@ def EvalAlgo(path, nbClass, seed, systematicChange=False, outPathResults=None, n
 
     if outPathResults is None:
         if nbClass == 2:
-            outPathResults = Path('./results/Evals/TwoClass/')
+            outPathResults = Path('./results/evals/TwoClass/')
         elif nbClass == 5:
             if systematicChange is False:
-                outPathResults = Path('./results/Evals/FiveClass/')
+                outPathResults = Path('./results/evals/FiveClass/random/')
             else:
-                outPathResults = Path('./results/Evals/FiveClass/systematicChange/')
+                outPathResults = Path('./results/evals/FiveClass/systematic/')
                 nbClass = 'Five class Systematic Change'
         elif nbClass == 10:
-            outPathResults = Path('./results/Evals/TenClass/')
+            outPathResults = Path('./results/evals/TenClass/')
     else:
         outPathResults = Path(outPathResults)
 
@@ -49,73 +49,34 @@ def EvalAlgo(path, nbClass, seed, systematicChange=False, outPathResults=None, n
                                                             systematicChange, nbunits_conv=nbunits_conv,
                                                             nbunits_fc=nbunits_fc)
 
-    if systematicChange is False:
-        dfAccuracyRF.to_csv(outPathResults / "AccuracyRF.csv")
-        dfAccuracySVML.to_csv(outPathResults / "AccuracySVM_Linear.csv")
-        dfAccuracySVMRBF.to_csv(outPathResults / "AccuracySVM_RBF.csv")
-        dfAccuracyTempCNN.to_csv(outPathResults / "AccuracyTempCNN.csv")
+    dfAccuracyRF.to_csv(outPathResults / "meanOA_RF.csv")
+    dfAccuracySVML.to_csv(outPathResults / "meanOA_SVM_Linear.csv")
+    dfAccuracySVMRBF.to_csv(outPathResults / "meanOA_SVM_RBF.csv")
+    dfAccuracyTempCNN.to_csv(outPathResults / "meanOA_TempCNN.csv")
 
-        dfAccuracyCsvRF.to_csv(outPathResults / "AccuracyCsvRF.csv")
-        dfAccuracyCsvSVML.to_csv(outPathResults / "AccuracyCsvSVM_Linear.csv")
-        dfAccuracyCsvSVMRBF.to_csv(outPathResults / "AccuracyCsvSVM_RBF.csv")
-        dfAccuracyCsvTempCNN.to_csv(outPathResults / "AccuracyCsvTempCNN.csv")
-
-    elif systematicChange is True:
-        dfAccuracyRF.to_csv(outPathResults / "AccuracyScRF.csv")
-        dfAccuracySVML.to_csv(outPathResults / "AccuracyScSVM_Linear.csv")
-        dfAccuracySVMRBF.to_csv(outPathResults / "AccuracyScSVM_RBF.csv")
-        dfAccuracyTempCNN.to_csv(outPathResults / "AccuracyScTempCNN.csv")
-
-        dfAccuracyCsvRF.to_csv(outPathResults / "AccuracyCsvScRF.csv")
-        dfAccuracyCsvSVML.to_csv(outPathResults / "AccuracyCsvScSVM_Linear.csv")
-        dfAccuracyCsvSVMRBF.to_csv(outPathResults / "AccuracyCsvScSVM_RBF.csv")
-        dfAccuracyCsvTempCNN.to_csv(outPathResults / "AccuracyCsvScTempCNN.csv")
+    dfAccuracyCsvRF.to_csv(outPathResults / "runOA_RF.csv")
+    dfAccuracyCsvSVML.to_csv(outPathResults / "runOA_SVM_Linear.csv")
+    dfAccuracyCsvSVMRBF.to_csv(outPathResults / "runOA_SVM_RBF.csv")
+    dfAccuracyCsvTempCNN.to_csv(outPathResults / "runOA_TempCNN.csv")
 
 
-def visualisationEval(nbClass, path=None, systematicChange=False):
+def visualisationEval(path):
     """
     Evaluation visualisation function
     :param path: Path to dataset
-    :param nbClass: Number of class in classification
-    :param systematicChange: True if noise is systematic change, False if noise is random
     :return: Show plot result of evaluation
     """
 
-    if path is None:
-        if nbClass == 2:
-            path = Path('./results/Evals/TwoClass/')
-            nbClass = 'Two class'
-        elif nbClass == 5:
-            if systematicChange is False:
-                path = Path('./results/Evals/FiveClass/')
-                nbClass = 'Five class'
-            else:
-                path = Path('./results/Evals/FiveClass/systematicChange/')
-                nbClass = 'Five class Systematic Change'
-        elif nbClass == 10:
-            path = Path('./results/Evals/TenClass/')
-            nbClass = 'Ten class'
+    path = Path(path)
+    if path.stem == ('random' or 'systematic'):
+        nbClass = path.parent.stem
     else:
-        path = Path(path)
+        nbClass = path.stem
 
-    if systematicChange is False or None:
-        if systematicChange is None:
-            print('Error systematicChange is not False or True !!!')
-            print('systematicChange will be set to False')
-        dfAccuracyRF = pd.read_csv(path / 'AccuracyRF.csv', index_col=0)
-        dfAccuracySVML = pd.read_csv(path / 'AccuracySVM_Linear.csv', index_col=0)
-        dfAccuracySVMRBF = pd.read_csv(path / 'AccuracySVM_RBF.csv', index_col=0)
-        dfAccuracyTempCNN = pd.read_csv(path / 'AccuracyTempCNN.csv', index_col=0)
-
-    elif systematicChange is True:
-        dfAccuracyRF = pd.read_csv(path / 'AccuracyScRF.csv', index_col=0)
-        dfAccuracySVML = pd.read_csv(path / 'AccuracyScSVM_Linear.csv', index_col=0)
-        dfAccuracySVMRBF = pd.read_csv(path / 'AccuracyScSVM_RBF.csv', index_col=0)
-        dfAccuracyTempCNN = pd.read_csv(path / 'AccuracyScTempCNN.csv', index_col=0)
-    else:
-        print('Error systematicChange is not False/None or True!!!')
-        print('End of program')
-        sys.exit(0)
+    dfAccuracyRF = pd.read_csv(path / 'meanOA_RF.csv', index_col=0)
+    dfAccuracySVML = pd.read_csv(path / 'meanOA_SVM_Linear.csv', index_col=0)
+    dfAccuracySVMRBF = pd.read_csv(path / 'meanOA_SVM_RBF.csv', index_col=0)
+    dfAccuracyTempCNN = pd.read_csv(path / 'meanOA_TempCNN.csv', index_col=0)
 
     fig, ax = plt.subplots()
     ax.set_aspect('equal', 'box')

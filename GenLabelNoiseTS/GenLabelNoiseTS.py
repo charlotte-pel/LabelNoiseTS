@@ -40,9 +40,9 @@ class GenLabelNoiseTS:
         if not os.path.isfile(self._dir / self._filename):
             # Path to initFilename
             if pathInitFile is None:
-                self._initFilename = 'init_param_file.csv'
+                self._initFilename = Path('init_param_file.csv')
             else:
-                self._initFilename = pathInitFile
+                self._initFilename = Path(pathInitFile)
             (dfHeader, dfData) = self._genData()
             self._dfHeader = dfHeader
             self._nbPixPerPolid = self._getDfNbPixPerPolidList()
@@ -207,6 +207,7 @@ class GenLabelNoiseTS:
         X1 = np.ones((len(X), len(np.array(self._dfHeader.loc[0, :])[0])))
         for i in range(len(X)):
             X1[i] = X[i]
+
         return X1, Y
 
     def _generateNoise(self, noiseLevel, dictClassSystematicChange, seedNoise):
