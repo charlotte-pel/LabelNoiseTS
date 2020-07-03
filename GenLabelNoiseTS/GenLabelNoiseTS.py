@@ -193,7 +193,7 @@ class GenLabelNoiseTS:
     #  Intern (Private) Functions of this class.
     #  For normal use, don't use them.
     #  -----------------------------------------------------------------------------------------------------------------
-    def _generateXY(self, dfLabel=None):
+    def _generateXY(self, seed=None, dfLabel=None):
         """
         Intern function
         :param dfLabel: DataFrame containing name of class for each pixel profil
@@ -207,6 +207,14 @@ class GenLabelNoiseTS:
         X1 = np.ones((len(X), len(np.array(self._dfHeader.loc[0, :])[0])))
         for i in range(len(X)):
             X1[i] = X[i]
+
+        # Shuffle the X et Y Matrix
+        if seed is None:
+            seed = np.random.randint(0, 100000)
+        randomStateGen = np.random.RandomState(seed)
+        X1 = randomStateGen.permutation(X1)
+        randomStateGen = np.random.RandomState(seed)
+        Y = randomStateGen.permutation(Y)
 
         return X1, Y
 
