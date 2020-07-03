@@ -152,7 +152,7 @@ generator = GenLabelNoiseTS(filename="dataset.h5", dir='pathToData' + 'Run' + st
 generator.visualisation(typePlot='mean')
 generator.visualisation(typePlot='mean', className='Corn')
 generator.visualisation(typePlot='all', className='Corn')
-generator.visualisation(typePlot='random', className='Corn', nbProlfile=20)
+generator.visualisation(typePlot='random', className='Corn', noProfile=20)
 generator.visualisation(typePlot='randomPoly', className='Corn')
 ```
 
@@ -164,7 +164,7 @@ Except for visualisationProfilsMeanAllClass, you need specify a class Name besid
 By default 'yourPath/' is None
 
 
-## Algorithm performane evaluation
+## Algorithm performance evaluation
 
 To evaluate the influence of class label noise on the performance of supervised classification algorithms, we created three synthetic datasets of 2-class, 5-class and 10-class. Each class has 500 training instances and 500 testing instances. The training instances are corrupted by 5 % to 100 % (5 % step) random class label noise (and systematic class label noise for 5-class dataset). We describe below how the published results can be reproduced.
 
@@ -231,11 +231,11 @@ pathFiveClass = './data/FiveClass/'
 pathTenClass = './data/TenClass/'
 
 systematicChange = False
-nbclass = 2
+noclass = 2
 seed = 0
 
-EvalAlgo(pathTwoClass, nbclass, seed, systematicChange)
-visualisationEval(pathTwoClass/random, 'Two classes') # shows performance for the 2-class dataset on random class label noise
+EvalAlgo(pathTwoClass, noclass, seed, systematicChange)
+visualisationEval(pathTwoClass+"/random") # shows performance for the 2-class dataset on random class label noise
 ```
 
 For each dataset and type of class label noise, the results are saved into two csv file
