@@ -5,11 +5,11 @@ from EvalAlgo.EvalSVM import *
 from EvalAlgo.EvalTempCNN import *
 
 
-def EvalAlgo(path, nbClass, seed, systematicChange=False, outPathResults=None, nbunits_conv=64, nbunits_fc=256):
+def EvalAlgo(path, noClass, seed, systematicChange=False, outPathResults=None, nounits_conv=64, nounits_fc=256):
     """
     Functions for evaluation of RandomForest, SVM-Linear, SVM-RBF, TempCNN
     :param path: Path to dataset
-    :param nbClass: Number of class in classification
+    :param noClass: Number of class in classification
     :param seed: seed for shuffle data
     :param systematicChange: True if noise is systematic change, False if noise is random
     :param outPathResults: path to results directory
@@ -17,37 +17,37 @@ def EvalAlgo(path, nbClass, seed, systematicChange=False, outPathResults=None, n
     """
     NJOBS = 8
     noiseArray = [round(i, 2) for i in np.arange(0, 1.05, 0.05)]
-    nbFirstRun = 1
-    nbLastRun = 10
+    noFirstRun = 1
+    noLastRun = 10
 
     if outPathResults is None:
-        if nbClass == 2:
+        if noClass == 2:
             outPathResults = Path('./results/evals/TwoClass/')
-        elif nbClass == 5:
+        elif noClass == 5:
             if systematicChange is False:
                 outPathResults = Path('./results/evals/FiveClass/random/')
             else:
                 outPathResults = Path('./results/evals/FiveClass/systematic/')
-                nbClass = 'Five class Systematic Change'
-        elif nbClass == 10:
+                noClass = 'Five class Systematic Change'
+        elif noClass == 10:
             outPathResults = Path('./results/evals/TenClass/')
     else:
         outPathResults = Path(outPathResults)
 
     path = Path(path)
 
-    (dfAccuracySVML, dfAccuracyCsvSVML) = svmWork(path, 'linear', noiseArray, nbFirstRun, nbLastRun, seed,
+    (dfAccuracySVML, dfAccuracyCsvSVML) = svmWork(path, 'linear', noiseArray, noFirstRun, noLastRun, seed,
                                                   systematicChange)
 
-    (dfAccuracySVMRBF, dfAccuracyCsvSVMRBF) = svmWork(path, 'rbf', noiseArray, nbFirstRun, nbLastRun, seed,
+    (dfAccuracySVMRBF, dfAccuracyCsvSVMRBF) = svmWork(path, 'rbf', noiseArray, noFirstRun, noLastRun, seed,
                                                       systematicChange)
 
-    (dfAccuracyRF, dfAccuracyCsvRF) = randomForestWork(path, noiseArray, nbFirstRun, nbLastRun, seed, NJOBS,
+    (dfAccuracyRF, dfAccuracyCsvRF) = randomForestWork(path, noiseArray, noFirstRun, noLastRun, seed, NJOBS,
                                                        systematicChange)
 
-    (dfAccuracyTempCNN, dfAccuracyCsvTempCNN) = tempCNNWork(path, nbClass, noiseArray, nbFirstRun, nbLastRun, seed,
-                                                            systematicChange, nbunits_conv=nbunits_conv,
-                                                            nbunits_fc=nbunits_fc)
+    (dfAccuracyTempCNN, dfAccuracyCsvTempCNN) = tempCNNWork(path, noClass, noiseArray, noFirstRun, noLastRun, seed,
+                                                            systematicChange, nounits_conv=nounits_conv,
+                                                            nounits_fc=nounits_fc)
 
     dfAccuracyRF.to_csv(outPathResults / "meanOA_RF.csv")
     dfAccuracySVML.to_csv(outPathResults / "meanOA_SVM_Linear.csv")
@@ -69,11 +69,11 @@ def visualisationEval(path):
 
     path = Path(path)
     if path.stem == 'random':
-        nbClass = path.parent.stem
+        noClass = path.parent.stem
     elif path.stem == 'systematic':
-        nbClass = path.parent.stem + ' Systematic change'
+        noClass = path.parent.stem + ' Systematic change'
     else:
-        nbClass = path.stem
+        noClass = path.stem
 
     dfAccuracyRF = pd.read_csv(path / 'meanOA_RF.csv', index_col=0)
     dfAccuracySVML = pd.read_csv(path / 'meanOA_SVM_Linear.csv', index_col=0)
@@ -87,7 +87,7 @@ def visualisationEval(path):
     dfAccuracySVMRBF.plot(y='SVM-RBF NDVI', kind='line', legend=True, yerr='SVM-RBF NDVI STD', ax=ax)
     dfAccuracyTempCNN.plot(y='TempCNN NDVI', kind='line', legend=True, yerr='TempCNN NDVI STD', ax=ax)
 
-    plt.title(nbClass)
+    plt.title(noClass)
     plt.xlabel('Noise Level')
     plt.ylabel('Overall Accuracy')
     plt.grid()

@@ -32,26 +32,26 @@ def getXtrainXtestYtrainYtest(path, noiseLevel, run, seed, systematicChange):
     return Xtrain, Xtest, ytrain, ytest
 
 
-def makeDfAccuracyMeanStd(resultsArray, noiseArray, algoName, nbFirstRun, nbLastRun, indexRunList):
+def makeDfAccuracyMeanStd(resultsArray, noiseArray, algoName, noFirstRun, noLastRun, indexRunList):
     """
     Function to make Accuracy Dataframe (Mean and STD)
     :param resultsArray: results of evaluation
     :param noiseArray: Array containing all noise level
     :param algoName: Algorithm name like RF, SVM-Linear, ...
-    :param nbFirstRun: First run number (1)
-    :param nbLastRun: Last run number (10)
+    :param noFirstRun: First run number (1)
+    :param noLastRun: Last run number (10)
     :param indexRunList: List of run
     :return: dfAccuracy, dfAccuracyCsv
     """
     dfAccuracyCsv = pd.DataFrame(np.array(
-        pd.DataFrame(resultsArray.reshape(((nbLastRun - nbFirstRun + 1), len(noiseArray))), columns=noiseArray,
-                     index=indexRunList)).reshape(nbLastRun, len(noiseArray)), columns=noiseArray).T
+        pd.DataFrame(resultsArray.reshape(((noLastRun - noFirstRun + 1), len(noiseArray))), columns=noiseArray,
+                     index=indexRunList)).reshape(noLastRun, len(noiseArray)), columns=noiseArray).T
 
     dfAccuracyMean = pd.DataFrame(np.array(
-        pd.DataFrame(resultsArray.reshape(((nbLastRun - nbFirstRun + 1), len(noiseArray))), columns=noiseArray,
+        pd.DataFrame(resultsArray.reshape(((noLastRun - noFirstRun + 1), len(noiseArray))), columns=noiseArray,
                      index=indexRunList).mean()).reshape(1, len(noiseArray)), columns=noiseArray).T
     dfAccuracyStd = pd.DataFrame(np.array(
-        pd.DataFrame(resultsArray.reshape(((nbLastRun - nbFirstRun + 1), len(noiseArray))), columns=noiseArray,
+        pd.DataFrame(resultsArray.reshape(((noLastRun - noFirstRun + 1), len(noiseArray))), columns=noiseArray,
                      index=indexRunList).std()).reshape(1, len(noiseArray)), columns=noiseArray).T
     dfAccuracyStd.rename(columns={0: algoName + ' NDVI STD'}, inplace=True)
     dfAccuracyMean.rename(columns={0: algoName + ' NDVI'}, inplace=True)

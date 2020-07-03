@@ -45,7 +45,7 @@ class GenLabelNoiseTS:
                 self._initFilename = Path(pathInitFile)
             (dfHeader, dfData) = self._genData()
             self._dfHeader = dfHeader
-            self._nbPixPerPolid = self._getDfNbPixPerPolidList()
+            self._noPixPerPolid = self._getDfNoPixPerPolidList()
             self._dfData = dfData
             WriteGenerateData.writeGenerateDataToH5(self._filename, self._dir, self._dfHeader, self._dfData, self._csv)
             if self._verbose is True:
@@ -54,7 +54,7 @@ class GenLabelNoiseTS:
         else:
             # File exist
             self._dfHeader = pd.DataFrame(pd.read_hdf(self._dir / self._filename, 'header'))
-            self._nbPixPerPolid = self._getDfNbPixPerPolidList()
+            self._noPixPerPolid = self._getDfNoPixPerPolidList()
             # Test if convert is needed
             if csv is False:
                 try:
@@ -153,7 +153,7 @@ class GenLabelNoiseTS:
         Public function
         :param Y_True: Array with originals labels
         :param Y_Noise: Array with noisy labels
-        :return: Noise Matrix with shape(nbUniqueClass_Y_True,nbUniqueClass_Y_Noise)
+        :return: Noise Matrix with shape(noUniqueClass_Y_True,noUniqueClass_Y_Noise)
         """
         noiseMatrix = np.zeros((len(np.unique(Y_True)), len(np.unique(Y_True))), dtype=int)
         for i, j in zip(Y_True, Y_Noise):
@@ -163,19 +163,19 @@ class GenLabelNoiseTS:
     #  -----------------------------------------------------------------------------------------------------------------
     #  Visualisation Functions of this class.
     #  -----------------------------------------------------------------------------------------------------------------
-    def visualisation(self, typePlot, className=None, nbProlfile=20, dir=None):
+    def visualisation(self, typePlot, className=None, noProfile=20, dir=None):
         """
         Visualisation function to draw plot
         :param typePlot: typePlot = 'all' or 'mean' or 'random' or 'randomPoly'
         :param className: None or Name of the class
-        :param nbProfile: Number of profile for typePlot = random
+        :param noProfile: Number of profile for typePlot = random
         :param dir: If dir = None show plot, if dir is specify plot will be save in dir
         :return: No return -> Draw graph or save in file depending of dir value
         """
         if dir is not None:
             dir = Path(dir)
         DrawProfiles.drawProfiles(self._dfHeader.copy(), self._dfData.copy(), typePlot=typePlot, className=className,
-                                  nbProfile=nbProlfile, dir=dir)
+                                  noProfile=noProfile, dir=dir)
 
     def defaultVisualisation(self, dir=None):
         """
@@ -221,7 +221,7 @@ class GenLabelNoiseTS:
         if not ReadGenerateData.getAlreadyGenNoise(self._filename, self._dir, name, self._csv):
             generatorNoise = GeneratorLabelNoise(filename=self._filename, dir=self._dir,
                                                  noiseLevel=noiseLevel, seed=seedNoise,
-                                                 dfNbPixPerPolidList=self._nbPixPerPolid,
+                                                 dfNoPixPerPolidList=self._noPixPerPolid,
                                                  dictClass=dictClassSystematicChange,
                                                  csv=self._csv)
             (noiseLevel, dfNoise, systematicChange) = generatorNoise.generatorNoisePerClass()
@@ -378,7 +378,7 @@ class GenLabelNoiseTS:
         # Get dataset by name
         self._dfData = pd.read_hdf(self._dir / self._filename, tmptab[tmptab.index('data')])
         self._dfHeader = pd.read_hdf(self._dir / self._filename, tmptab[tmptab.index('header')])
-        self._nbPixPerPolid = self._getDfNbPixPerPolidList()
+        self._noPixPerPolid = self._getDfNoPixPerPolidList()
         tmpDfHeaderNoise = np.array(
             pd.DataFrame(pd.read_hdf(self._dir / self._filename, tmptab[tmptab.index('headerNoise')])))
         # Reshape to horizontal array
@@ -436,6 +436,6 @@ class GenLabelNoiseTS:
             name = 'random_' + str(int(noiseLevel * 100))
         return name
 
-    def _getDfNbPixPerPolidList(self):
+    def _getDfNoPixPerPolidList(self):
         return pd.DataFrame([[i[0], i[1][1]] for i in np.array(self._dfHeader.loc[2:, 0])],
-                            columns=['label', 'nbPixelPerPolid'])
+                            columns=['label', 'noPixelPerPolid'])

@@ -11,14 +11,14 @@ from keras.regularizers import l2
 from keras.utils.np_utils import to_categorical
 
 
-def tempCNNWork(path, nbClass, noiseArray, nbFirstRun, nbLastRun, seed, systematicChange=False, nbunits_conv=64, nbunits_fc=256):
+def tempCNNWork(path, noClass, noiseArray, noFirstRun, noLastRun, seed, systematicChange=False, nounits_conv=64, nounits_fc=256):
     """
     TempCNN evaluation function
     :param path: Path to dataset
-    :param nbClass: Number of class in classification
+    :param noClass: Number of class in classification
     :param noiseArray: Array containing all noise level
-    :param nbFirstRun: First run number (1)
-    :param nbLastRun: Last run number (10)
+    :param noFirstRun: First run number (1)
+    :param noLastRun: Last run number (10)
     :param seed: seed for shuffle data
     :param systematicChange: True if noise is systematic change, False if noise is random:
     :return: dfAccuracyTempCNN, dfAccuracyTempCNNCsv
@@ -29,7 +29,7 @@ def tempCNNWork(path, nbClass, noiseArray, nbFirstRun, nbLastRun, seed, systemat
     resultsArray = np.array([])
     indexRunList = []
     algoName = 'TempCNN'
-    for i in range(nbFirstRun, nbLastRun + 1):
+    for i in range(noFirstRun, noLastRun + 1):
         print('TempCNN')
         print('Run ' + str(i))
         results = []
@@ -37,15 +37,15 @@ def tempCNNWork(path, nbClass, noiseArray, nbFirstRun, nbLastRun, seed, systemat
         for j in noiseArray:
             (Xtrain, Xtest, ytrain, ytest) = EvalFunc.getXtrainXtestYtrainYtest(path, j, i, seed, systematicChange)
 
-            accuracy_score = TempCNN(Xtrain, ytrain, Xtest, ytest, nbClass, nbunits_conv, nbunits_fc)
+            accuracy_score = TempCNN(Xtrain, ytrain, Xtest, ytest, noClass, nounits_conv, nounits_fc)
 
             results.append(accuracy_score)
 
         resultsArray = np.append(resultsArray, values=results, axis=0)
 
     (dfAccuracyTempCNN, dfAccuracyTempCNNCsv) = EvalFunc.makeDfAccuracyMeanStd(resultsArray, noiseArray, algoName,
-                                                                               nbFirstRun,
-                                                                               nbLastRun, indexRunList)
+                                                                               noFirstRun,
+                                                                               noLastRun, indexRunList)
 
     return dfAccuracyTempCNN, dfAccuracyTempCNNCsv
 
@@ -59,7 +59,7 @@ def tempCNNWork(path, nbClass, noiseArray, nbFirstRun, nbLastRun, seed, systemat
 # Code come from: https://github.com/charlotte-pel/igarss2019-dl4sits
 # Authors: Dr. Charlotte Pelletier, Professor Geoffrey I. Webb, Dr. Francois Petitjean
 # -----------------------------------------------------------------------
-def TempCNN(X_train, y_train, X_test, y_test, nbClass, nbunits_conv, nbunits_fc):
+def TempCNN(X_train, y_train, X_test, y_test, noClass, nounits_conv, nounits_fc):
     classifier_type = 'TempCNN'
     # Parameters
     # -- general
@@ -84,12 +84,12 @@ def TempCNN(X_train, y_train, X_test, y_test, nbClass, nbunits_conv, nbunits_fc)
     X_train = reshape_data(X_train, nchannels)
     min_per, max_per = computingMinMax(X_train)
     X_train = normalizingData(X_train, min_per, max_per)
-    y_train_one_hot = to_categorical(y_train, nbClass)
+    y_train_one_hot = to_categorical(y_train, noClass)
     X_test = reshape_data(X_test, nchannels)
     X_test = normalizingData(X_test, min_per, max_per)
-    y_test_one_hot = to_categorical(y_test, nbClass)
+    y_test_one_hot = to_categorical(y_test, noClass)
 
-    model = Archi_TempCNN(X_train, nbClass, nbunits_conv, nbunits_fc)
+    model = Archi_TempCNN(X_train, noClass, nounits_conv, nounits_fc)
 
     res_mat[0], res_mat[1], model, model_hist, res_mat[2], res_mat[3] = \
         trainTestModel(model, X_train, y_train_one_hot, X_test, y_test_one_hot, model_file, n_epochs=n_epochs,
@@ -105,7 +105,7 @@ def TempCNN(X_train, y_train, X_test, y_test, nbClass, nbunits_conv, nbunits_fc)
     return float(res_mat[0])
 
 
-def Archi_TempCNN(X, nbclasses, nbunits_conv, nbunits_fc):
+def Archi_TempCNN(X, noclasses, nounits_conv, nounits_fc):
     # -- get the input sizes
     m, L, depth = X.shape
     input_shape = (L, depth)
@@ -113,26 +113,26 @@ def Archi_TempCNN(X, nbclasses, nbunits_conv, nbunits_fc):
     # -- parameters of the architecture
     l2_rate = 1.e-6
     dropout_rate = 0.5
-    nb_conv = 3
-    nb_fc = 1
-    # nbunits_conv = 64  # 32
-    # nbunits_fc = 256  # 128
+    no_conv = 3
+    no_fc = 1
+    # nounits_conv = 64  # 32
+    # nounits_fc = 256  # 128
 
     # Define the input placeholder.
     X_input = Input(input_shape)
 
-    # -- nb_conv CONV layers
+    # -- no_conv CONV layers
     X = X_input
-    for add in range(nb_conv):
-        X = conv_bn_relu_drop(X, nbunits=nbunits_conv, kernel_size=5, kernel_regularizer=l2(l2_rate),
+    for add in range(no_conv):
+        X = conv_bn_relu_drop(X, nounits=nounits_conv, kernel_size=5, kernel_regularizer=l2(l2_rate),
                               dropout_rate=dropout_rate)
     # -- Flatten + 	1 FC layers
     X = Flatten()(X)
-    for add in range(nb_fc):
-        X = fc_bn_relu_drop(X, nbunits=nbunits_fc, kernel_regularizer=l2(l2_rate), dropout_rate=dropout_rate)
+    for add in range(no_fc):
+        X = fc_bn_relu_drop(X, nounits=nounits_fc, kernel_regularizer=l2(l2_rate), dropout_rate=dropout_rate)
 
     # -- SOFTMAX layer
-    out = softmax(X, nbclasses, kernel_regularizer=l2(l2_rate))
+    out = softmax(X, noclasses, kernel_regularizer=l2(l2_rate))
 
     # Create model.
     return Model(inputs=X_input, outputs=out, name='Archi_3CONV64_1FC256')
@@ -177,16 +177,16 @@ def trainTestModel(model, X_train, Y_train_onehot, X_test, Y_test_onehot, out_mo
     return test_acc, np.min(hist.history['loss']), model, hist.history, train_time, test_time
 
 
-def softmax(X, nbclasses, **params):
+def softmax(X, noclasses, **params):
     kernel_regularizer = params.setdefault("kernel_regularizer", l2(1.e-6))
     kernel_initializer = params.setdefault("kernel_initializer", "glorot_uniform")
-    return Dense(nbclasses, activation='softmax',
+    return Dense(noclasses, activation='softmax',
                  kernel_initializer=kernel_initializer,
                  kernel_regularizer=kernel_regularizer)(X)
 
 
 def conv_bn(X, **conv_params):
-    nbunits = conv_params["nbunits"];
+    nounits = conv_params["nounits"];
     kernel_size = conv_params["kernel_size"];
 
     strides = conv_params.setdefault("strides", 1)
@@ -194,7 +194,7 @@ def conv_bn(X, **conv_params):
     kernel_regularizer = conv_params.setdefault("kernel_regularizer", l2(1.e-6))
     kernel_initializer = conv_params.setdefault("kernel_initializer", "he_normal")
 
-    Z = Conv1D(nbunits, kernel_size=kernel_size,
+    Z = Conv1D(nounits, kernel_size=kernel_size,
                strides=strides, padding=padding,
                kernel_initializer=kernel_initializer,
                kernel_regularizer=kernel_regularizer)(X)
@@ -214,12 +214,12 @@ def conv_bn_relu(X, **conv_params):
 
 
 def fc_bn(X, **fc_params):
-    nbunits = fc_params["nbunits"];
+    nounits = fc_params["nounits"]
 
     kernel_regularizer = fc_params.setdefault("kernel_regularizer", l2(1.e-6))
     kernel_initializer = fc_params.setdefault("kernel_initializer", "he_normal")
 
-    Z = Dense(nbunits, kernel_initializer=kernel_initializer, kernel_regularizer=kernel_regularizer)(X)
+    Z = Dense(nounits, kernel_initializer=kernel_initializer, kernel_regularizer=kernel_regularizer)(X)
     return BatchNormalization(axis=-1)(Z)  # -- CHANNEL_AXIS (-1)
 
 

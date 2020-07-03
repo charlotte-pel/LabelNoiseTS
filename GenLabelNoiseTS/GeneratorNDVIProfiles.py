@@ -30,10 +30,10 @@ class GeneratorNDVIProfiles:
 
         if classList is None:
             class_names = np.array(param_val['class_names'])
-            nbClass = len(class_names) - 1
+            noClass = len(class_names) - 1
         else:
             class_names = classList
-            nbClass = len(class_names)
+            noClass = len(class_names)
 
         tmpClass = np.array(param_val['class_names'])[:-1]
         for i in tmpClass:
@@ -58,26 +58,26 @@ class GeneratorNDVIProfiles:
         tmpDataFrame = []
         tmpProfiles = []
         # Write the header
-        # N = nbClass
+        # N = noClass
         # dates
-        # class1;nbSamples
+        # class1;noSamples
         # ...
-        # % classN;nbSamples
+        # % classN;noSamples
         dfHeader.append(np.array(dates))
         dfHeader.append(np.array({'dataSeed': seed}))
-        for i in range(0, nbClass):
+        for i in range(0, noClass):
             dfHeader.append(np.array([class_names[i], param_val[i]]))
         dfHeader = pd.DataFrame(np.array(dfHeader))
 
         # Generate Data Start:
-        for add in range(0, nbClass):
+        for add in range(0, noClass):
             data = param_val[add, :int(db_sigmo[add])]
-            nb_Samples = data[0]
+            no_Samples = data[0]
             polygonSize = data[1]
 
             # Generate the exact number of samples per polygons
             # (same number of samples per polygon)
-            nb_Samples_Polygons = polygonSize * np.ones((1, int(np.floor(nb_Samples / polygonSize))))
+            no_Samples_Polygons = polygonSize * np.ones((1, int(np.floor(no_Samples / polygonSize))))
 
             range_param = data[2:]
             if db_sigmo[add] == 14:
@@ -85,7 +85,7 @@ class GeneratorNDVIProfiles:
             else:
                 range_param = np.reshape(range_param, (12, 2))
 
-            for i in range(0, len(nb_Samples_Polygons[0])):  # id poly
+            for i in range(0, len(no_Samples_Polygons[0])):  # id poly
                 polid = next(unique_sequencePolid)
                 sigmo_param = GeneratorNDVIProfiles._generate_double_sigmo_parameters(range_param, randomState)
                 # Calculation of Gaussian parameters
@@ -122,7 +122,7 @@ class GeneratorNDVIProfiles:
                 if diff_pos < 0:
                     diff_pos = pos_mean[0][-1] - pos_x2[0][-1]
 
-                for j in range(0, int(nb_Samples_Polygons[0, i])):  # pixel poly
+                for j in range(0, int(no_Samples_Polygons[0, i])):  # pixel poly
                     # Generate variability : 3eme version
 
                     reduce_sigmo_param = np.zeros((len(sigmo_param[0]), 2))

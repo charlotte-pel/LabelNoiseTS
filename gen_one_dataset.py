@@ -36,7 +36,7 @@ def main():
                      'Wheat', 'Rapeseed', 'Barley',
                      'Evergreen', 'Decideous')
     else:
-        print('Error nb class !!!')
+        print('Error no class !!!')
         print('Only 2,5 or 10 class')
         sys.exit(0)
 

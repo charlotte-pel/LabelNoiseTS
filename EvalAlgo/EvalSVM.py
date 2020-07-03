@@ -6,14 +6,14 @@ from EvalAlgo import EvalFunc
 from GenLabelNoiseTS.GenLabelNoiseTS import *
 
 
-def svmWork(path, kernel, noiseArray, nbFirstRun, nbLastRun, seed, systematicChange=False):
+def svmWork(path, kernel, noiseArray, noFirstRun, noLastRun, seed, systematicChange=False):
     """
     SVM evaluation function
     :param path: Path to dataset
     :param kernel: SVM Kernel (Linear or RBF)
     :param noiseArray: Array containing all noise level
-    :param nbFirstRun: First run number (1)
-    :param nbLastRun: Last run number (10)
+    :param noFirstRun: First run number (1)
+    :param noLastRun: Last run number (10)
     :param seed: seed for shuffle data
     :param systematicChange: True if noise is systematic change, False if noise is random
     :return: dfAccuracySVM, dfAccuracySVMCsv
@@ -29,7 +29,7 @@ def svmWork(path, kernel, noiseArray, nbFirstRun, nbLastRun, seed, systematicCha
     elif kernel.upper() == 'RBF':
         algoName = 'SVM-RBF'
 
-    for i in range(nbFirstRun, nbLastRun + 1):
+    for i in range(noFirstRun, noLastRun + 1):
         print(kernel)
         print('Run ' + str(i))
         results = []
@@ -88,8 +88,8 @@ def svmWork(path, kernel, noiseArray, nbFirstRun, nbLastRun, seed, systematicCha
             del clf
         resultsArray = np.append(resultsArray, values=results, axis=0)
 
-    (dfAccuracySVM, dfAccuracySVMCsv) = EvalFunc.makeDfAccuracyMeanStd(resultsArray, noiseArray, algoName, nbFirstRun,
-                                                                       nbLastRun, indexRunList)
+    (dfAccuracySVM, dfAccuracySVMCsv) = EvalFunc.makeDfAccuracyMeanStd(resultsArray, noiseArray, algoName, noFirstRun,
+                                                                       noLastRun, indexRunList)
 
     return dfAccuracySVM, dfAccuracySVMCsv
 

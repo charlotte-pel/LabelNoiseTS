@@ -35,22 +35,22 @@ def checkNoiseForTwoFiveTenClass(verbose=False):
     print('Check ending !!!')
 
 
-def checkGeneratingNoise(nbSamples, nbClass, path, verbose=False):
+def checkGeneratingNoise(noSamples, noClass, path, verbose=False):
     """
 
-    :param nbSamples: Number of sample per class
-    :param nbClass: Number of class
+    :param noSamples: Number of sample per class
+    :param noClass: Number of class
     :param path: path to data
     :param verbose: Verbose mode -> True or False
     :return: None -> Get error if noise generation is wrong
     """
     path = Path(path)
     noiseArray = [round(i, 2) for i in np.arange(0, 1.05, 0.05)]
-    nbFirstRun = 1
-    nbLastRun = 10
+    noFirstRun = 1
+    noLastRun = 10
     indexRunList = []
-    nbSamplesAllClass = nbClass * nbSamples
-    for i in range(nbFirstRun, nbLastRun + 1):
+    noSamplesAllClass = noClass * noSamples
+    for i in range(noFirstRun, noLastRun + 1):
         results = []
         indexRunList.append('Run' + str(i))
         for j in noiseArray:
@@ -58,7 +58,7 @@ def checkGeneratingNoise(nbSamples, nbClass, path, verbose=False):
             if verbose is True:
                 print(
                     '------------------------------------------------------------------------------------------------')
-                print('nbClass = ' + str(nbClass))
+                print('noClass = ' + str(noClass))
                 print('NoiseLevel = ' + str(j))
 
             generator = GenLabelNoiseTS(filename="dataFrame.h5", dir=path / ('Run' + str(i) + '/'), csv=True,
@@ -69,11 +69,11 @@ def checkGeneratingNoise(nbSamples, nbClass, path, verbose=False):
             if verbose is True:
                 print(
                     True if (np.sum(np.diag(generator.getNoiseMatrix(ytrue, ytrain))) == round(
-                        nbSamplesAllClass * (1 - j))) else False)
+                        noSamplesAllClass * (1 - j))) else False)
 
             assert (np.sum(np.diag(generator.getNoiseMatrix(ytrue, ytrain))) == round(
-                nbSamplesAllClass * (1 - j))), "\nError_Generating_Noise\n" + "nbClass =" + str(
-                nbClass) + "Run = " + str(
+                noSamplesAllClass * (1 - j))), "\nError_Generating_Noise\n" + "noClass =" + str(
+                noClass) + "Run = " + str(
                 i) + "\n" + "Noise Level = " + str(j)
 
             if verbose is True:

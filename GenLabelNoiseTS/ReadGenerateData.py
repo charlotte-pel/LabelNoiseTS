@@ -20,10 +20,10 @@ class ReadGenerateData:
         filename = dir / filename
         dfheader = pd.read_hdf(filename, 'header')
         dfheader = pd.DataFrame(dfheader)
-        nbClass = len(dfheader) - 2
+        noClass = len(dfheader) - 2
         dates = dfheader[0][0]
         classNames = []
-        for i in range(2, nbClass + 2):
+        for i in range(2, noClass + 2):
             classNames.append(dfheader[0][i][0])
         if csv is False:
             dfData = pd.read_hdf(filename, 'data')
@@ -33,9 +33,9 @@ class ReadGenerateData:
             npCsv = np.array(pd.DataFrame(dfCsv))[0]
             dfData = pd.read_csv(dir / npCsv[0])
         samplesClass = dfData
-        nbPixelClass = [len(samplesClass.loc[(samplesClass['label'] == i)]) for i in classNames]
-        nbPixelClass = pd.DataFrame([nbPixelClass], columns=classNames)
-        return nbClass, dates, classNames, samplesClass, nbPixelClass
+        noPixelClass = [len(samplesClass.loc[(samplesClass['label'] == i)]) for i in classNames]
+        noPixelClass = pd.DataFrame([noPixelClass], columns=classNames)
+        return noClass, dates, classNames, samplesClass, noPixelClass
 
     @staticmethod
     def getAlreadyGenNoise(filename, dir, name, csv=False):

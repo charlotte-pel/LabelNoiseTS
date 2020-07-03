@@ -7,14 +7,14 @@ from pathlib import Path
 class DrawProfiles:
 
     @staticmethod
-    def drawProfiles(dfHeader, dfData, typePlot, className=None, nbProfile=20, dir=None):
+    def drawProfiles(dfHeader, dfData, typePlot, className=None, noProfile=20, dir=None):
         """
         Drawn data plot.
         :param dfHeader: DataFrame contain Header
         :param dfData: DataFrame contain Data
         :param typePlot: typePlot = 'all' or 'mean' or 'random' or 'randomPoly'
         :param className: None or Name of the class
-        :param nbProfile: Number of profile for typePlot = random
+        :param noProfile: Number of profile for typePlot = random
         :param dir: If dir = None show plot, if dir is specify plot will be save in dir
         :return: No return -> Draw graph or save in file depending of dir value
         """
@@ -26,7 +26,7 @@ class DrawProfiles:
             dir = Path(dir)
 
         dates = np.array(dfHeader.loc[0, :])[0]
-        nbClass = len(dfHeader) - 2
+        noClass = len(dfHeader) - 2
 
         tmpDfData = dfData
         if typePlot == 'randomPoly':
@@ -45,7 +45,7 @@ class DrawProfiles:
         elif typePlot == 'random' and className is not None:
             tmpDfData = dfData.loc[(dfData['label'] == className)]
             tmpDfData = tmpDfData.set_index('label')
-            tmpDfData = tmpDfData.sample(n=nbProfile)
+            tmpDfData = tmpDfData.sample(n=noProfile)
         elif typePlot == 'randomPoly' and className is not None:
             tmpDfData = dfData.loc[(dfData['label'] == className)]
             tmpDfData = tmpDfData.loc[(tmpDfData['polid'] == int(tmpDfData['polid'].sample(n=1)))]
@@ -58,7 +58,7 @@ class DrawProfiles:
         tmpDfData.insert(0, 'dates', dates, True)
         tmpDfData.plot(x='dates', y=className, kind='line', legend=False)
         if typePlot == 'mean' and className is None:
-            plt.title('Simulated NDVI profiles ' + str(nbClass) + ' Classes')
+            plt.title('Simulated NDVI profiles ' + str(noClass) + ' Classes')
         else:
             plt.title('Simulated NDVI profiles ' + className)
         plt.grid()
@@ -70,7 +70,7 @@ class DrawProfiles:
             plt.show()
         else:
             if typePlot == 'mean' and className is None:
-                plt.savefig(dir / ('plotProfilesMeanAllClass_' + str(nbClass) + 'class'))
+                plt.savefig(dir / ('plotProfilesMeanAllClass_' + str(noClass) + 'class'))
             elif typePlot == 'mean' and className is not None:
                 plt.savefig(dir / ('plotProfileMeanOneClass_' + className))
             elif typePlot == 'all' and className is not None:

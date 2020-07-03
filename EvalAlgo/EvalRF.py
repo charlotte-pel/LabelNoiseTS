@@ -6,13 +6,13 @@ from EvalAlgo import EvalFunc
 from GenLabelNoiseTS.GenLabelNoiseTS import *
 
 
-def randomForestWork(path, noiseArray, nbFirstRun, nbLastRun, seed, NJOBS, systematicChange=False):
+def randomForestWork(path, noiseArray, noFirstRun, noLastRun, seed, NJOBS, systematicChange=False):
     """
     Random Forest evaluation function
     :param path: Path to dataset
     :param noiseArray: Array containing all noise level
-    :param nbFirstRun: First run number (1)
-    :param nbLastRun: Last run number (10)
+    :param noFirstRun: First run number (1)
+    :param noLastRun: Last run number (10)
     :param seed: seed for shuffle data
     :param NJOBS: Number of cores used
     :param systematicChange: True if noise is systematic change, False if noise is random
@@ -25,7 +25,7 @@ def randomForestWork(path, noiseArray, nbFirstRun, nbLastRun, seed, NJOBS, syste
     indexRunList = []
     algoName = 'RF'
 
-    for i in range(nbFirstRun, nbLastRun + 1):
+    for i in range(noFirstRun, noLastRun + 1):
         print('RF')
         print('Run ' + str(i))
         results = []
@@ -42,7 +42,7 @@ def randomForestWork(path, noiseArray, nbFirstRun, nbLastRun, seed, NJOBS, syste
 
         resultsArray = np.append(resultsArray, values=results, axis=0)
 
-    (dfAccuracyRF, dfAccuracyRFCsv) = EvalFunc.makeDfAccuracyMeanStd(resultsArray, noiseArray, algoName, nbFirstRun,
-                                                                     nbLastRun, indexRunList)
+    (dfAccuracyRF, dfAccuracyRFCsv) = EvalFunc.makeDfAccuracyMeanStd(resultsArray, noiseArray, algoName, noFirstRun,
+                                                                     noLastRun, indexRunList)
 
     return dfAccuracyRF, dfAccuracyRFCsv
