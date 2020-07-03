@@ -76,7 +76,7 @@ pip install keras==2.4.3 tensorflow==2.2.0
 
 ## Quick use
 There are a set of Jupyter notebooks available in the `notebook` folder, for example:
-* `ExampleUseGeneratingData.ipynb` generates data...
+* `ExampleUseGeneratingData.ipynb` generates data generates a dataset by using the class `GenLabelNoiseTS`. It requires a file name where to save the generated dataset, for example `dataset.h5`, a directory path to save the results, and a list of class (if not specified Wheat and Barley classes). It can also take two options csv and a verbose mode. Data matrix `X` and the associated label `Y` (see next section for the format) can be obtained with the `getDataXY()` method. A method `getNoiseDataXY(0.05, None)` generates noisy data where 5 % of the instances are randomly corrupted (a dictionary can also be used to add systematic class label noise, see the next section). The `getTestData()` method creates also `X` and `Y` data that can be used as test instances (when training supervised classification algorithms). Finally, the `defaultVisualisation()` method depicts the meen temporal profiles for each class.
 * `ExampleUseEvaluation.ipynb` trains four supervised classification algorithms (Support Vector Machines with linear and Radial Basis Function kernel, Random Forests and Temporal Convolutional Neural Network) on the data contains in a h5 file. Each classification algorithm is trained on the original data and the data corrupted by different types and levels of class label noise. The training operation is repeated 10 times (on 10 different datasets) to evaluate the variance. The notebook outputs a Figure showing the overall accuracy of each algorithm (and one standard deviation) as a function of the noise level.
 
 ## Data generation
