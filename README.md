@@ -115,7 +115,7 @@ The following options are optional:
 -`--config config_file`: a configuration file can be used to parameterize the double logistic function parameters (please refer to the Remote Sensing journal paper).
 - `--save_csv`: the data will be also saved in csv files (one file per type of noise and per level of noise)
 - `-v`: verbose mode
-- `--vis`: saving some default visualisation
+- `--vis`: saving default visualisation (one Figure per class depicting all the NDVI profiles and one Figure depicting mean averaged NDVI profiles per class)
 
 #### Configuration file
 
