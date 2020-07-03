@@ -87,9 +87,8 @@ from GenLabelNoiseTS.GenLabelNoiseTS import *
 path = './somePath/'
 # Example with a list of two class and systematic change.
 generator = GenLabelNoiseTS(filename="dataset.h5", classList=('Wheat','Barley'), csv=True, verbose=True, dir=path/to/dir)
-a = {'Wheat': 'Barley', 'Barley': 'Wheat'}
 (X,Y) = generator.getDataXY()
-(Xnoise,Ynoise) = generator.getNoiseDataXY(0.05,a)
+(Xnoise,Ynoise) = generator.getNoiseDataXY(0.05,None)
 (Xtest,Ytest) = (generator.getTestData())
 generator.defaultVisualisation()
 ```
