@@ -15,7 +15,7 @@
 
 ## Introduction
 
-This module generates synthetic univarite time series datasets that contain different level of label noise. The generated datasets include remote sensing dataset specificity with a polygon concept. The idea is to take into account the field campaign protocols where sample labels are assigned by polygons describing for example crop fields.
+This module generates synthetic univariate time series datasets, which contain different levels of label noise. The generated datasets include remote sensing dataset specificity with a polygon concept. The idea is to take into account the field campaign protocols where sample labels are assigned with polygons describing an homogeneous area (for example a crop field).
 This code supports the following journal and conference papers:
 ```
 @article{pelletier2017effect,
@@ -40,7 +40,7 @@ This code supports the following journal and conference papers:
 
 ## Context
 
-The automatic production of land cover maps obtained by the supervised classification of satellite image time series relies on the availability of accurate reference databases. In remote sensing, these reference databases come generally from several sources including field campaigns, thematic maps or photointerpreation of high spatial resolution remote sensing images. Although most of classification algorithms made the assumption that reference databases are gold standard, it is well known that they contain errors, artifacts and imprecisions. These errors lead to the presence of class label noise on both training and testing samples. In other words some samples are assigned a wrong class label.
+The automatic production of land cover maps obtained by the supervised classification of satellite image time series relies on the availability of accurate reference databases. In remote sensing, these reference databases come generally from several sources including field campaigns, thematic maps or photointerpretation of high spatial resolution images. Although most of classification algorithms made the assumption that reference databases are gold standard, it is well known that they contain errors, artifacts and imprecisions. These errors lead to the presence of class label noise on both training and testing samples. In other words some samples are assigned a wrong class label.
 
 This code generates univariate time series representing vegetation profiles (closed from Normalized Difference Vegetation Index) for various vegetation classes (mainly crops). The generation of urban and water time series profiles is also possible.
 The generated datasets might be used for testing the robustness of various classification systems in a control environment where class label noise is completely known. 
@@ -76,11 +76,11 @@ pip install keras==2.4.3 tensorflow==2.2.0
 
 ## Quick use
 There are a set of Jupyter notebooks available in the `notebook` folder, for example:
-* `ExampleUseGeneratingData.ipynb` generates data generates a dataset by using the class `GenLabelNoiseTS`. It requires a file name where to save the generated dataset, for example `dataset.h5`, a directory path to save the results, and a list of class (if not specified Wheat and Barley classes). It can also take two options csv and a verbose mode. Data matrix `X` and the associated label `Y` (see next section for the format) can be obtained with the `getDataXY()` method. A method `getNoiseDataXY(0.05, None)` generates noisy data where 5 % of the instances are randomly corrupted (a dictionary can also be used to add systematic class label noise, see the next section). The `getTestData()` method creates also `X` and `Y` data that can be used as test instances (when training supervised classification algorithms). Finally, the `defaultVisualisation()` method depicts the meen temporal profiles for each class.
+* `ExampleUseGeneratingData.ipynb` generates a dataset by using the class `GenLabelNoiseTS`. It requires a file name where to save the generated dataset, for example `dataset.h5`, a directory path to save the results, and a list of class (if not specified Wheat and Barley classes are used). It can also take two optional parameters: `csv` and `v` for a verbose mode. Data matrix `X` and the associated label `Y` (see next section for the format) can be obtained with the `getDataXY()` method. A method `getNoiseDataXY(0.05, None)` generates noisy data where 5 % of the instances are randomly corrupted (a dictionary can also be used to add systematic class label noise, see the next section). The `getTestData()` method creates also `Xtest` and `Ytest` data that can be used as test instances (when training supervised classification algorithms). Finally, the `defaultVisualisation()` method depicts the mean temporal profile for each class.
 * `ExampleUseEvaluation.ipynb` trains four supervised classification algorithms (Support Vector Machines with linear and Radial Basis Function kernel, Random Forests and Temporal Convolutional Neural Network) on the data contains in a h5 file. Each classification algorithm is trained on the original data and the data corrupted by different types and levels of class label noise. The training operation is repeated 10 times (on 10 different datasets) to evaluate the variance. The notebook outputs a Figure showing the overall accuracy of each algorithm (and one standard deviation) as a function of the noise level.
 
 ## Data generation
-The following Python code is used to generate a 2-class dataset (wheat and barley) composed of the original data `(X,Y)`, the original data corrupted by 5 % of random class label noise `(Xnoise,Ynoise)`, and some non noisy test data (`(Xtest,Ytest)`. `X` (of size `(n,l)`) is the data matrix (numpy array) composed of `n` time series of length `l` (`X[i,j]` represents the NDVI value of the `i` observation at time `j`), and `Y` is the label vector (of size `n`) associated to each time series.
+The following Python code is used to generate a 2-class dataset (wheat and barley) composed of the original data `(X,Y)`, the original data corrupted by 5 % of random class label noise `(Xnoise,Ynoise)`, and some non noisy test data `(Xtest,Ytest)`. `X` (of size `(n,l)`) is the data matrix (numpy array) composed of `n` time series of length `l` (`X[i,j]` represents the NDVI value of the `i`-th observation at time `j`), and `Y` is the label vector (of size `n`) associated with each time series.
 ```python
 from GenLabelNoiseTS.GenLabelNoiseTS import *
 
@@ -106,13 +106,13 @@ This command generates a dataset in the specified directory `path/to/dir`. The c
 The following options are mandatory:
 - `-d path/to/dir`: directory path
 - `-f fileName`: file name (should be a .h5 file)
-- `--noClass 10`: number of class presents in the generated dataset
+- `--noClass 10`: number of classes presents in the generated dataset
 - `--noise random`: type of class label noise added to the data. Either `random` or a dictionary for systematic noise. The dictionary needs to be in a Python format: {'Wheat':('Barley','Soy'),'Barley':'Soy'}.
 - `--noise.level [0.05,0.1]`: a list containing the noise levels added to the data.
 
 The following options are optional:
 -`--config config_file`: a configuration file can be used to parameterize the double logistic function parameters (please refer to the Remote Sensing journal paper).
-- `--save_csv`: the data will be also saved in csv files (one file per type of noise and per level of noise)
+- `--save_csv`: the data will also be saved in csv files (one file per type of noise and per level of noise)
 - `-v`: verbose mode
 - `--vis`: saving default visualisation (one Figure per class depicting all the NDVI profiles and one Figure depicting mean averaged NDVI profiles per class)
 
@@ -142,7 +142,7 @@ The configuration file `initFile.csv` is a data frame (converted into csv file) 
 
 ## Data visualisation
 
-The following code retrieves the data contain in `dataset.h5` file and performs several visualisation on the non-noisy data.
+The following code retrieves the data contained in the `dataset.h5` file and displays several visualisation figures on the non-noisy data.
 ```python
 from GenLabelNoiseTS.GenLabelNoiseTS import *
 
@@ -155,27 +155,20 @@ generator.visualisation(typePlot='random', className='Corn', noProfile=20)
 generator.visualisation(typePlot='randomPoly', className='Corn')
 ```
 
-If 'yourPath/' is None, visualisation will not be save in external file.\
-If you specify 'yourPath/', visualisation will be save in external file.
-
-Except for visualisationProfilsMeanAllClass, you need specify a class Name besides 'yourPath/'
-
-By default 'yourPath/' is None
-
 
 ## Algorithm performance evaluation
 
-To evaluate the influence of class label noise on the performance of supervised classification algorithms, we created three synthetic datasets of 2-class, 5-class and 10-class. Each class has 500 training instances and 500 testing instances. The training instances are corrupted by 5 % to 100 % (5 % step) random class label noise (and systematic class label noise for 5-class dataset). We describe below how the published results can be reproduced.
+To evaluate the influence of class label noise on the performance of supervised classification algorithms, we created three synthetic datasets of 2 classes, 5 classes and 10 classes. Each class has 500 training instances and 500 testing instances. The training instances are corrupted by 5 % to 100 % (5 % step) random class label noise (and systematic class label noise for 5-class dataset). This setting is the same than the one published in the Remote Sensing MDPI journal. We describe below how the published results can be reproduced.
 
 #### Generating datasets
-We first generate the three datasets that contain different type and level of class label noise by using the following Python command line:
+We first generate the three datasets, which contain different types and levels of class label noise by using the following Python command line:
 ```bash
 python gen_datasets.py
 ```
 This command creates
--  2-class (`TwoClass`), 5-class (`FiveClass`), and 10-class (`TenClass`) datasets
-- In each dataset, we create ten variants of the datasets (ten runs).
-- A run includes the original training data, training data corrupted using 20 levels of class label noise (from 5 % to 100 %, with a step of 5 %), and (non-noisy) testing data.
+- 2-class (`TwoClass`), 5-class (`FiveClass`), and 10-class (`TenClass`) datasets.
+- Ten variants of the datasets (ten runs) are created.
+- One run includes the original training data, training data corrupted using 20 levels of class label noise (from 5 % to 100 %, with a step of 5 %), and (non-noisy) testing data.
 - All the datasets are corrupted by a random class label noise, and the 5-class datasets are also corrupted by a systematic class label noise.
 
 The created datasets are stored in the `data` folder (at the root of the project) with the following tree structure:
@@ -241,7 +234,7 @@ For each dataset and type of class label noise, the results are saved into two c
 - `runOA_RF.csv`: OA per run and per noise level
 - `meanOA_RF.csv`: a mean run OA score computed for each noise level. This is thus a summary of the OA scores contained in `runOA_RF.csv`; it is used for the visualisation of the classification algorithm performane.
 
-The following results are obtained: they are similar to the one published in the Remote Sensing journal (initially obtained by running a Matlab implementation and by using OpenCV implementation for the classification algorithms). It also added the performance of TemCNN for the different datasets and noise levels (see the code [here](https://github.com/charlotte-pel/temporalCNN)).
+The following results are obtained: they are similar to the one published in the Remote Sensing journal (initially obtained by running a Matlab implementation and by using OpenCV implementation for the classification algorithms). It also adds the performance of TemCNN for the different datasets and noise levels (see the code [here](https://github.com/charlotte-pel/temporalCNN)).
 ![Plots Results Evaluation](/img/results2_5_10Class.png)
 
 ## Contributing
